@@ -2,7 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Document\CreateDocumentAction;
+use App\Actions\Document\UpdateDocumentAction;
+use App\Actions\Document\DeleteDocumentAction;
 use App\Services\DocumentService;
+use App\Models\Document;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,6 +28,30 @@ class DocumentController extends Controller
         $action->execute($validated);
 
         return redirect()->back()->with('message', 'Документ успешно создан!');
+    }
+
+    public function update(Request $request, Document $document, UpdateDocumentAction $action)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $action->execute($document, $validated);
+        return redirect()->back();
+    }
+
+    public function edit(Document $document)
+    {
+        return Inertia::render('Documents/Edit', [
+            'document' => $document
+        ]);
+    }
+
+    public function destroy(Document $document, DeleteDocumentAction $action)
+    {
+        $action->execute($document);
+        return redirect()->back();
     }
 }
 

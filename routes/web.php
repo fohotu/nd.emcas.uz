@@ -14,8 +14,11 @@ Route::get('/test-action', function (GetServerStatusAction $action) {
     ]);
 });
 
+/*
 Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
 Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+*/
+Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

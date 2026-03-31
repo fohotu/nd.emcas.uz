@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm,Link,router } from '@inertiajs/react';
 
 export default function Index({ auth, documents }) {
     // Форма для создания нового документа через Action
@@ -13,6 +13,17 @@ export default function Index({ auth, documents }) {
         post(route('documents.store'), {
             onSuccess: () => reset(),
         });
+    };
+
+    const handleDelete = (id) => {
+        if (confirm('Вы уверены, что хотите удалить этот документ?')) {
+            router.delete(route('documents.destroy', id), {
+                onSuccess: () => {
+                    // Можно добавить уведомление об успехе
+                    alert('Документ удален');
+                },
+            });
+        }
     };
 
     return (
@@ -72,6 +83,7 @@ export default function Index({ auth, documents }) {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Заголовок</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Описание</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата создания</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -82,6 +94,20 @@ export default function Index({ auth, documents }) {
                                             <td className="px-6 py-4 text-sm text-gray-500">{doc.description}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {new Date(doc.created_at).toLocaleDateString()}
+                                            </td>
+                                            <td>
+                                                <Link
+                                                    href={route('documents.edit', doc.id)}
+                                                    className="text-indigo-600 hover:text-indigo-900 font-medium m-1"
+                                                >
+                                                    Изменить
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDelete(doc.id)}
+                                                    className="text-red-600 hover:text-red-900 transition-colors duration-200 m-1"
+                                                >
+                                                    Удалить
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
