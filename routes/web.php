@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DocumentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Actions\GetServerStatusAction;
 use Inertia\Inertia;
-
 
 
 Route::get('/test-action', function (GetServerStatusAction $action) {
@@ -13,6 +13,9 @@ Route::get('/test-action', function (GetServerStatusAction $action) {
         'serverInfo' => $action->execute()
     ]);
 });
+
+Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

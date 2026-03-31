@@ -1,7 +1,7 @@
 <?php 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateDocumentAction;
+use App\Actions\Document\CreateDocumentAction;
 use App\Services\DocumentService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
