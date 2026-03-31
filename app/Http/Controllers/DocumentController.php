@@ -8,6 +8,7 @@ use App\Services\DocumentService;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\Document\StoreDocumentRequest;
 
 class DocumentController extends Controller
 {
@@ -18,15 +19,10 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request, CreateDocumentAction $action)
+    public function store(StoreDocumentRequest $request, CreateDocumentAction $action)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
-        $action->execute($validated);
-
+        
+        $action->execute($request->validated());
         return redirect()->back()->with('message', 'Документ успешно создан!');
     }
 
