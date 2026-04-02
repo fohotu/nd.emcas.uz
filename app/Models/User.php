@@ -16,7 +16,9 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-
+   
+    //protected $table = 'emcas_compilation_user';
+    
     /**
      * Get the attributes that should be cast.
      *

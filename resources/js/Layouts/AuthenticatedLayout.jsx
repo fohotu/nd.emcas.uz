@@ -1,176 +1,193 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Link } from '@inertiajs/react';
+import { Tree } from 'react-arborist';
+import UserDropdown from './UserDropdown';
 
-export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+export default function AuthenticatedLayout({ children, user ={name:'Farkhod'} }) {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    // Массив для основных документов
+    
+    function Node({ node, style, dragHandle }) {
+
+    
+
+        /* This node instance can do many things. See the API reference. */
+        const combinedStyle = {
+            ...style,
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: `${node.level * 24}px`, // Кастомный отступ для вложенности
+        };
+       
+        return (
+            <div style={combinedStyle} ref={dragHandle}>
+                <div className="flex items-center">
+                
+                            <Link href={node.data.href || '#'} className="px-4 flex items-center   hover:text-white transition">
+                               
+                                <span className="text-sm">{node.data.name}</span>
+                            </Link>
+                </div>
+
+            </div>
+           
+        );
+    }
+
+    const data = [
+            { id: "1", name: "Документы Республики Узбекистан",icon: 'file', href: '/document/uz' },
+            { id: "2", name: "Документы МСЭ", icon: 'file', href: '/document/itu' },
+            { id: "3", name: "Документы РСС", icon: 'file', href: '/document/rss' },
+            { id: "4", name: "Документы стран мира", icon: 'file', href: '/document/world' },
+            { id: "5", name: "Материалы Подготовительной комиссии", icon: 'file', href: '/document/commission' },
+            {
+                id: "6",
+                name: "АР/ВКР",
+                children: [
+                    { id: "c1", name: "Ход подготовки к АР/ВКR 2023", icon: 'file', href: '/document/wrc-2023' },
+                    { id: "c2", name: "Рабочей группы ПК по пунктам повестки дня ВКR-23", icon: 'file', href: '/document/wrc-day-2023' },
+                    { id: "c3", name: "Ход подготовки к АР/ВКР 27", icon: 'file', href: '/document/wrc-2027' },
+                    { 
+                        id: "c4", name: "Рабочей группы ПК по пунктам повестка дня ВКР-27", icon: 'file', href: '/document/wrc-day-2027'
+                    },
+
+                  
+                ],
+            },
+        ];
+
+    const mainDocs = [
+        { name: 'Поиск документы', href: '/search', icon: 'search' },
+        { name: 'Документы Республики Узбекистан', href: '/document/uz', icon: 'file' },
+        { name: 'Документы МСЭ', href: '/document/itu', icon: 'file' },
+        { name: 'Документы РСС', href: '/document/rss', icon: 'file' },
+        { name: 'Документы стран мира', href: '/document/world', icon: 'file' },
+        { name: 'Материалы Подготовительной комиссии', href: '/document/commission', icon: 'file' },
+        { name: 'Ход подготовки к АР/ВКР 2023', href: '/document/wrc-2023', icon: 'file' },
+        { name: 'Рабочей группы ПК по пунктам повестки дня ВКР-23', href: '/document/wrc-day-2023', icon: 'file' },
+        { name: 'Ход подготовки к АР/ВКР 27', href: '/document/wrc-2027', icon: 'file' },
+        { name: 'Рабочей группы ПК по пунктам повестка дня ВКР-27 ', href: '/document/wrc-day-2027', icon: 'file' },
+    ];
+
+    // Массив для личного кабинета
+    const personalLinks = [
+        { name: 'Мои документы', href: '/my-documents', icon: 'layers' },
+        { name: 'Мои теги', href: '/my-tags', icon: 'file-text' },
+        { name: 'Личные данные', href: '/user', icon: 'file-text' },
+    ];
+
+    // Функция для рендеринга иконок (SVG из вашего примера)
+    const Icon = ({ name }) => {
+        const props = {
+            className: "w-5 h-5 mr-3", // Tailwind классы для размера и отступа
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        };
+
+        if (name === 'search') return (
+            <svg {...props} viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        );
+        if (name === 'layers') return (
+            <svg {...props} viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        );
+        if (name === 'file-text') return (
+            <svg {...props} viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        );
+        // По умолчанию иконка 'file'
+        return (
+            <svg {...props} viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+        );
+    };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="border-t border-gray-200 pb-1 pt-4">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
+        <div className="flex h-screen bg-gray-100 overflow-hidden">
+            {/* Оверлей мобильного меню */}
+            {sidebarOpen && (
+                <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-40 bg-black/50 lg:hidden" />
             )}
 
-            <main>{children}</main>
+            {/* САЙДБАР */}
+            <aside className={`
+                fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 transition-transform duration-300 
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static
+            `}>
+                <div className="flex items-center justify-between px-6 py-5 bg-slate-950 text-white font-bold text-xl">
+                    <span></span>
+                    <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <nav className="p-0 space-y-6 overflow-y-auto h-[calc(100vh-70px)]">
+                    {/* Первая группа */}
+                    <div>
+                        <ul className="">
+                            <li>
+                                    <Link href="/search" className="flex items-center px-4 py-2.5 rounded-lg bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 transition">
+                                        <Icon name="search" />
+                                        <span className="text-sm font-medium">Поиск документы</span>
+                                    </Link>
+                            </li>
+                        </ul>
+                        
+                     <ul className="border-t border-slate-800 pt-4">
+                        <Tree 
+                            initialData={data} 
+                            rowHeight={50}
+        
+                        >   
+                            {Node}
+                        </Tree>
+                        </ul>
+                          
+                        
+                    </div>
+
+                    <div className="border-t border-slate-800 pt-4">
+                        <h4 className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Личный кабинет</h4>
+                       
+                        <ul className="space-y-1" >
+                            {personalLinks.map((item) => (
+                                <li key={item.href}>
+                                    <Link href={item.href} className="flex items-center px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                                        <Icon name={item.icon} />
+                                        <span className="text-sm">{item.name}</span>
+                                    </Link>
+                                </li>
+                            ))}
+                            
+                            {/* Условный рендеринг для админа (если передано из Laravel) */}
+                            {user?.role === 'admin' && (
+                                <li>
+                                    <Link href="/dashboard" className="flex items-center px-4 py-2.5 rounded-lg bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 transition">
+                                        <Icon name="file-text" />
+                                        <span className="text-sm font-medium">Администрирование</span>
+                                    </Link>
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            {/* КОНТЕНТ */}
+            <div className="flex-1 flex flex-col">
+                <header className="h-16 bg-white border-b flex items-center px-6 lg:justify-end">
+                    <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-2 text-gray-600">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                   
+                    <UserDropdown user={user} />
+                </header>
+
+                <main className="overflow-y-auto p-2">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Actions\GetServerStatusAction;
@@ -9,8 +10,15 @@ use Inertia\Inertia;
 
 
 Route::get('/test-action', function (GetServerStatusAction $action) {
+    // Tree View Menu "React Arborist" instance of "jsTree"
     return Inertia::render('Dashboard', [
         'serverInfo' => $action->execute()
+    ]);
+});
+
+Route::get('/tree', function () {
+    return Inertia::render('Post/TreeView', [
+        'serverInfo' => 1,
     ]);
 });
 
@@ -18,7 +26,9 @@ Route::get('/test-action', function (GetServerStatusAction $action) {
 Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
 Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
 */
+
 Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
+Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit']);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

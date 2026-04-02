@@ -22,3 +22,13 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+
+/public/assets/
+
+/resources/js/Layouts/1AuthenticatedLayout.jsx
+/resources/js/Layouts/MyNode.jsx
+/resources/js/Layouts/UserDropdown.jsx
+
+/resources/views/1app.blade.php
+/rest1_backup.sql
