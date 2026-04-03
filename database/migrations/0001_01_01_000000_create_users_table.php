@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('role', 15)->default('user');
             $table->boolean('status')->default(1);
+            $table->timestamp('last_visit')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -28,7 +28,8 @@ Route::post('/documents', [DocumentController::class, 'store'])->name('documents
 */
 
 Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
-Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit']);
+Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit',]);
+Route::post('/users/{user}/block', [UserController::class, 'block']);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

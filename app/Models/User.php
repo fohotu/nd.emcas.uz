@@ -18,7 +18,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
    
     //protected $table = 'emcas_compilation_user';
-    
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'last_visit', 
+    ];
     /**
      * Get the attributes that should be cast.
      *
@@ -29,6 +34,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_visit' => 'datetime',
         ];
     }
 }
