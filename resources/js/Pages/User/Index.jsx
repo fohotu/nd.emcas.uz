@@ -29,27 +29,44 @@ export default function Index({users}) {
     },[]);
 
 
-    const blockUser = (id) => {
+    const blockUser = (user) => {
+
+        let title = user.status ? 'Заблокировать' : 'Разблокировать';
+        let text = user.status ? 'Вы сможете восстановить этого пользователя любое время!' : 'Доступ пользователя к системе будет полностью восстановлен!';
+        let confirm = user.status ? 'Да, заблокировать!' : 'Да, разблокировать!';
         Swal.fire({
-            title: 'Вы собирайтес заблокировать?',
-            text: "Вы сможете восстановить этого пользователя любое время!",
+            title: title,
+            text: text,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Да, заблокировать!',
+            confirmButtonText:confirm,
             cancelButtonText: 'Отмена'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post(`/users/${id}/block`)  
+                axios.post(`/users/${user.id}/block`)  
                 .then(() => {
+
+                    let alertTitle = user.status ? 'Заблокировано!' : 'Разблокировано!';
+                    let alertText = user.status ? 'Пользователь был заблокирован.' : 'Доступ для пользователя восстановлен.';
+                    let alertIcon = 'success';
+                        
                     Swal.fire(
-                        'Заблокировано!',
-                        'Пользователь был заблокирован.',
-                        'success'
-                    )
-                   // let filtered = usersList.data.filter(u => u.id !== id);
-                   // setUsersList({...usersList, data: filtered});
+                            alertTitle,
+                            alertText,
+                            alertIcon
+                        )
+                   
+                    
+                    let updatedUsers = usersList.data.map(u => {
+                        if(u.id === user.id){
+                            return {...u, status: !u.status};
+                        }
+                        return u;
+                    });
+                    setUsersList({...usersList, data: updatedUsers});
+       
            
                 })
                 .catch(err => console.error(err));
@@ -122,7 +139,6 @@ export default function Index({users}) {
                  <table className="w-full text-left">
                     <thead className="bg-gray-50 border-b">
                         <tr>
-                            <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">ID</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Имя</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дата регистрации</th>
@@ -133,8 +149,7 @@ export default function Index({users}) {
                     
                     <tbody className="divide-y divide-gray-200">
                         {usersList?.data.map((item) => (
-                            <tr key={item.id} className="hover:bg-gray-50 transition">
-                                <td className="px-6 py-4 text-sm text-gray-500">{item.id}</td>
+                            <tr key={item.id} className={`hover:bg-gray-50 transition ${item.status ? '':'bg-red-200'}`}>
                                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.name}</td>
                                 <td className="px-6 py-4 text-sm text-gray-500">{item.email}</td>
                                 <td className="px-6 py-4 text-sm text-gray-500">{item.created_at}</td>
@@ -211,7 +226,7 @@ export default function Index({users}) {
                                                 className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-amber-100"
                                                 onClick={() => {
                                                     // Твоя логика, например:
-                                                    blockUser(item.id);
+                                                    blockUser(item);
                                                     setBlockModal(true);
                                                 }}
                                             >
