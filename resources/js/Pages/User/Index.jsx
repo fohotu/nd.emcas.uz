@@ -29,6 +29,33 @@ export default function Index({users}) {
     },[]);
 
 
+    const  successEditHandler = () => {
+        setEditModal(false);
+        Swal.fire({
+            title:'Успешно!',
+            text:'Пользователь успешно обновлен.',
+            icon:'success',
+            iconColor: '#28a745',
+            timer:1500,
+            showConfirmButton:false,
+        })
+    };
+
+    const errorEditHandler = (errors) => {
+       // setEditModal(false);
+        let errorText = '';
+        for (const key in errors) {
+            if (errors.hasOwnProperty(key)) {
+               // errorText += `${errors[key]}\n`;
+            }
+        }
+        Swal.fire({
+            title:'Ошибка!',
+            text:errorText,
+            icon:'error',
+        })
+    }
+
     const blockUser = (user) => {
 
         let title = user.status ? 'Заблокировать' : 'Разблокировать';
@@ -52,11 +79,12 @@ export default function Index({users}) {
                     let alertText = user.status ? 'Пользователь был заблокирован.' : 'Доступ для пользователя восстановлен.';
                     let alertIcon = 'success';
                         
-                    Swal.fire(
-                            alertTitle,
-                            alertText,
-                            alertIcon
-                        )
+                    Swal.fire({
+                            title:alertTitle,
+                            text:alertText,
+                            icon:alertIcon,
+                            timer:2000,
+                    })
                    
                     
                     let updatedUsers = usersList.data.map(u => {
@@ -90,11 +118,12 @@ export default function Index({users}) {
              
                 axios.delete(`/users/${id}`)
                 .then(() => {
-                     Swal.fire(
-                        'Удалено!',
-                        'Пользователь был удален.',
-                        'success'
-                    )
+                     Swal.fire({
+                        title:'Удалено!',
+                        text:'Пользователь был удален.',
+                        icon:'success',
+                        timer:2000,
+                })
                     let filtered = usersList.data.filter(u => u.id !== id);
                     setUsersList({...usersList, data: filtered});
            
@@ -114,26 +143,32 @@ export default function Index({users}) {
             <Head title="Profile" />
 
             <Modal show={editModal} onClose={() => setEditModal(false)}>
+                <div className="py-10 px-5">
                 {
-                    selectedUser ? <Edit user={selectedUser}/> : <div>Loading...</div>
+                    selectedUser ? <Edit user={selectedUser} onSuccess={successEditHandler} onError={errorEditHandler}/> : <div>Loading...</div>
                 }
+                </div>
             </Modal>
 
             <Modal show={passwordModal} onClose={() => setPasswordModal(false)}>
+                <div className="py-10 px-5">
                 {
                     selectedUser ? <ChangePassword user={selectedUser}/> : <div>Loading...</div>
                 }
+                </div>
             </Modal>
 
             <Modal show={roleModal} onClose={() => setRoleModal(false)}>
+                <div className="py-10 px-5">
                 {
                     selectedUser ? <ChangeRole user={selectedUser}/> : <div>Loading...</div>
                 }
+                </div>
             </Modal>
             <div className="py-12">
                
                 {
-                    !usersList ? <div class="w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin float-end my-5"></div> : null
+                    !usersList ? <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin float-end my-5"></div> : null
                 }
               
                  <table className="w-full text-left">

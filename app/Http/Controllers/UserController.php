@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Actions\User\CreateUserAction;
 use App\Actions\User\DeleteUserAction;
+use App\Actions\User\UpdateUserAction;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Services\UserService;
@@ -32,8 +34,16 @@ class UserController extends Controller
         return response()->json($user,200); 
 
     }
+
+
+     public function update(User $user,UpdateUserRequest $request, UpdateUserAction $action)
+    {
+        $user = $action->execute($user,$request->validated());
+        return redirect()->back();
+        //return response()->json($user,200);
+    }
     
-    public function update($id, UpdateUserRequest $request, UserService $service)
+    public function update1($id, UpdateUserRequest $request, UserService $service)
     {
         $user = $service->updateUser($id, $request->validated());
         return response()->json($user);

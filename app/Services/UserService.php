@@ -23,9 +23,8 @@ class UserService
         $user = User::findOrFail($id);
 
         $user->update([
-            'login' => $data['login'] ?? $user->login,
-            'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
-            'role' => $data['role'] ?? $user->role,
+            'name' => $data['name'] ?? $user->name,
+            'email' => isset($data['email']) ?? $user->email,
         ]);
 
         return $user;
@@ -33,7 +32,7 @@ class UserService
 
 
    public function toggleBlockUser(User $user): bool
-    {
+   {
         $user->status = !$user->status;
         $user->save();
 
