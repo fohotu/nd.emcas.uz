@@ -10,6 +10,8 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -64,6 +66,26 @@ class UserController extends Controller
         return response()->json([
             'user_status' => $result
         ]);
+    }
+
+    public function updatePassword(User $user, Request $request)
+    {
+        //$2y$12$3ukXSE9EdaKsH/I9jjR59.lMrjCHmclMXi9YNqCx9iYTDZLCy1TxO
+        // 1. Валидация с расширенными правилами
+        $request->validate([
+            'password' => [
+                'required', 
+                'confirmed', 
+                Password::min(8)->letters()->numbers() // Пример: минимум 8 символов, буквы и цифры
+            ],
+        ]);
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // 3. Возврат с уведомлением для Inertia/SweetAlert
+        return redirect()->back()->with('success', 'Пароль пользователя успешно изменен.');
+
     }
 
 }

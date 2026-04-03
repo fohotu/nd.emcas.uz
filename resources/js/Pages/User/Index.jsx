@@ -28,6 +28,31 @@ export default function Index({users}) {
         setUsersList(users);
     },[]);
 
+    const  successChangePasswordHandler = () => {
+        setPasswordModal(false);
+        Swal.fire({
+            title:'Успешно!',
+            text:'Пароль пользователя успешно изменен.',
+            icon:'success',
+            iconColor: '#28a745',
+            timer:1500,
+            showConfirmButton:false,
+        })
+    };
+
+    const errorChangePasswordHandler = (errors) => {    
+        let errorText = '';
+        for (const key in errors) {
+            if (errors.hasOwnProperty(key)) {
+               // errorText += `${errors[key]}\n`;
+            }
+        }
+        Swal.fire({
+            title:'Ошибка!',
+            text:errorText,
+            icon:'error',
+        })
+    }
 
     const  successEditHandler = () => {
         setEditModal(false);
@@ -42,7 +67,7 @@ export default function Index({users}) {
     };
 
     const errorEditHandler = (errors) => {
-       // setEditModal(false);
+  
         let errorText = '';
         for (const key in errors) {
             if (errors.hasOwnProperty(key)) {
@@ -153,7 +178,7 @@ export default function Index({users}) {
             <Modal show={passwordModal} onClose={() => setPasswordModal(false)}>
                 <div className="py-10 px-5">
                 {
-                    selectedUser ? <ChangePassword user={selectedUser}/> : <div>Loading...</div>
+                    selectedUser ? <ChangePassword user={selectedUser} onSuccess={successChangePasswordHandler} onError={errorChangePasswordHandler}/> : <div>Loading...</div>
                 }
                 </div>
             </Modal>
