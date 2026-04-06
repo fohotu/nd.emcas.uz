@@ -13,6 +13,7 @@ function Edit({user,onSuccess,onError}) {
         e.preventDefault();
         patch(`/users/${user.id}`,{
           onSuccess: () => {
+          
             onSuccess();
           },
           onError: (errors) => {

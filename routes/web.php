@@ -27,11 +27,6 @@ Route::get('/documents', [DocumentController::class, 'index'])->name('documents.
 Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
 */
 
-Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
-Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit',]);
-Route::post('/users/{user}/block', [UserController::class, 'block']);
-Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])
-    ->name('users.password.update');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -49,9 +44,24 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    // Ресурсные маршруты для документов и пользователей
+
+    Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
+    Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit',]);
+    Route::post('/users/{user}/block', [UserController::class, 'block']);
+    Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])
+        ->name('users.password.update');
+    Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])
+        ->name('users.role.update');
+    Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
+
+    // Другие защищенные маршруты...
 });
 
 require __DIR__.'/auth.php';

@@ -6,11 +6,23 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserService
 {
-    public function getAllUsers(int $perPage = 10): LengthAwarePaginator
+    public function getAllUsers(array $filters = [],int $perPage = 11): LengthAwarePaginator
     {
-        return User::query()
-            ->latest()
-            ->paginate($perPage);
+        $model = User::query();
+
+        if (!empty($filters['name'])) {
+            $model->where('name', 'like', "%{$filters['name']}%");
+        }
+
+        if (!empty($filters['email'])) {
+            $model->where('email', 'like', "%{$filters['email']}%");
+        }
+
+        if (!empty($filters['role'])) {
+            $model->where('role', $filters['role']);
+        }
+
+        return $model->latest()->paginate($perPage);
     }
 
     public function getUserById(int $id): User
@@ -37,6 +49,18 @@ class UserService
         $user->save();
 
         return $user->status;
+    }
+
+
+    public function bulkDeleteUsers(array $ids): int
+    {
+       // return User::whereIn('id', $ids)->delete();
+       $deletedCount = 0;
+        User::whereIn('id', $ids)->get()->each(function ($user) use (&$deletedCount) {
+            $user->delete();
+            $deletedCount++;
+        });
+        return $deletedCount;
     }
 }
 ?>

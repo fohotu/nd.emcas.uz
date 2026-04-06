@@ -10,20 +10,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+
+
+
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
+
+#[Fillable(['name', 'email', 'password', 'last_visit', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
-   
-    //protected $table = 'emcas_compilation_user';
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'last_visit', 
-    ];
+    use HasFactory, Notifiable, LogsActivity;
+
+
+    // Настройка параметров логирования
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'role']) // Какие поля отслеживать
+            ->logOnlyDirty()                    // Записывать только те поля, которые реально изменились
+           // ->dontSubmitEmptyLogs()             // Не создавать пустую запись, если ничего не поменялось
+            ->useLogName('users');              // Название канала логов
+    }
     /**
      * Get the attributes that should be cast.
      *

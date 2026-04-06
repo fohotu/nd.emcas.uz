@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 
 function ChangePassword({user,onSuccess,onError}) {
 
-  const { data, setData, put, errors, processing, reset } = useForm({
+  const { data, setData, patch, errors, processing, reset } = useForm({
         password: '',
         password_confirmation: '',
     });
@@ -12,7 +12,7 @@ function ChangePassword({user,onSuccess,onError}) {
     const submit = (e) => {
         e.preventDefault();
         // Отправляем запрос на роут, например: /admin/users/{id}/password
-        put(route('users.password.update', user.id), {
+        patch(route('users.password.update', user.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();

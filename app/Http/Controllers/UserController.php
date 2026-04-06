@@ -22,19 +22,20 @@ class UserController extends Controller
         return response()->json($user,201);
     }
 
-    public function index(){
-        $users = (new UserService())->getAllUsers();
+    public function index(UserService $service, Request $request){
+        
+        $query = $request->only(['name', 'email', 'role']);
+        $users = $service->getAllUsers($query);
 
         return Inertia::render('User/Index', [
-            'users' => $users
+            'users' => $users->withQueryString(),
+            'query' => $query
         ]);
     }
 
     public function edit($id,UserService $service){
         $user = $service->getUserById($id);
-
         return response()->json($user,200); 
-
     }
 
 
@@ -42,14 +43,9 @@ class UserController extends Controller
     {
         $user = $action->execute($user,$request->validated());
         return redirect()->back();
-        //return response()->json($user,200);
     }
     
-    public function update1($id, UpdateUserRequest $request, UserService $service)
-    {
-        $user = $service->updateUser($id, $request->validated());
-        return response()->json($user);
-    }
+
 
     public function destroy(User $user, DeleteUserAction $action)
     {
@@ -70,7 +66,6 @@ class UserController extends Controller
 
     public function updatePassword(User $user, Request $request)
     {
-        //$2y$12$3ukXSE9EdaKsH/I9jjR59.lMrjCHmclMXi9YNqCx9iYTDZLCy1TxO
         // 1. Валидация с расширенными правилами
         $request->validate([
             'password' => [
@@ -85,6 +80,36 @@ class UserController extends Controller
 
         // 3. Возврат с уведомлением для Inertia/SweetAlert
         return redirect()->back()->with('success', 'Пароль пользователя успешно изменен.');
+
+    }
+
+
+    public function updateRole(User $user, Request $request)
+    {
+        $request->validate([
+            'role' => 'required|in:user,admin', // Пример: разрешаем только роли "user" и "admin"
+        ]);
+
+        $user->update([
+            'role' => $request->role,
+        ]);
+
+
+
+
+        return redirect()->back()->with('success', 'Роль пользователя успешно изменена.');
+    }
+
+    public function bulkDelete(Request $request, UserService $service)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+        ]);
+
+        $service->bulkDeleteUsers($request->ids);
+
+        return redirect()->back()->with('success', 'Пользователи удалены.');
 
     }
 

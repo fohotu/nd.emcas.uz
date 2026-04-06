@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head,Link } from '@inertiajs/react';
+import { Head,Link,router } from '@inertiajs/react';
+import AdminIcon from './Partials/AdminIcon';
+import UserIcon from './Partials/UserIcon';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import Edit from './Edit';
@@ -9,8 +11,7 @@ import ChangeRole from './ChangeRole';
 import axios from 'axios';
 
 
-
-export default function Index({users}) {
+export default function Index({users,query}) {
 
 
 
@@ -19,14 +20,103 @@ export default function Index({users}) {
     const [passwordModal,setPasswordModal] = useState(false);
     const [roleModal,setRoleModal] = useState(false);
     const [blockModal,setBlockModal] = useState(false);
+    const [createModal,setCreateModal] = useState(false);
+
 
     const [selectedUser,setSelectedUser] = useState(null);
 
     const [usersList,setUsersList] = useState(null);
 
+    const [searchForm,setSearchForm] = useState({
+        name:query.name || '',
+        email:query.email || '',
+        role:query.role || '',
+    });
+
     useEffect(()=>{
+        console.log("Пропсы обновились:", users); // Проверьте в консоли
         setUsersList(users);
-    },[]);
+    },[users.data,users]);
+
+
+    // Состояние для хранения ID выбранных пользователей
+    const [selectedIds, setSelectedIds] = useState([]);
+
+    // Обработка клика по главному чекбоксу (Выделить всё)
+    const toggleAll = (e) => {
+
+        if (e.target.checked) {
+            setSelectedIds(usersList?.data.map(u => u.id));
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
+    const removeSelected = () => {
+        Swal.fire({
+            title: 'Вы уверены?',
+            text: `Вы не сможете восстановить этих ${selectedIds.length} пользователей!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Да, удалить!',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/users/bulk-delete', { ids: selectedIds })
+                .then(() => {
+                    setSelectedIds([]);
+                    Swal.fire({
+                        title:'Удалено!',
+                        text:`${selectedIds.length} пользователей были удалены.`,  
+                        icon:'success',
+                        timer:1500,
+                        showConfirmButton:false,
+                    })
+                })
+                .catch(error => {
+                    console.error("Ошибка при удалении", error);
+                });
+            }
+        });
+    };
+
+    // Обработка клика по конкретной строке
+    const toggleOne = (id) => {
+        setSelectedIds(prev => 
+            prev.includes(id) 
+                ? prev.filter(item => item !== id) 
+                : [...prev, id]
+        );
+    };
+
+
+    const successChangeRoleHandler = () => {
+        setRoleModal(false);
+        Swal.fire({
+            title:'Успешно!',
+            text:'Роль пользователя успешно изменена.',
+            icon:'success',
+            iconColor: '#28a745',
+            timer:1500,
+            showConfirmButton:false,
+        })
+    };
+
+    const errorChangeRoleHandler = (errors) => {
+        let errorText = '';
+        for (const key in errors) {
+            if (errors.hasOwnProperty(key)) {
+               // errorText += `${errors[key]}\n`;
+            }
+        }
+        Swal.fire({
+            title:'Ошибка!',
+            text:errorText,
+            icon:'error',
+        })
+    }
 
     const  successChangePasswordHandler = () => {
         setPasswordModal(false);
@@ -128,6 +218,23 @@ export default function Index({users}) {
         });
     }
 
+     function handleSearch(e){
+        e.preventDefault();
+        router.get('/users',searchForm,{
+            onSuccess: (res) => {
+                //console.log(res.props.query);
+                //setSearchForm(res.props.query);
+            },
+        })
+    }
+
+
+    function handleChange(e){
+        const key = e.target.name;
+        const value = e.target.value;
+        setSearchForm({...searchForm,[key]:value});
+    }
+
     const deleteUser = (id) => {
         Swal.fire({
             title: 'Вы уверены?',
@@ -186,8 +293,16 @@ export default function Index({users}) {
             <Modal show={roleModal} onClose={() => setRoleModal(false)}>
                 <div className="py-10 px-5">
                 {
-                    selectedUser ? <ChangeRole user={selectedUser}/> : <div>Loading...</div>
+                    selectedUser ? <ChangeRole user={selectedUser} onSuccess={successChangeRoleHandler} onError={errorChangeRoleHandler}/> : <div>Loading...</div>
                 }
+                </div>
+            </Modal>
+
+             <Modal show={createModal} onClose={() => setCreateModal(false)}>
+                <div className="py-10 px-5">
+                {
+                }
+                    Create User
                 </div>
             </Modal>
             <div className="py-12">
@@ -195,10 +310,117 @@ export default function Index({users}) {
                 {
                     !usersList ? <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin float-end my-5"></div> : null
                 }
-              
+                 <div>
+                    <button 
+                        className="mb-5 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                        onClick={() => setCreateModal(true)}
+                    >
+                        Создать пользователя
+                    </button>
+                </div>
+                <div>
+                    <div class="mx-auto p-6 my-5 bg-gray-50 border">
+                        <form class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+
+                       
+                            <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Роль
+                            </label>
+                            <select
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={handleChange}
+                                name="role"
+                                value={searchForm.role}
+                            >
+                                <option value="">Все</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                            </div>
+
+                           
+                            <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Имя
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Введите имя"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={handleChange}
+                                name="name"
+                                value={searchForm.name}
+
+                            />
+                            </div>
+
+                     
+                            <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                placeholder="Введите email"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={handleChange}
+                                name="email"
+                                value={searchForm.email}
+                            />
+                            </div>
+
+
+                            <div>
+                            <div className="flex items-center">
+                                 <button
+                                onClick={handleSearch}
+                                className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-l hover:bg-blue-700 transition"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                                        />
+                                    </svg>
+                                </button>
+
+                                 <Link
+                                    href="/users"
+                                    className="flex items-center justify-center px-3 py-3 bg-gray-200 rounded-r hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500"
+                                >   
+                                    Сбросить
+                                      
+                                </Link>
+                            </div>
+                           
+                            </div>
+
+                        </form>
+                        </div>
+                </div>
+               
                  <table className="w-full text-left">
                     <thead className="bg-gray-50 border-b">
                         <tr>
+                            <th className="p-3 text-xs font-medium text-gray-500 uppercase">
+                                <input 
+                                    type="checkbox"
+                                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                    onChange={toggleAll}
+                                    checked={selectedIds.length === usersList?.data.length && usersList?.data.length > 0}
+                                />
+                            </th>
+                            <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Роль</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Имя</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Дата регистрации</th>
@@ -210,6 +432,29 @@ export default function Index({users}) {
                     <tbody className="divide-y divide-gray-200">
                         {usersList?.data.map((item) => (
                             <tr key={item.id} className={`hover:bg-gray-50 transition ${item.status ? '':'bg-red-200'}`}>
+                                <td className="p-3 text-sm text-gray-500">
+                                    <input 
+                                        type="checkbox"
+                                        className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer"
+                                        checked={selectedIds.includes(item.id)}
+                                        onChange={() => toggleOne(item.id)}
+                                    />
+                                </td>
+                                <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    {item.role === 'admin' ? (
+                                        // Пример для админа (с использованием Indigo цвета)
+                                        <div className="flex items-center space-x-2 bg-indigo-50 px-2 py-1 rounded text-indigo-700">
+                                            <AdminIcon className="w-4 h-4 text-indigo-500" />
+                                            <span className="text-sm font-medium">Администратор</span>
+                                        </div>
+                                    ) : (
+                                        // Пример для обычного пользователя
+                                        <div className="flex items-center space-x-2 bg-gray-50 px-2 py-1 rounded text-gray-700">
+                                            <UserIcon className="w-4 h-4 text-gray-400" />
+                                            <span className="text-sm">Пользователь</span>
+                                        </div>
+                                    )}
+                                </td>
                                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.name}</td>
                                 <td className="px-6 py-4 text-sm text-gray-500">{item.email}</td>
                                 <td className="px-6 py-4 text-sm text-gray-500">{item.created_at}</td>
@@ -315,6 +560,18 @@ export default function Index({users}) {
                     })
                 }
                 </div> 
+
+                  {/* Панель действий, если кто-то выбран */}
+                {selectedIds.length > 0 && (
+                    <div className="bg-indigo-50 p-3 mb-2 rounded flex justify-between items-center">
+                        <span className="text-sm text-indigo-700 font-medium">
+                            Выбрано: {selectedIds.length}
+                        </span>
+                        <button onClick={removeSelected} className="text-red-600 hover:text-red-800 text-sm font-bold">
+                            Удалить выбранных
+                        </button>
+                    </div>
+                )}
             </div>
         </AuthenticatedLayout>
     );
