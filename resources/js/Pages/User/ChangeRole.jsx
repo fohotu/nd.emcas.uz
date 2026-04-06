@@ -38,6 +38,7 @@ function ChangeRole({user,onSuccess,onError}) {
                         className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.role ? 'border-red-500' : ''}`}
                     >
                         <option value="user">User (Пользователь)</option>
+                        <option value="manager">Manager (Менеджер)</option>
                         <option value="admin">Admin (Администратор)</option>
                     </select>
                     {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}

@@ -2,6 +2,7 @@
 namespace App\Actions\User;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUserAction
 {
@@ -11,10 +12,11 @@ class CreateUserAction
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'password' => Hash::make($data['password']),
             'role' => $data['role'] ?? 'user',
         ]);
 
     }
+
 }
 ?>

@@ -31,9 +31,9 @@ class UpdateUserRequest extends FormRequest
                 "max:255",
                 Rule::unique('users', 'email')->ignore($this->user),
             ],
-           // "email" => "required|email|max:255|unique:users,email",
-         //   "password" => "required|string|min:6",
-         //   "role" => "required|string|max:15|in:user,admin,manager",
+           //"email" => "required|email|max:255|unique:users,email",
+         //  "password" => "required|string|min:6",
+         //  "role" => "required|string|max:15|in:user,admin,manager",
         ];
     }
 }

@@ -6,6 +6,7 @@ import UserIcon from './Partials/UserIcon';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import Edit from './Edit';
+import Create from './Create';
 import ChangePassword from './ChangePassword';
 import ChangeRole from './ChangeRole';
 import axios from 'axios';
@@ -300,9 +301,7 @@ export default function Index({users,query}) {
 
              <Modal show={createModal} onClose={() => setCreateModal(false)}>
                 <div className="py-10 px-5">
-                {
-                }
-                    Create User
+                    <Create />
                 </div>
             </Modal>
             <div className="py-12">
@@ -319,16 +318,16 @@ export default function Index({users,query}) {
                     </button>
                 </div>
                 <div>
-                    <div class="mx-auto p-6 my-5 bg-gray-50 border">
-                        <form class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div className="mx-auto p-6 my-5 bg-gray-50 border">
+                        <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
 
                        
                             <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Роль
                             </label>
                             <select
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onChange={handleChange}
                                 name="role"
                                 value={searchForm.role}
@@ -342,13 +341,13 @@ export default function Index({users,query}) {
 
                            
                             <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Имя
                             </label>
                             <input
                                 type="text"
                                 placeholder="Введите имя"
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onChange={handleChange}
                                 name="name"
                                 value={searchForm.name}
@@ -358,13 +357,13 @@ export default function Index({users,query}) {
 
                      
                             <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Email
                             </label>
                             <input
                                 type="email"
                                 placeholder="Введите email"
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onChange={handleChange}
                                 name="email"
                                 value={searchForm.email}
@@ -380,7 +379,7 @@ export default function Index({users,query}) {
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        class="w-5 h-5"
+                                        className="w-5 h-5"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
