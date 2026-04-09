@@ -31,4 +31,22 @@ class UserTest extends TestCase
         ]);
         $response->assertStatus(201);
     }
+
+        public function test_update_user(): void
+        {
+            $user = User::factory()->create();
+            $response = $this->put("/users/{$user->id}", [
+                'name' => 'Test UpdateUserAdmin',
+                'email' => 'test12345@updateuser1.com',
+            ]);
+            
+            $response->assertRedirect();
+            
+            $this->assertDatabaseHas('users', [
+                'id' => $user->id,
+                'name' => 'Test UpdateUserAdmin',
+                'email' => 'test12345@updateuser1.com',
+            ]);
+        }
+
 }

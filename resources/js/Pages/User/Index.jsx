@@ -446,7 +446,14 @@ export default function Index({users,query}) {
                                             <AdminIcon className="w-4 h-4 text-indigo-500" />
                                             <span className="text-sm font-medium">Администратор</span>
                                         </div>
-                                    ) : (
+                                    ) : item.role === 'manager' ? 
+                                        (
+                                        <div className="flex items-center space-x-2 bg-indigo-50 px-2 py-1 rounded text-indigo-700">
+                                            <AdminIcon className="w-4 h-4 text-indigo-500" />
+                                            <span className="text-sm font-medium">Менеджер</span>
+                                        </div>
+                                    )
+                                    : (
                                         // Пример для обычного пользователя
                                         <div className="flex items-center space-x-2 bg-gray-50 px-2 py-1 rounded text-gray-700">
                                             <UserIcon className="w-4 h-4 text-gray-400" />
