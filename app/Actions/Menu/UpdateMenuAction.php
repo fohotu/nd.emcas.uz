@@ -4,12 +4,12 @@ namespace App\Actions\Menu;
 use App\Models\Menus;
 use Illuminate\Support\Str;
 
-class CreateMenuAction
+class UpdateMenuAction
 {
-    public function execute(array $data): Menus
+
+    public function execute(Menus $menu, array $data): bool
     {
-        
-        return Menus::create([
+        return $menu->update([
             'title' => $data['title'],
             'description' => $data['description'],
             'parent_id' => (int)$data['parent_id'] ?? null,
@@ -18,7 +18,6 @@ class CreateMenuAction
             'url' => $data['url'] ?? null,
             'sys_name' => $data['sys_name']  ?? Str::slug($data['title']),
         ]);
-
     }
 
 }

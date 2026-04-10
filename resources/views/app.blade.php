@@ -3,10 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     <!-- Scripts -->
     @routes
     @viteReactRefresh
@@ -15,7 +14,5 @@
 </head>
 <body class="bg-gray-100 font-sans" x-data="{ sidebarOpen: false }">
     @inertia
-   
-
 </body>
 </html>

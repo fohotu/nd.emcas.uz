@@ -68,4 +68,5 @@ Route::middleware('auth')->group(function () {
     // Другие защищенные маршруты...
 });
 
+
 require __DIR__.'/auth.php';

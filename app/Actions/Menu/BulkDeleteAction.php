@@ -2,7 +2,7 @@
 
 namespace App\Actions\Menu;
 
-use App\Models\Menu;
+use App\Models\Menus;
 use Illuminate\Support\Facades\Hash;
 
 class BulkDeleteAction
@@ -10,7 +10,7 @@ class BulkDeleteAction
     public function execute(array $data): int
     {
         $deletedCount = 0;
-        Menu::whereIn('id', $data['ids'])->get()->each(function ($menu) use (&$deletedCount) {
+        Menus::whereIn('id', $data['ids'])->get()->each(function ($menu) use (&$deletedCount) {
             $menu->delete();
             $deletedCount++;
         });

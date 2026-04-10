@@ -6,10 +6,14 @@ import Modal from '@/Components/Modal';
 import Create from './Create';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-function Index({ menu, query }) {
+import Edit from './Edit';
+function Index({ menu, query,treeMenu }) {
+
+    console.log(treeMenu);
 
     const [selectedIds, setSelectedIds] = useState([]);
     const [menuList, setMenuList] = useState([]);
+    const [treeData, setTreeData] = useState([]);
     const [createModal, setCreateModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState({});
@@ -19,16 +23,47 @@ function Index({ menu, query }) {
             description:query.description || '',
         });
 
+  
+
+
     const deleteMenu = (id) => {
-        if (confirm("Вы уверены, что хотите удалить это меню?")) {
-            router.delete(route('menu.destroy', id), {
-                onSuccess: () => {
-                    setMenuList(menuList.filter(m => m.id !== id));
-                    setSelectedIds(selectedIds.filter(sid => sid !== id));
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Вы уверены?',
+            text: "Вы не сможете восстановить это меню!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Да, удалить!',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/menu/${id}`)
+                .then(() => {
+                    Swal.fire({
+                        title:'Удалено!',
+                        text:'Меню был удален.',
+                        icon:'success',
+                        timer:2000,
+                    })
+                    let filteredMenu = menu?.data?.filter(m => m.id!==id);
+                    setMenuList({...menu,...menuList,data:filteredMenu});
+                })
+                .catch(err => console.error(err));
+
+            }
+        });
     }
+
+    const buildTree = (menus) => {
+        return menus?.map(menu => ({
+            id: menu.id,
+            name: menu.title,
+            children: menu.children_recursive
+            ? buildTree(menu.children_recursive)
+            : []
+        }));
+    };
 
     const onSuccessCreate = () => {
         console.log("Success");
@@ -41,19 +76,34 @@ function Index({ menu, query }) {
         console.error("Ошибка при создании меню:", errors);
     };
 
+    const onSuccessUpdate = () => {
+        console.log("Success");
+        setEditModal(false);
+        router.visit(route('menu.index'))
+    };
+
+    const onErrorUpdate = (errors) => {
+        console.log("Error");
+        console.error("Ошибка при создании меню:", errors);
+    };
+
     useEffect(() => {
         setMenuList(menu);
+        let td = buildTree(treeMenu);
+        console.log(td);
+        setTreeData(td);
     },[]);
 
-     function handleSearch(e){
+    function handleSearch(e){
             e.preventDefault();
             router.get('/menu',searchForm,{
                 onSuccess: (res) => {
 
                 },
             })
-        }
-     function handleChange(e){
+    }
+
+    function handleChange(e){
         const key = e.target.name;
         const value = e.target.value;
         setSearchForm({...searchForm,[key]:value});
@@ -79,7 +129,7 @@ function Index({ menu, query }) {
         );
     }
 
-    const treeData = [
+    const treeData1 = [
         { id: "1", name: "Документы Республики Узбекистан" },
         { id: "21", name: "Документы МСЭ" },
         { id: "22", name: "Документы РСС" },
@@ -115,9 +165,10 @@ function Index({ menu, query }) {
 
 
     const removeSelected = () => {
+
         Swal.fire({
             title: 'Вы уверены?',
-            text: `Вы не сможете восстановить этих ${selectedIds.length} пользователей!`,
+            text: `Вы не сможете восстановить этих ${selectedIds.length} меню!`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -125,13 +176,16 @@ function Index({ menu, query }) {
             confirmButtonText: 'Да, удалить!',
             cancelButtonText: 'Отмена'
         }).then((result) => {
+
             if (result.isConfirmed) {
                 axios.post('/menu/bulk-delete', { ids: selectedIds })
                 .then(() => {
+                    let filteredMenu = menu?.data?.filter(m => !selectedIds.includes(m.id));
+                    setMenuList({...menu,...menuList,data:filteredMenu});
                     setSelectedIds([]);
                     Swal.fire({
                         title:'Удалено!',
-                        text:`${selectedIds.length} пользователей были удалены.`,  
+                        text:`${selectedIds.length} меню были удалены.`,  
                         icon:'success',
                         timer:1500,
                         showConfirmButton:false,
@@ -161,7 +215,7 @@ function Index({ menu, query }) {
 
              <Modal show={editModal} onClose={() => setEditModal(false)}>
                 <div className="py-10 px-5">
-                    Edit
+                    <Edit menu={selectedMenu} parents={menuList?.data} onSuccessHandler={onSuccessUpdate} onErrorHandler={onErrorUpdate}/>
                 </div>
             </Modal>
 
@@ -173,6 +227,9 @@ function Index({ menu, query }) {
                     Создать
                 </button>
             </div>
+            {
+
+           treeData.length ?
              <Tree
                 initialData={treeData}
                 openByDefault={true}
@@ -188,6 +245,8 @@ function Index({ menu, query }) {
                 >
                 {Node}
                 </Tree>
+                :""
+                 }
 
              <div>
                                 <div className="mx-auto p-6 my-5 bg-gray-50 border">

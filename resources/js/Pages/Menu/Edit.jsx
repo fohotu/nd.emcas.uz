@@ -1,31 +1,28 @@
+import { useForm } from '@inertiajs/react';
 
-import { useForm,router } from '@inertiajs/react';
-
-function Create ({ parents = [],onSuccessHandler,onErrorHandler }) {
-  const { data, setData, post, processing, errors,reset } = useForm({
-    title: '',
-    description: '',
-    sys_name: '',
-    parent_id: '',
-    order: '',
-    route: '',
-    url: '',
+function Edit({ menu, parents = [], onSuccessHandler }) {
+  console.log(menu,parents);
+  const { data, setData, put, processing, errors, reset } = useForm({
+    title: menu.title || '',
+    description: menu.description || '',
+    sys_name: menu.sys_name || '',
+    parent_id: menu.parent_id || '',
+    order: menu.order || '',
+    route: menu.route || '',
+    url:menu.url || '',
   });
 
   const submit = (e) => {
-        e.preventDefault();
-        post(`/menu`,{
-          onSuccess: () => {
-            onSuccessHandler?.();
-            
-          },
-          onError: (errors) => {
-           // onError(errors);
-          }
-        });
-    };
-
-  
+    e.preventDefault();
+    put(`/menu/${menu.id}`, {
+      onSuccess: () => {
+        onSuccessHandler?.();
+      },
+      onError: (errors) => {
+        console.log(errors);
+      },
+    });
+  };
 
   return (
     <form onSubmit={submit} className="max-w-xl mx-auto p-6 bg-white rounded-xl shadow space-y-4">
@@ -51,6 +48,7 @@ function Create ({ parents = [],onSuccessHandler,onErrorHandler }) {
           className="w-full mt-1 border rounded p-2"
         />
       </div>
+
       {/* System Name */}
       <div>
         <label className="block text-sm font-medium">System Name</label>
@@ -71,11 +69,11 @@ function Create ({ parents = [],onSuccessHandler,onErrorHandler }) {
           className="w-full mt-1 border rounded p-2"
         >
           <option value="">-- No Parent --</option>
-          {parents.map(parent => (
-            <option key={parent.id} value={parent.id}>
+          {parents.map(parent => {
+            return (<option key={parent.id} value={parent.id}>
               {parent.title}
-            </option>
-          ))}
+            </option>)
+          })}
         </select>
       </div>
 
@@ -97,41 +95,34 @@ function Create ({ parents = [],onSuccessHandler,onErrorHandler }) {
           type="text"
           value={data.route}
           onChange={e => setData('route', e.target.value)}
-          placeholder="/dashboard"
           className="w-full mt-1 border rounded p-2"
         />
       </div>
-      {/* URL */}
+
+      {/* Route URL */}
       <div>
         <label className="block text-sm font-medium">Url</label>
         <input
           type="text"
           value={data.url}
           onChange={e => setData('url', e.target.value)}
-          placeholder="url"
           className="w-full mt-1 border rounded p-2"
         />
       </div>
 
-      {/* Submit */}
-      <button
-            type="submit"
-            disabled={processing}
-            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
-          >
-        Save Menu
-      </button>
-       <button
-            type="button"
-            onClick={() => reset()}
-            className="bg-gray-500 text-white px-5 py-2 rounded hover:bg-gray-600"
-          >
-            Очистить
-          </button>
+      {/* Buttons */}
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={processing}
+          className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700"
+        >
+          Update Menu
+        </button>
 
+      </div>
     </form>
   );
 }
 
-
-export default Create;
+export default Edit;

@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\MenuService;
+use App\Models\Menus;
 use App\Actions\Menu\CreateMenuAction;
+use App\Actions\Menu\UpdateMenuAction;
+use App\Actions\Menu\DeleteMenuAction;
 use App\Actions\Menu\BulkDeleteAction;
 use App\Http\Requests\Menu\CreateMenuRequest;
 use App\Http\Requests\Menu\BulkDeleteRequest;
+use App\Http\Requests\Menu\UpdateMenuRequest;
 
 class MenuController extends Controller
 {
@@ -21,12 +25,26 @@ class MenuController extends Controller
         $query = $request->only(['title','description']);
         $menu = $service->getAllMenu($query);
 
+        $treeMenu = Menus::with('childrenRecursive')
+        ->whereNull('parent_id')
+        ->get();
+
+   
+
+      
+       
+        
+
         return Inertia::render('Menu/Index', [
             'menu' => $menu->withQueryString(),
-            'query' => $query
+            'query' => $query,
+            'treeMenu' => $treeMenu,
         ]);
 
     }
+
+
+   
 
     /**
      * Show the form for creating a new resource.
@@ -41,6 +59,7 @@ class MenuController extends Controller
      */
     public function store(CreateMenuRequest $request, CreateMenuAction $action)
     {
+       
         $action->execute($request->validated());
         return redirect()->route('menu.index')
             ->with('success', 'Menu created successfully');
@@ -66,20 +85,21 @@ class MenuController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+
+    public function update(Menus $menu,UpdateMenuRequest $request, UpdateMenuAction $action)
     {
-        //
+        $action->execute($menu,$request->validated());
+        return redirect()->back()->with('success', 'Menu updated');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function destroy(Menus $menu, DeleteMenuAction $action)
     {
-        //
+        $action->execute($menu); 
+        return response()->json([
+            'message' => 'Menu deleted successfully'
+        ]);
     }
 
     public function bulkDelete(BulkDeleteRequest $request, BulkDeleteAction $action)

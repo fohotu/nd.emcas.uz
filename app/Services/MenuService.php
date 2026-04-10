@@ -1,7 +1,7 @@
 <?php 
 namespace App\Services;
 
-use App\Models\Menu;
+use App\Models\Menus;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MenuService
@@ -9,7 +9,7 @@ class MenuService
     
     public function getAllMenu(array $filters = [],int $perPage = 11): LengthAwarePaginator
     {
-        $model = Menu::query();
+        $model = Menus::query();
 
         if (!empty($filters['title'])) {
             $model->where('title', 'like', "%{$filters['title']}%");
@@ -21,9 +21,9 @@ class MenuService
         return $model->latest()->paginate($perPage);
     }
 
-    public function getMenuById(int $id): Menu
+    public function getMenuById(int $id): Menus
     {
-        return Menu::findOrFail($id);
+        return Menus::findOrFail($id);
     }
 
 }
