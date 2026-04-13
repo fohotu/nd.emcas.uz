@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Menu;
+namespace App\Http\Requests\Category;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class BulkDeleteRequest extends FormRequest
+class CreateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,11 @@ class BulkDeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:menus,id',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'menu_id' => ['required', 'exists:menus,id'],
+            'parent_id' => ['nullable', 'exists:categories,id'],
+            'order' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

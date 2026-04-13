@@ -7,16 +7,16 @@ import Create from './Create';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Edit from './Edit';
-function Index({ menu, query,treeMenu }) {
+function Index({ category, query,treeCategory,menu }) {
 
-    console.log(treeMenu);
+    
 
     const [selectedIds, setSelectedIds] = useState([]);
-    const [menuList, setMenuList] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
     const [treeData, setTreeData] = useState([]);
     const [createModal, setCreateModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
-    const [selectedMenu, setSelectedMenu] = useState({});
+    const [selectedCategory, setSelectedCategory] = useState({});
 
     const [searchForm,setSearchForm] = useState({
             title:query.title || '',
@@ -26,7 +26,7 @@ function Index({ menu, query,treeMenu }) {
   
 
 
-    const deleteMenu = (id) => {
+    const deleteCategory = (id) => {
         Swal.fire({
             title: 'Вы уверены?',
             text: "Вы не сможете восстановить это меню!",
@@ -37,8 +37,8 @@ function Index({ menu, query,treeMenu }) {
             confirmButtonText: 'Да, удалить!',
             cancelButtonText: 'Отмена'
         }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`/menu/${id}`)
+            if (result.isConfirmed){
+                axios.delete(`/category/${id}`)
                 .then(() => {
                     Swal.fire({
                         title:'Удалено!',
@@ -46,10 +46,10 @@ function Index({ menu, query,treeMenu }) {
                         icon:'success',
                         timer:2000,
                     })
-                    let filteredMenu = menu?.data?.filter(m => m.id!==id);
-                    let filteredTree = treeMenu?.filter(m=>m.id!==id);
+                    let filteredCategory = category?.data?.filter(m => m.id!==id);
+                    let filteredTree = treeCategory?.filter(m=>m.id!==id);
                     let newTree = buildTree(filteredTree);
-                    setMenuList({...menu,...menuList,data:filteredMenu});
+                    setCategoryList({...category,...categoryList,data:filteredCategory});
                     setTreeData(newTree);
 
 
@@ -60,12 +60,12 @@ function Index({ menu, query,treeMenu }) {
         });
     }
 
-    const buildTree = (menus) => {
-        return menus?.map(menu => ({
-            id: menu.id,
-            name: menu.title,
-            children: menu.children_recursive
-            ? buildTree(menu.children_recursive)
+    const buildTree = (categorys) => {
+        return categorys?.map(category => ({
+            id: category.id,
+            name: category.title,
+            children: category.children_recursive
+            ? buildTree(category.children_recursive)
             : []
         }));
     };
@@ -75,7 +75,7 @@ function Index({ menu, query,treeMenu }) {
     const onSuccessCreate = () => {
         console.log("Success");
         setCreateModal(false);
-        router.visit(route('menu.index'))
+        router.visit(route('category.index'))
     };
 
     const onErrorCreate = (errors) => {
@@ -86,7 +86,7 @@ function Index({ menu, query,treeMenu }) {
     const onSuccessUpdate = () => {
         console.log("Success");
         setEditModal(false);
-        router.visit(route('menu.index'))
+        router.visit(route('category.index'))
     };
 
     const onErrorUpdate = (errors) => {
@@ -95,15 +95,15 @@ function Index({ menu, query,treeMenu }) {
     };
 
     useEffect(() => {
-        setMenuList(menu);
-        let td = buildTree(treeMenu);
+        setCategoryList(category);
+        let td = buildTree(treeCategory);
         console.log(td);
         setTreeData(td);
     },[]);
 
     function handleSearch(e){
             e.preventDefault();
-            router.get('/menu',searchForm,{
+            router.get('/category',searchForm,{
                 onSuccess: (res) => {
 
                 },
@@ -136,25 +136,12 @@ function Index({ menu, query,treeMenu }) {
         );
     }
 
-    const treeData1 = [
-        { id: "1", name: "Документы Республики Узбекистан" },
-        { id: "21", name: "Документы МСЭ" },
-        { id: "22", name: "Документы РСС" },
-        { id: "23", name: "Документы стран мира" },
-        { id: "24", name: "Документы подготовительные комиссии" },
-        { id: "25", name: "АР/ВКР" ,
-            children: [
-                { id: "c11", name: "Ход подготовки к АР/ВКР 2023" },
-                { id: "c21", name: "Рабочей группы ПК по пунктам повестки дня ВКR-23" },
-                { id: "c31", name: "Ход подготовки к АР/ВКР 27" },
-            ],
-        },
-    ];
+
 
     const toggleAll = (e) => {
 
         if (e.target.checked) {
-            setSelectedIds(menuList?.data.map(m => m.id));
+            setSelectedIds(categoryList?.data.map(m => m.id));
         } else {
             setSelectedIds([]);
         }
@@ -185,12 +172,12 @@ function Index({ menu, query,treeMenu }) {
         }).then((result) => {
 
             if (result.isConfirmed) {
-                axios.post('/menu/bulk-delete', { ids: selectedIds })
+                axios.post('/category/bulk-delete', { ids: selectedIds })
                 .then(() => {
-                    let filteredMenu = menu?.data?.filter(m => !selectedIds.includes(m.id));
-                    setMenuList({...menu,...menuList,data:filteredMenu});
+                    let filteredCategory = category?.data?.filter(m => !selectedIds.includes(m.id));
+                    setCategoryList({...category,...categoryList,data:filteredCategory});
 
-                    let filteredTree = treeMenu?.filter(m=>!selectedIds.includes(m.id));
+                    let filteredTree = treeCategory?.filter(m=>!selectedIds.includes(m.id));
                     let newTree = buildTree(filteredTree);
                     setTreeData(newTree);
 
@@ -224,20 +211,20 @@ function Index({ menu, query,treeMenu }) {
           <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Menu
+                    category
                 </h2>
             }
         >
-            <Head title="Menu" />
+            <Head title="category" />
             <Modal show={createModal} onClose={() => setCreateModal(false)} >
                 <div className="py-10 px-5">
-                   <Create parents={menuList?.data} onSuccessHandler={onSuccessCreate} onErrorHandler={onErrorCreate}/>
+                   <Create  parents={categoryList?.data} menu={menu} onSuccessHandler={onSuccessCreate} onErrorHandler={onErrorCreate}/>
                 </div>
             </Modal>
 
              <Modal show={editModal} onClose={() => setEditModal(false)}>
                 <div className="py-10 px-5">
-                    <Edit menu={selectedMenu} parents={menuList?.data} onSuccessHandler={onSuccessUpdate} onErrorHandler={onErrorUpdate}/>
+                    <Edit category={selectedCategory}  menu={menu} parents={categoryList?.data} onSuccessHandler={onSuccessUpdate} onErrorHandler={onErrorUpdate}/>
                 </div>
             </Modal>
 
@@ -333,7 +320,7 @@ function Index({ menu, query,treeMenu }) {
                                             </button>
             
                                              <Link
-                                                href="/menu"
+                                                href="/category"
                                                 className="flex items-center justify-center px-3 py-3 bg-gray-200 rounded-r hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500"
                                             >   
                                                 Сбросить
@@ -354,7 +341,7 @@ function Index({ menu, query,treeMenu }) {
                                     type="checkbox"
                                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                                     onChange={toggleAll}
-                                    checked={selectedIds.length === menuList?.data?.length && menuList?.data?.length > 0}
+                                    checked={selectedIds.length === categoryList?.data?.length && categoryList?.data?.length > 0}
                                 />
                             </th>
                             <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Название</th>
@@ -365,7 +352,7 @@ function Index({ menu, query,treeMenu }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {menuList?.data?.map((item) => (
+                        {categoryList?.data?.map((item) => (
                             <tr key={item.id} className="border-b hover:bg-gray-50">
                                 <td className="p-3">
                                     <input 
@@ -392,7 +379,7 @@ function Index({ menu, query,treeMenu }) {
                                                 <button 
                                                     title="Удалить"
                                                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-100"
-                                                    onClick={() => deleteMenu(item.id)}
+                                                    onClick={() => deleteCategory(item.id)}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -405,7 +392,7 @@ function Index({ menu, query,treeMenu }) {
                                                 title="Изменить"
                                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100"
                                                 onClick={()=>{
-                                                        setSelectedMenu(item); 
+                                                        setSelectedCategory(item); 
                                                         setEditModal(true);
                                                     }
                                                 }
@@ -424,7 +411,7 @@ function Index({ menu, query,treeMenu }) {
 
                 <div className="my-5">
                                 {
-                                    menuList?.links?.map((item,i)=>{
+                                    categoryList?.links?.map((item,i)=>{
                                         let label = item.label
                                                             .replace("&laquo; Previous", "«")   
                                                             .replace("Next &raquo;", "»"); 

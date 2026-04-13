@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Actions\GetServerStatusAction;
@@ -64,6 +65,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('menu', MenuController::class)->only(['index', 'store', 'update', 'destroy','edit']);
     Route::post('/menu/bulk-delete', [MenuController::class, 'bulkDelete'])->name('menu.bulk-delete');
+    Route::resource('category', CategoryController::class)->only(['index', 'store', 'update', 'destroy','edit']);
+    Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
 
     // Другие защищенные маршруты...
 });

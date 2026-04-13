@@ -1,13 +1,13 @@
 <?php
 namespace App\Actions\Menu;
 
-use App\Models\Menus;
+use App\Models\Menu;
 use Illuminate\Support\Str;
 
 class UpdateMenuAction
 {
 
-    public function execute(Menus $menu, array $data): bool
+    public function execute(Menu $menu, array $data): bool
     {
         return $menu->update([
             'title' => $data['title'],

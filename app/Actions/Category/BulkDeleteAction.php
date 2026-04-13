@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Actions\Menu;
+namespace App\Actions\Category;
 
-use App\Models\Menu;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Category;
+
 
 class BulkDeleteAction
 {
     public function execute(array $data): int
     {
         $deletedCount = 0;
-        Menu::whereIn('id', $data['ids'])->get()->each(function ($menu) use (&$deletedCount) {
+        Category::whereIn('id', $data['ids'])->get()->each(function ($menu) use (&$deletedCount) {
             $menu->delete();
             $deletedCount++;
         });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Menu;
+namespace App\Http\Requests\Category;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +24,7 @@ class BulkDeleteRequest extends FormRequest
     {
         return [
             'ids' => 'required|array',
-            'ids.*' => 'exists:menus,id',
+            'ids.*' => 'exists:categories,id',
         ];
     }
 }

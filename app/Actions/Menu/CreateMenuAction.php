@@ -1,15 +1,15 @@
 <?php
 namespace App\Actions\Menu;
 
-use App\Models\Menus;
+use App\Models\Menu;
 use Illuminate\Support\Str;
 
 class CreateMenuAction
 {
-    public function execute(array $data): Menus
+    public function execute(array $data): Menu
     {
         
-        return Menus::create([
+        return Menu::create([
             'title' => $data['title'],
             'description' => $data['description'],
             'parent_id' => (int)$data['parent_id'] ?? null,

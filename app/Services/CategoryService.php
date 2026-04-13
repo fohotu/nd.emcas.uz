@@ -1,15 +1,15 @@
 <?php 
 namespace App\Services;
 
-use App\Models\Menu;
+use App\Models\Category;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class MenuService
+class CategoryService
 {
     
-    public function getAllMenu(array $filters = [],int $perPage = 11): LengthAwarePaginator
+    public function getAllCategory(array $filters = [],int $perPage = 11): LengthAwarePaginator
     {
-        $model = Menu::query();
+        $model = Category::query();
 
         if (!empty($filters['title'])) {
             $model->where('title', 'like', "%{$filters['title']}%");
@@ -19,17 +19,17 @@ class MenuService
         }
 
         return $model->latest()->paginate($perPage);
+
     }
 
-    public function getMenuById(int $id): Menu
+    public function getCategoryById(int $id): Category
     {
-        return Menu::findOrFail($id);
+        return Category::findOrFail($id);
     }
-
 
     public function treeView()
     {
-        return Menu::with('childrenRecursive')
+        return Category::with('childrenRecursive')
             ->whereNull('parent_id')
             ->orWhere('parent_id',0)
             ->get();

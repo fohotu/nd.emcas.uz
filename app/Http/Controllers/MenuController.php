@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\MenuService;
-use App\Models\Menus;
+use App\Models\Menu;
 use App\Actions\Menu\CreateMenuAction;
 use App\Actions\Menu\UpdateMenuAction;
 use App\Actions\Menu\DeleteMenuAction;
@@ -24,16 +24,15 @@ class MenuController extends Controller
 
         $query = $request->only(['title','description']);
         $menu = $service->getAllMenu($query);
-
-        $treeMenu = Menus::with('childrenRecursive')
-        ->whereNull('parent_id')
-        ->get();
-
-   
-
-      
-       
         
+        /*
+        $treeMenu = Menu::with('childrenRecursive')
+        ->whereNull('parent_id')
+        ->orWhere('parent_id',0)
+        ->get();
+        */
+
+        $treeMenu = $service->treeView();
 
         return Inertia::render('Menu/Index', [
             'menu' => $menu->withQueryString(),
@@ -87,14 +86,14 @@ class MenuController extends Controller
 
 
 
-    public function update(Menus $menu,UpdateMenuRequest $request, UpdateMenuAction $action)
+    public function update(Menu $menu,UpdateMenuRequest $request, UpdateMenuAction $action)
     {
         $action->execute($menu,$request->validated());
         return redirect()->back()->with('success', 'Menu updated');
     }
 
 
-    public function destroy(Menus $menu, DeleteMenuAction $action)
+    public function destroy(Menu $menu, DeleteMenuAction $action)
     {
         $action->execute($menu); 
         return response()->json([
