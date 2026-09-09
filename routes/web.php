@@ -6,6 +6,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Actions\GetServerStatusAction;
@@ -52,6 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/menu/{id}/category/{category_id?}',[DocumentController::class, 'view'])->name('document.view');
     Route::get('/documents/{document}',[DocumentController::class, 'show'])->name('document.show');
 
+    Route::get('/home',[HomeController::class, 'index'])->name('home');
+
+
+    Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::post('/tags', [TagController::class, 'attach'])->name('tags.attach');
 
     //admin routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

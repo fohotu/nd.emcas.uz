@@ -138,15 +138,14 @@ class MenuController extends Controller
 
     public function view($id, CategoryService $service)
     {
+        
         $category = $service->getCategoryByMenu($id);
-        $menu = Menu::find($id);
-
-       // dd($category);
-
-        return Inertia::render('Menu/View', [
+        $menu = Menu::find($id); 
+        return Inertia::render('Menu/View',[
             'category' => $category,
             'menu_item' => $menu,
         ]);
+
     }
 
 

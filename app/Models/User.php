@@ -47,4 +47,10 @@ class User extends Authenticatable
             'last_visit' => 'datetime',
         ];
     }
+
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorites::class);
+    }
 }
