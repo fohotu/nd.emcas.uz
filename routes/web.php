@@ -60,19 +60,19 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::post('/tags', [TagController::class, 'attach'])->name('tags.attach');
-
+    Route::delete('/tags', [TagController::class, 'remove'])->name('tags.remove');
+    Route::get('/tags/search', [TagController::class, 'search'])->name('tags.search');
+   
     //admin routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
     //Ресурсные маршруты для документов и пользователей
-
     Route::get('/document/live-search', [DocumentController::class, 'liveSearch'])->name('document.live-search');
 
     Route::resource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy','edit']);
     Route::post('/documents/bulk-delete', [DocumentController::class, 'bulkDelete'])->name('documents.bulk-delete');
-   
-
 
     Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy','edit',]);
     Route::post('/users/{user}/block', [UserController::class, 'block']);
@@ -100,7 +100,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/file/download/{id}',[FileController::class,'download'])->name('file.download')->withoutMiddleware([EnsureAdmin::class]);
     Route::get('/file/download-link/{id}',[FileController::class,'dowloadLink'])->name('file.download-link')->withoutMiddleware([EnsureAdmin::class]);
 
-
+    Route::get('/test',function(){
+        /*
+            $m = new \App\Models\Tags;
+            $m->name = "Test #7";
+            $m->user_id = auth()->id();
+            $m->save();
+            dd($m);
+        */
+    });
 
 });
 

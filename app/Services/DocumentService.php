@@ -10,7 +10,7 @@ class DocumentService
     {
        // dd($filters);
         //$model = Document::query();
-        $model = Document::with('category.menu','files','versions');
+        $model = Document::with('category.menu','files','versions','tags');
         /*
         |--------------------------------------------------------------------------
         | NUMBER

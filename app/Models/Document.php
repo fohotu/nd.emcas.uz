@@ -28,11 +28,20 @@ class Document extends Model
         return $this->hasMany(UploadedFiles::class,'object_id','id');
     }
 
-
     // Родитель
     public function versions()
     {
         return $this->belongsTo(Document::class, 'version_for');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(
+            Tags::class,
+            'document_tags',
+            'document_id',
+            'tag_id'
+        );
     }
 
     /*    

@@ -3,6 +3,7 @@ import { router, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
+import Swal from 'sweetalert2';
 
 function Index({ documents,filter,favoriteIds }) {
     console.log(filter,documents,favoriteIds);
@@ -36,6 +37,8 @@ const [searchField, setSearchField] = useState({
 
 const [favoriteDocuments, setFavoriteDocuments] = useState([]);
 const [menuOptions, setMenuOptions] = useState([]);
+
+const [selectedDocument,setSelectedDocument] = useState(null);
 
 
 
@@ -201,10 +204,47 @@ const addToFavorites = (documentId) => {
     });
 };
 
-const attachTag = (documentId) => {
+const attachTag = (document) => {
+    setSelectedDocument(document);
+    /*
     axios.post(route('tags.attach'), {
         document_id: documentId,
+    });*/
+}
+
+const successAtachTag = () => {
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Tags successfully added',
+        timer: 1500,
+        showConfirmButton: false,
     });
+
+    setSelectedDocument(null);
+    router.reload();
+}
+
+const errorAtachTag = (error) => {
+    Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.response?.data?.message || 'Failed to add tags',
+    });
+}
+
+const removeTag = (document_id, tag_id) => {
+    axios.delete(route('tags.remove'), {
+       data:{ 
+        document_id,
+        tag_id,
+       } 
+    }).then((res) => {
+        if(res.data.success){
+            router.reload();
+        }
+    });
+
 }
 
 return (
@@ -216,8 +256,12 @@ return (
             </h2>
         }
     >
-        <Modal show={true} onClose={() => {}}>
-           <TagForm />
+        <Modal show={selectedDocument} onClose={() => setSelectedDocument(null)}>
+           <TagForm 
+            documentId = {selectedDocument?.id}
+            successCalback={successAtachTag}
+            errorCalback={errorAtachTag}
+            />
         </Modal>
         <div className="py-6">
             <div className="mx-auto px-4 sm:px-6 lg:px-8">
@@ -555,6 +599,10 @@ return (
                                         Статус
                                     </th>
 
+                                    <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">
+                                        #
+                                    </th>
+
                                 </tr>
 
                             </thead>
@@ -627,7 +675,7 @@ return (
                                                     type="button"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        attachTag(document.id,1);
+                                                        attachTag(document);
                                                     }}
                                                     className="
                                                         inline-flex items-center justify-center
@@ -717,6 +765,45 @@ return (
 
                                                 )}
                                             </td>
+
+                                            <td className="px-4 py-3 text-right text-sm font-medium">
+                                                <div className="flex flex-wrap justify-end gap-1">
+                                                    {document.tags.map((tag) => (
+                                                        <span
+                                                            key={tag.id}
+                                                            className="
+                                                                inline-flex items-center gap-1
+                                                                rounded-md
+                                                                bg-gray-100
+                                                                px-2 py-1
+                                                                text-gray-700
+                                                            "
+                                                        >
+                                                            {tag.name}
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    removeTag(document.id, tag.id);
+                                                                }}
+                                                                className="
+                                                                    inline-flex items-center justify-center
+                                                                    w-4 h-4
+                                                                    rounded
+                                                                    text-gray-400
+                                                                    hover:text-red-500
+                                                                    hover:bg-red-50
+                                                                "
+                                                                title="Remove tag"
+                                                            >
+                                                                ×
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+
                                            
                                           
 
