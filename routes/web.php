@@ -59,6 +59,8 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites', [FavoriteController::class, 'remove'])->name('favorites.remove');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/tags', [TagController::class, 'attach'])->name('tags.attach');
     Route::delete('/tags', [TagController::class, 'remove'])->name('tags.remove');
     Route::get('/tags/search', [TagController::class, 'search'])->name('tags.search');

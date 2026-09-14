@@ -94,7 +94,7 @@ export default function AuthenticatedLayout({ children, user ={name:'Farkhod'} }
 
     // Массив для личного кабинета
     const personalLinks = [
-        { name: 'Мои документы', href: '/my-documents', icon: 'layers' },
+        { name: 'Избранное', href: '/favorites', icon: 'layers' },
         { name: 'Мои теги', href: '/my-tags', icon: 'file-text' },
         { name: 'Личные данные', href: '/user', icon: 'file-text' },
     ];

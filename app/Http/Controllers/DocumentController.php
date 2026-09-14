@@ -20,7 +20,7 @@ class DocumentController extends Controller
 {
     public function index(DocumentService $service,CategoryService $categoryService,MenuService $menuService, Request $request)
     {
-
+ 
         $query = $request->only(['number','title','date','category_id','menu_id','status']);
         $filter['categories'] = $categoryService->getAllCategory();
         $filter['menus'] = $menuService->getAllMenu();
@@ -30,6 +30,7 @@ class DocumentController extends Controller
             'filter' => $filter,
             'query' => $query,
         ]);
+
 
     }
 
@@ -82,9 +83,15 @@ class DocumentController extends Controller
     }
 
 
-    public function view(CategoryService $service,DocumentService $documentService,$id,$category_id = null) {
+    public function view(Request $request,CategoryService $service,DocumentService $documentService,$id,$category_id = null) {
         $category = $service->getCategoryByMenu($id);
         $menu = Menu::findOrFail($id);
+        $favoriteIds = $request->user()
+        ->favorites()
+        ->pluck('document_id');
+
+       
+
         if($category_id){
             $documents = $documentService->getDocumentByCategory($category_id);
         }else{
@@ -96,6 +103,7 @@ class DocumentController extends Controller
             'menu_item' => $menu,
             'selectedCategoryId' => $category_id,
             'documents' => $documents,
+            'favoriteIds' => $favoriteIds,
         ]);
     }
 

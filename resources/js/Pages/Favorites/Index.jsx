@@ -39,6 +39,7 @@ const [favoriteDocuments, setFavoriteDocuments] = useState([]);
 const [menuOptions, setMenuOptions] = useState([]);
 
 const [selectedDocument,setSelectedDocument] = useState(null);
+const [openSearchForm,setOpenSearchForm] = useState(false);
 
 
 
@@ -145,7 +146,7 @@ const handleStatus = (status) => {
 const handleSubmit = (e) => {
     e.preventDefault();
     router.get(
-        route('home'),
+        route('favorites.index'),
         searchField,
         {
             preserveState: true,
@@ -178,7 +179,7 @@ const handleReset = () => {
     setSearchField(resetData);
 
     router.get(
-        route('home'),
+        route('favorites'),
         {},
         {
             preserveState: false,
@@ -189,18 +190,14 @@ const handleReset = () => {
 };
 
 
-const addToFavorites = (documentId) => {
-    axios.post(route('favorites.store'), {
-        document_id: documentId,
-    }).then((res)=>{
-        const isFavorite = favoriteDocuments.includes(documentId);
-        if (isFavorite) {
-            setFavoriteDocuments((prev) =>
-                prev.filter((id) => id !== documentId)
-            );
-        } else {
-            setFavoriteDocuments((prev) => [...prev, documentId]);
-        }
+const removeFavorites = (documentId) => {
+    axios.delete(route('favorites.remove'), {
+        data: {
+            document_id: documentId,
+        },
+    }).then((res) => {
+        console.log(res.data);
+        router.reload();
     });
 };
 
@@ -270,7 +267,84 @@ return (
                 {/* ===================== */}
 
                 <div className="mb-6 overflow-hidden bg-white shadow-sm sm:rounded">
+                    {
+                        openSearchForm ? (
+                            <button
+                                type="button"
+                                onClick={() => setOpenSearchForm(false)}
+                                className="
+                                    inline-flex items-center gap-2
+                                    rounded-lg
+                                    bg-red-50
+                                    px-4 py-2
+                                    text-sm font-medium text-red-600
+                                    border border-red-200
+                                    shadow-sm
+                                    transition-all duration-200
+                                    hover:bg-red-100
+                                    hover:border-red-300
+                                    hover:shadow
+                                    active:scale-95
+                                    float-end mx-2 my-5
+                                "
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
 
+                                Close Search
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => setOpenSearchForm(true)}
+                                className="
+                                    inline-flex items-center gap-2
+                                    rounded-lg
+                                    bg-blue-600
+                                    px-4 py-2
+                                    text-sm font-medium text-white
+                                    shadow-sm
+                                    transition-all duration-200
+                                    hover:bg-blue-700
+                                    hover:shadow-md
+                                    active:scale-95
+                                    float-end mx-2 my-5
+                                "
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M21 21l-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z"
+                                    />
+                                </svg>
+
+                                Search
+                            </button>
+                        )
+                    }
+
+
+                    {
+                        openSearchForm ?
+                    
                     <div className="p-6">
 
                         <form onSubmit={handleSubmit}>
@@ -539,6 +613,8 @@ return (
                             </div>
                         </form>
                     </div>
+                    :""                    
+                    }
                 </div>
 
                 {/* ===================== */}
@@ -635,7 +711,7 @@ return (
                                                     type="button"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        addToFavorites(document.id);
+                                                        removeFavorites(document.id);
                                                     }}
                                                     className={`
                                                         inline-flex items-center justify-center
@@ -654,19 +730,22 @@ return (
                                                     
                                                     title="Добавить в избранное"
                                                 >
-                                                    <svg
-                                                        className="w-5 h-5"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.8"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M11.48 3.499a.75.75 0 011.04 0l2.52 2.52a.75.75 0 00.53.22h3.57a.75.75 0 01.75.75v3.57a.75.75 0 00.22.53l2.52 2.52a.75.75 0 010 1.04l-2.52 2.52a.75.75 0 00-.22.53v3.57a.75.75 0 01-.75.75h-3.57a.75.75 0 00-.53.22l-2.52 2.52a.75.75 0 01-1.04 0l-2.52-2.52a.75.75 0 00-.53-.22H6.38a.75.75 0 01-.75-.75v-3.57a.75.75 0 00-.22-.53l-2.52-2.52a.75.75 0 010-1.04l2.52-2.52a.75.75 0 00.22-.53v-3.57a.75.75 0 01.75-.75h3.57a.75.75 0 00.53-.22l2.52-2.52z"
-                                                        />
-                                                    </svg>
+                                           
+                                                <svg
+                                                    className="w-5 h-5"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.8"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7h10zM10 11v5M14 11v5"
+                                                    />
+                                                </svg>
+
+
                                                 </button>
 
                                                 {/* Прикрепить к тегу */}
