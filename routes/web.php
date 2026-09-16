@@ -60,10 +60,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('/favorites', [FavoriteController::class, 'remove'])->name('favorites.remove');
+    Route::delete('/favorites/bulk-delete', [FavoriteController::class, 'removeMultiple'])->name('favorites.bulk-delete');
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/tags', [TagController::class, 'attach'])->name('tags.attach');
+    Route::post('/tags/store', [TagController::class, 'create'])->name('tags.store');
+    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
     Route::delete('/tags', [TagController::class, 'remove'])->name('tags.remove');
+    Route::delete('/tags/bulk-delete', [TagController::class, 'removeMultiple'])->name('tags.bulk-delete');
     Route::get('/tags/search', [TagController::class, 'search'])->name('tags.search');
+    Route::put('/tags/{tag}', [TagController::class, 'edit'])->name('tags.update');
    
     //admin routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Actions\Favorite\CreateFavoriteAction;
 use App\Actions\Favorite\RemoveFavoriteAction;
+use App\Actions\Favorite\BulkDeleteFavoriteAction;
 use App\Services\DocumentService;
 use App\Models\Document;
 use App\Http\Requests\Favorite\StoreFavoriteRequest;
 use App\Http\Requests\Favorite\RemoveFavoriteRequest;
+use App\Http\Requests\Favorite\BulkDeleteFavoriteRequest;
 use Inertia\Inertia;
 
 class FavoriteController extends Controller
@@ -68,6 +70,16 @@ class FavoriteController extends Controller
             'success' => $result,
         ]);
 
+    }
+
+    public function removeMultiple(BulkDeleteFavoriteRequest $request, BulkDeleteFavoriteAction $action)
+    {
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id; // Добавляем ID текущего пользователя
+        $result = $action->execute($data);
+        return response()->json([
+            'success' => $result,
+        ]);
     }
 
 }

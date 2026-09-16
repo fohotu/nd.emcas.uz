@@ -41,6 +41,8 @@ const [menuOptions, setMenuOptions] = useState([]);
 const [selectedDocument,setSelectedDocument] = useState(null);
 const [openSearchForm,setOpenSearchForm] = useState(false);
 
+const [selectedIds, setSelectedIds] = useState([]);
+
 
 
 
@@ -243,6 +245,54 @@ const removeTag = (document_id, tag_id) => {
     });
 
 }
+
+
+const removeSelected = () => {
+
+            Swal.fire({
+                title: 'Вы уверены?',
+                text: `Вы не сможете восстановить этих ${selectedIds.length} меню!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Да, удалить!',
+                cancelButtonText: 'Отмена'
+            }).then((result) => {
+    
+                if (result.isConfirmed) {
+
+                    axios.delete(route('favorites.bulk-delete'), {
+                        data: {
+                            ids: selectedIds
+                        }
+                    })
+                    .then(() => {
+            
+                        setSelectedIds([]);
+                        router.reload();
+                        Swal.fire({
+                            title:'Удалено!',
+                            text:`${selectedIds.length} меню были удалены.`,  
+                            icon:'success',
+                            timer:1500,
+                            showConfirmButton:false,
+                        })
+                    })
+                    .catch(error => {
+                        console.error("Ошибка при удалении", error);
+                    });
+                }
+            });
+        };
+
+        const toggleAll = (e) => {
+            if (e.target.checked) {
+                setSelectedIds(documents?.data.map(m => m.id));
+            } else {
+                setSelectedIds([]);
+            }
+        };
 
 return (
 
@@ -620,7 +670,54 @@ return (
                 {/* ===================== */}
                 {/* RESULTS TABLE */}
                 {/* ===================== */}
+            
+                {selectedIds.length > 0 && (
+                <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded px-4 py-3">
+                    <div className="flex items-center gap-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-5 h-5 text-blue-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
 
+                        <span className="text-sm font-medium text-gray-700">
+                            Выбрано записей:
+                            <span className="ml-1 font-bold text-blue-600">
+                                {selectedIds.length}
+                            </span>
+                        </span>
+                    </div>
+
+                    <div className="flex gap-2">
+
+                        <button
+                            type="button"
+                            onClick={() => setSelectedIds([])}
+                            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
+                        >
+                            Снять выделение
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={removeSelected}
+                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                        >
+                            🗑 Удалить выбранные
+                        </button>
+
+                    </div>
+                </div>
+            )}      
                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
 
                     <div className="border-b border-gray-200 px-6 py-4">
@@ -647,7 +744,17 @@ return (
                             <thead className="bg-gray-50">
 
                                 <tr>
-
+                                    <th className="w-12 px-4 py-3 text-center">
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            checked={
+                                                selectedIds.length === documents?.data.length &&
+                                                documents?.data.length > 0
+                                            }
+                                            onChange={toggleAll}
+                                        />
+                                    </th>
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
                                         #
                                     </th>
@@ -687,6 +794,7 @@ return (
 
                                 {documents?.data?.length > 0 ? (
                                     documents.data.map((document, index) => {
+                                        console.log(document);
                                         const isFavorite = favoriteDocuments.includes(document.id);
                                         return (
                                                <tr
@@ -703,7 +811,24 @@ return (
                                             }
                                         }
                                         >
-
+                                         <td className="px-4 py-4 text-center">
+                                            <input
+                                                type="checkbox"
+                                                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                checked = {selectedIds.includes(document.id)}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange = {() => {
+                                                   
+                                                    if (selectedIds.includes(document.id)){
+                                                        setSelectedIds(
+                                                            selectedIds.filter(id => id !== document.id)
+                                                        );
+                                                    } else {
+                                                        setSelectedIds([...selectedIds, document.id]);
+                                                    }
+                                                }}
+                                            />
+                                        </td>
                                         <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
                                             <div className="flex items-center gap-2">
                                                 {/* Избранное */}

@@ -1,10 +1,10 @@
 <?php
-namespace App\Http\Requests\Tag;
+namespace App\Http\Requests\Favorite;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RemoveTagRequest extends FormRequest
+class BulkDeleteFavoriteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +21,9 @@ class RemoveTagRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //'document_id' => 'exists:documents,id',
-            'tag_id' => 'exists:tags,id',
+         return [
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:documents,id'],
         ];
     }
 }

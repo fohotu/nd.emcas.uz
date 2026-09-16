@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Tags;
 use App\Models\DocumentTags;
+use App\Services\TagService;
 use App\Http\Requests\Tag\RemoveTagRequest;
+use App\Http\Requests\Tag\UpdateTagRequest;
+use App\Http\Requests\Tag\CreateTagRequest;
+use App\Http\Requests\Tag\BulkDeleteTagRequest;
 use App\Actions\Tag\RemoveTagAction;
-
+use App\Actions\Tag\CreateTagAction;
+use App\Actions\Tag\UpdateTagAction;
+use App\Actions\Tag\BulkDeleteTagAction;
+use Inertia\Inertia;
 
 class TagController extends Controller
 {
@@ -71,11 +78,55 @@ class TagController extends Controller
     public function remove(RemoveTagRequest $request,RemoveTagAction $action){
         $data = $request->validated();
         $data['user_id'] = auth()->id();
-        $action->execute($data);
+        $result = $action->execute($data);
 
         return response()->json([
-            'success' => true,
+            'success' => $result,
         ]);
     }
+
+    public function index(Request $request,TagService $service)
+    {
+        
+        $user_id = $request->user()->id;
+        $tags = $service->getAllUserTags($user_id);
+        return Inertia::render('Tags/Index',['tags'=>$tags]);
+
+    }
+
+    public function create(CreateTagRequest $request,CreateTagAction $action)
+    {
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
+        $tag = $action->execute($data);
+
+        return response()->json([ 
+            'success' => (bool) $tag, 
+            'data' => $tag, 
+        ]);
+
+    }
+
+    public function edit(Tags $tag,UpdateTagRequest $request,UpdateTagAction $action)
+    {
+        $res = $action->execute($tag,$request->validated());
+        return response()->json([ 
+            'success' => (bool) $res,
+        ]);
+    }
+
+
+     public function removeMultiple(BulkDeleteTagRequest $request,BulkDeleteTagAction $action){
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        $result = $action->execute($data);
+
+        return response()->json([
+            'success' => $result,
+        ]);
+    }
+
+ 
+
 
 }

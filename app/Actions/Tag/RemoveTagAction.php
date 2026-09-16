@@ -2,6 +2,7 @@
 namespace App\Actions\Tag;
 
 use App\Models\DocumentTags;
+use App\Models\Tags;
 
 
 
@@ -9,13 +10,20 @@ class RemoveTagAction
 {
     public function execute(array $data): bool
     {
+        $tag = Tags::find($data['tag_id']);
 
-        $result = DocumentTags::where('document_id' , $data['document_id'])
-        ->where('tag_id',$data['tag_id'])
-        ->where('user_id',$data['user_id'])
-        ->delete();
+        if (!$tag) {
+            return false;
+        }
 
-        return $result;
+        $tag->delete();
+
+        DocumentTags::where('tag_id', $data['tag_id'])
+            ->where('user_id', $data['user_id'])
+            ->delete();
+
+        return true;
+
    
     }
 
