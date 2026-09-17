@@ -1,26 +1,20 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head,Link,router } from '@inertiajs/react';
-import { Tree } from 'react-arborist';
+import { Head, Link, router } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import Create from './Create';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Edit from './Edit';
 import BreadCrubs from './BreadCrubs';
-//function Index({ menu, query,treeMenu }) {
-function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
 
-   
-   /*
-   
-        'category' => $category->withQueryString(),
-        'query' => $query,
-        'treeCategory' => $treeCategory,
-        'category' => $category,
-   
-   */
-
+function Index({
+    category,
+    query = {},
+    treeCategory = [],
+    menu = [],
+    treeMenu,
+}) {
     const [selectedIds, setSelectedIds] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
     const [menuList, setMenuList] = useState([]);
@@ -29,81 +23,87 @@ function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
     const [editModal, setEditModal] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState({});
 
-    const [searchForm,setSearchForm] = useState({
-            title:query.title || '',
-            description:query.description || '',
+    const [searchForm, setSearchForm] = useState({
+        title: query.title || '',
+        description: query.description || '',
     });
 
-  
-
-
-    const deleteMenu = (id) => {
-        Swal.fire({
-            title: 'Вы уверены?',
-            text: "Вы не сможете восстановить это меню!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Да, удалить!',
-            cancelButtonText: 'Отмена'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`/category/${id}`)
-                .then(() => {
-                    Swal.fire({
-                        title:'Удалено!',
-                        text:'Меню был удален.',
-                        icon:'success',
-                        timer:2000,
-                    })
-                    let filteredMenu = category?.data?.filter(m => m.id!==id);
-                    let filteredTree = treeMenu?.filter(m=>m.id!==id);
-                    let newTree = buildTree(filteredTree);
-                    setCategoryList({...category,...categoryList,data:filteredMenu});
-                    setTreeData(newTree);
-                })
-                .catch(err => console.error(err));
-            }
-        });
-    }
-
-    const buildTree = (categorys) => {
-
-
-        return categorys?.map(category => ({
+    const buildTree = (categories) => {
+        return categories?.map((category) => ({
             id: category.id,
             name: category.title,
             children: category.children_recursive
-            ? buildTree(category.children_recursive)
-            : []
+                ? buildTree(category.children_recursive)
+                : [],
         }));
-
-
-
     };
 
-  
+    const deleteCategory = (id) => {
+        Swal.fire({
+            title: 'Вы уверены?',
+            text: 'Вы не сможете восстановить эту категорию!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Да, удалить',
+            cancelButtonText: 'Отмена',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .delete(`/category/${id}`)
+                    .then(() => {
+                        Swal.fire({
+                            title: 'Удалено!',
+                            text: 'Категория успешно удалена.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+
+                        const filteredCategory = category?.data?.filter(
+                            (item) => item.id !== id
+                        );
+
+                        const filteredTree = treeCategory?.filter(
+                            (item) => item.id !== id
+                        );
+
+                        setCategoryList({
+                            ...category,
+                            data: filteredCategory,
+                        });
+
+                        setTreeData(buildTree(filteredTree));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        });
+    };
 
     const onSuccessCreate = () => {
         setCreateModal(false);
+
         Swal.fire({
             title: 'Успешно!',
-            text: 'Меню успешно создано.',
+            text: 'Категория успешно создана.',
             icon: 'success',
             timer: 1500,
             showConfirmButton: false,
         });
-        router.visit(route('category.index'))
+
+        router.visit(route('category.index'));
     };
 
     const onErrorCreate = (errors) => {
-        console.log("Error");
-        console.error("Ошибка при создании категория:", errors);
+        console.error('Ошибка при создании категории:', errors);
     };
 
     const onSuccessUpdate = () => {
         setEditModal(false);
+
         Swal.fire({
             title: 'Успешно!',
             text: 'Изменения успешно сохранены.',
@@ -111,185 +111,239 @@ function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
             timer: 1500,
             showConfirmButton: false,
         });
-        router.visit(route('category.index'))
+
+        router.visit(route('category.index'));
     };
 
     const onErrorUpdate = (errors) => {
-        console.log("Error");
-        console.error("Ошибка при создании меню:", errors);
+        console.error('Ошибка при обновлении категории:', errors);
     };
 
     useEffect(() => {
         setCategoryList(category);
         setMenuList(menu);
-        let td = buildTree(treeMenu);
-        setTreeData(td);
-    },[]);
+        setTreeData(buildTree(treeCategory));
+    }, [category, menu, treeCategory]);
 
-    function handleSearch(e){
-            e.preventDefault();
-            router.get('/category',searchForm,{
-                onSuccess: (res) => {
-                    
-                },
-            })
-    }
+    const handleSearch = (e) => {
+        e.preventDefault();
 
-    function handleChange(e){
+        router.get('/category', searchForm);
+    };
+
+    const handleChange = (e) => {
         const key = e.target.name;
         const value = e.target.value;
-        setSearchForm({...searchForm,[key]:value});
-    }
 
-
-   
-
-    
+        setSearchForm({
+            ...searchForm,
+            [key]: value,
+        });
+    };
 
     const toggleAll = (e) => {
-
         if (e.target.checked) {
-            setSelectedIds(categoryList?.data.map(m => m.id));
+            setSelectedIds(
+                categoryList?.data?.map((item) => item.id) || []
+            );
         } else {
             setSelectedIds([]);
         }
     };
 
- 
-
-
+    const toggleOne = (id) => {
+        setSelectedIds((current) =>
+            current.includes(id)
+                ? current.filter((selectedId) => selectedId !== id)
+                : [...current, id]
+        );
+    };
 
     const removeSelected = () => {
-
         Swal.fire({
             title: 'Вы уверены?',
-            text: `Вы не сможете восстановить этих ${selectedIds.length} меню!`,
+            text: `Вы не сможете восстановить выбранные ${selectedIds.length} категории!`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Да, удалить!',
-            cancelButtonText: 'Отмена'
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Да, удалить',
+            cancelButtonText: 'Отмена',
         }).then((result) => {
-
             if (result.isConfirmed) {
-                axios.post('/category/bulk-delete', { ids: selectedIds })
-                .then(() => {
-                    let filteredMenu = category?.data?.filter(m => !selectedIds.includes(m.id));
-                    setCategoryList({...category,...categoryList,data:filteredMenu});
-
-                    let filteredTree = treeMenu?.filter(m=>!selectedIds.includes(m.id));
-                    let newTree = buildTree(filteredTree);
-                    setTreeData(newTree);
-
-                    setSelectedIds([]);
-                    Swal.fire({
-                        title:'Удалено!',
-                        text:`${selectedIds.length} меню были удалены.`,  
-                        icon:'success',
-                        timer:1500,
-                        showConfirmButton:false,
+                axios
+                    .post('/category/bulk-delete', {
+                        ids: selectedIds,
                     })
-                })
-                .catch(error => {
-                    console.error("Ошибка при удалении", error);
-                });
+                    .then(() => {
+                        const filteredCategory = category?.data?.filter(
+                            (item) => !selectedIds.includes(item.id)
+                        );
+
+                        const filteredTree = treeCategory?.filter(
+                            (item) => !selectedIds.includes(item.id)
+                        );
+
+                        setCategoryList({
+                            ...category,
+                            data: filteredCategory,
+                        });
+
+                        setTreeData(buildTree(filteredTree));
+                        setSelectedIds([]);
+
+                        Swal.fire({
+                            title: 'Удалено!',
+                            text: `${selectedIds.length} категорий удалено.`,
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(
+                            'Ошибка при удалении категорий:',
+                            error
+                        );
+                    });
             }
         });
     };
 
-
-    
-    const  breadcrumb = [
-        { title: "Панель управления",href: 'dashboard' },
-        { title: "Категории" },
+    const breadcrumb = [
+        {
+            title: 'Панель управления',
+            href: 'dashboard',
+        },
+        {
+            title: 'Категории',
+        },
     ];
 
+    const loadCategories = async (inputValue, menu = null) => {
+        const { data } = await axios.get(
+            route('category.live-search'),
+            {
+                params: {
+                    title: inputValue,
+                    menu: menu?.value,
+                },
+            }
+        );
 
-    const loadCategories = async (inputValue,menu=null) => {
-      const { data } = await axios.get(route("category.live-search"), {
-          params: {
-              title: inputValue,
-              menu: menu?.value,
-          },
-        });
-      return data;
-
+        return data;
     };
 
+    const loadMenu = async (inputValue) => {
+        const { data } = await axios.get(
+            route('menu.live-search'),
+            {
+                params: {
+                    title: inputValue,
+                },
+            }
+        );
 
-     const loadMenu = async (inputValue) => {
-      const { data } = await axios.get(route("menu.live-search"), {
-          params: {
-              title: inputValue,
-          },
-        });
-      return data;
-
+        return data;
     };
-   
 
-  return (
-          <AuthenticatedLayout
+    const allSelected =
+        categoryList?.data?.length > 0 &&
+        selectedIds.length === categoryList.data.length;
+
+    return (
+        <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Menu
-                </h2>
+                <div>
+                    <h1 className="text-xl font-semibold text-gray-800">
+                        Категории
+                    </h1>
+
+                    <p className="mt-1 text-sm text-gray-400">
+                        Управление категориями электронного сборника
+                    </p>
+                </div>
             }
         >
-            <Head title="Menu" />
-            <Modal show={createModal} onClose={() => setCreateModal(false)} >
-                <div className="py-10 px-5">
-                   <Create 
-                        parents={categoryList?.data} 
-                        onSuccessHandler={onSuccessCreate} 
+            <Head title="Категории" />
+
+            {/* Create Modal */}
+            <Modal
+                show={createModal}
+                onClose={() => setCreateModal(false)}
+            >
+                <div className="px-5 py-10">
+                    <Create
+                        parents={categoryList?.data}
+                        onSuccessHandler={onSuccessCreate}
                         onErrorHandler={onErrorCreate}
-                        onClose = {()=>setCreateModal(false)}
+                        onClose={() => setCreateModal(false)}
                         menu={menuList}
-                        loadMenu={loadMenu}
-                        loadCategories={loadCategories}
-
-                   />
-                </div>
-            </Modal>
-
-             <Modal show={editModal} onClose={() => setEditModal(false)}>
-                <div className="py-10 px-5">
-                    <Edit 
-                        category={selectedMenu} 
-                        parents={categoryList?.data} 
-                        onSuccessHandler={onSuccessUpdate} 
-                        onErrorHandler={onErrorUpdate}
-                        onClose = {()=>setEditModal(false)}
                         loadMenu={loadMenu}
                         loadCategories={loadCategories}
                     />
                 </div>
             </Modal>
 
-           
-           
+            {/* Edit Modal */}
+            <Modal
+                show={editModal}
+                onClose={() => setEditModal(false)}
+            >
+                <div className="px-5 py-10">
+                    <Edit
+                        category={selectedMenu}
+                        parents={categoryList?.data}
+                        onSuccessHandler={onSuccessUpdate}
+                        onErrorHandler={onErrorUpdate}
+                        onClose={() => setEditModal(false)}
+                        loadMenu={loadMenu}
+                        loadCategories={loadCategories}
+                    />
+                </div>
+            </Modal>
 
-            <BreadCrubs items={breadcrumb} />   
+            <BreadCrubs items={breadcrumb} />
 
-             <div className="mt-2">
-                <div className="bg-white border rounded shadow-sm p-6 mb-6">
-                    <div className="flex items-center justify-between mb-5">
+            <div className="space-y-6">
+
+                {/* Search */}
+                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+                    <div className="mb-5 flex items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                            <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.8"
+                                    d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
+                            </svg>
+                        </div>
+
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-800">
-                                Поиск Категории
+                            <h2 className="text-base font-semibold text-gray-800">
+                                Поиск категорий
                             </h2>
-                            <p className="text-sm text-gray-500">
-                                Используйте фильтры для поиска записей.
+
+                            <p className="mt-1 text-sm text-gray-400">
+                                Используйте фильтры для поиска категорий.
                             </p>
                         </div>
                     </div>
 
-                    <form className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
-
-                        {/* Название */}
+                    <form
+                        onSubmit={handleSearch}
+                        className="grid grid-cols-1 items-end gap-5 md:grid-cols-3"
+                    >
+                        {/* Title */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700">
                                 Название
                             </label>
 
@@ -300,25 +354,28 @@ function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
                                 onChange={handleChange}
                                 placeholder="Введите название..."
                                 className="
+                                    mt-2
+                                    block
                                     w-full
+                                    rounded-lg
                                     border
-                                    border-gray-300
-                                    rounded
-                                    px-3
+                                    border-gray-200
+                                    px-3.5
                                     py-2.5
-                                    bg-white
+                                    text-sm
+                                    outline-none
                                     transition
-                                    focus:outline-none
-                                    focus:ring-2
-                                    focus:ring-blue-500
+                                    placeholder:text-gray-400
                                     focus:border-blue-500
+                                    focus:ring-4
+                                    focus:ring-blue-50
                                 "
                             />
                         </div>
 
-                        {/* Описание */}
+                        {/* Description */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700">
                                 Описание
                             </label>
 
@@ -329,54 +386,59 @@ function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
                                 onChange={handleChange}
                                 placeholder="Введите описание..."
                                 className="
+                                    mt-2
+                                    block
                                     w-full
+                                    rounded-lg
                                     border
-                                    border-gray-300
-                                    rounded
-                                    px-3
+                                    border-gray-200
+                                    px-3.5
                                     py-2.5
-                                    bg-white
+                                    text-sm
+                                    outline-none
                                     transition
-                                    focus:outline-none
-                                    focus:ring-2
-                                    focus:ring-blue-500
+                                    placeholder:text-gray-400
                                     focus:border-blue-500
+                                    focus:ring-4
+                                    focus:ring-blue-50
                                 "
                             />
                         </div>
 
-                        {/* Кнопки */}
+                        {/* Search buttons */}
                         <div className="flex gap-2">
-
                             <button
-                                type="button"
-                                onClick={handleSearch}
+                                type="submit"
                                 className="
-                                    flex
+                                    inline-flex
                                     items-center
                                     gap-2
+                                    rounded-lg
                                     bg-blue-600
-                                    hover:bg-blue-700
-                                    text-white
                                     px-5
                                     py-2.5
-                                    rounded
-                                    transition
+                                    text-sm
+                                    font-medium
+                                    text-white
                                     shadow-sm
+                                    transition
+                                    hover:bg-blue-700
+                                    focus:outline-none
+                                    focus:ring-4
+                                    focus:ring-blue-100
                                 "
                             >
                                 <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="w-5 h-5"
+                                    className="h-4 w-4"
                                     fill="none"
-                                    viewBox="0 0 24 24"
                                     stroke="currentColor"
-                                    strokeWidth={2}
+                                    viewBox="0 0 24 24"
                                 >
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                                        strokeWidth="1.8"
+                                        d="m21 21-4.35-4.35m1.35-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"
                                     />
                                 </svg>
 
@@ -386,336 +448,465 @@ function Index({category,query = {},treeCategory = [],menu = [],treeMenu}) {
                             <Link
                                 href="/category"
                                 className="
-                                    flex
+                                    inline-flex
                                     items-center
                                     justify-center
+                                    rounded-lg
+                                    border
+                                    border-gray-200
+                                    bg-white
                                     px-5
                                     py-2.5
-                                    rounded
-                                    border
-                                    border-gray-300
-                                    bg-gray-100
-                                    hover:bg-gray-200
-                                    text-gray-700
+                                    text-sm
+                                    font-medium
+                                    text-gray-600
                                     transition
+                                    hover:bg-gray-50
+                                    hover:text-gray-800
                                 "
                             >
                                 Сбросить
                             </Link>
-
                         </div>
-
                     </form>
                 </div>
 
+                {/* Toolbar */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-800">
+                            Список категорий
+                        </h2>
 
-            </div>
+                        <p className="mt-1 text-sm text-gray-400">
+                            Всего записей:{' '}
+                            <span className="font-medium text-gray-600">
+                                {categoryList?.total || 0}
+                            </span>
+                        </p>
+                    </div>
 
-             <div>
-                 <button
-                    type="button"
-                    title=""
-                    onClick={() => setCreateModal(true)}
-                    className="
-                        flex
-                        items-center
-                        gap-2
-                        px-3
-                        py-2
-                        my-5
-                        border
-                        rounded
-                        bg-white
-                        hover:bg-gray-100
-                        active:bg-gray-200
-                        transition
-                    "
-                >
-                    <svg
-                                className="w-5 h-5 text-green-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M12 5v14M5 12h14"
-                                />
-                            </svg>
-
-                            <span>Создать</span>
-                </button>
-
-            </div>
-            {selectedIds.length > 0 && (
-                <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded px-4 py-3">
-                    <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={() => setCreateModal(true)}
+                        className="
+                            inline-flex
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-lg
+                            bg-blue-600
+                            px-4
+                            py-2.5
+                            text-sm
+                            font-medium
+                            text-white
+                            shadow-sm
+                            transition
+                            hover:bg-blue-700
+                            focus:outline-none
+                            focus:ring-4
+                            focus:ring-blue-100
+                        "
+                    >
                         <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 h-5 text-blue-600"
+                            className="h-4 w-4"
                             fill="none"
-                            viewBox="0 0 24 24"
                             stroke="currentColor"
+                            viewBox="0 0 24 24"
                         >
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                strokeWidth="1.8"
+                                d="M12 5v14M5 12h14"
                             />
                         </svg>
 
-                        <span className="text-sm font-medium text-gray-700">
-                            Выбрано записей:
-                            <span className="ml-1 font-bold text-blue-600">
-                                {selectedIds.length}
+                        Создать категорию
+                    </button>
+                </div>
+
+                {/* Selected toolbar */}
+                {selectedIds.length > 0 && (
+                    <div className="flex flex-col gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                                <svg
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="1.8"
+                                        d="M5 13l4 4L19 7"
+                                    />
+                                </svg>
+                            </div>
+
+                            <span className="text-sm font-medium text-gray-700">
+                                Выбрано:
+                                <span className="ml-1 font-semibold text-blue-600">
+                                    {selectedIds.length}
+                                </span>
                             </span>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedIds([])}
+                                className="
+                                    rounded-lg
+                                    border
+                                    border-gray-200
+                                    bg-white
+                                    px-4
+                                    py-2
+                                    text-sm
+                                    font-medium
+                                    text-gray-600
+                                    transition
+                                    hover:bg-gray-50
+                                "
+                            >
+                                Снять выделение
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={removeSelected}
+                                className="
+                                    inline-flex
+                                    items-center
+                                    gap-2
+                                    rounded-lg
+                                    bg-red-600
+                                    px-4
+                                    py-2
+                                    text-sm
+                                    font-medium
+                                    text-white
+                                    transition
+                                    hover:bg-red-700
+                                "
+                            >
+                                <svg
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="1.8"
+                                        d="M6 7h12M9 7V5h6v2m2 0-.7 12H7.7L7 7m3 4v5m4-5v5"
+                                    />
+                                </svg>
+
+                                Удалить выбранные
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Table */}
+                <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full">
+                            <thead className="border-b border-gray-100 bg-gray-50">
+                                <tr>
+                                    <th className="w-12 px-4 py-3 text-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={allSelected}
+                                            onChange={toggleAll}
+                                            className="
+                                                h-4
+                                                w-4
+                                                cursor-pointer
+                                                rounded
+                                                border-gray-300
+                                                text-blue-600
+                                                focus:ring-blue-500
+                                            "
+                                        />
+                                    </th>
+
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Название
+                                    </th>
+
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Описание
+                                    </th>
+
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Создано
+                                    </th>
+
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Обновлено
+                                    </th>
+
+                                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Действия
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100">
+                                {categoryList?.data?.length > 0 ? (
+                                    categoryList.data.map((item) => (
+                                        <tr
+                                            key={item.id}
+                                            className="transition-colors hover:bg-gray-50"
+                                        >
+                                            <td className="px-4 py-4 text-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.includes(
+                                                        item.id
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleOne(item.id)
+                                                    }
+                                                    className="
+                                                        h-4
+                                                        w-4
+                                                        cursor-pointer
+                                                        rounded
+                                                        border-gray-300
+                                                        text-blue-600
+                                                        focus:ring-blue-500
+                                                    "
+                                                />
+                                            </td>
+
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                                                        <svg
+                                                            className="h-4 w-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="1.8"
+                                                                d="M4 7.5A1.5 1.5 0 0 1 5.5 6h4l2 2h7A1.5 1.5 0 0 1 20 9.5v8A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-10z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+
+                                                    <div className="font-medium text-gray-800">
+                                                        {item.title}
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td className="max-w-md px-4 py-4 text-sm text-gray-600">
+                                                {item.description || (
+                                                    <span className="italic text-gray-400">
+                                                        Нет описания
+                                                    </span>
+                                                )}
+                                            </td>
+
+                                            <td className="px-4 py-4">
+                                                <span className="inline-flex rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                                                    {new Date(
+                                                        item.created_at
+                                                    ).toLocaleDateString()}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-4 py-4">
+                                                <span className="inline-flex rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
+                                                    {new Date(
+                                                        item.updated_at
+                                                    ).toLocaleDateString()}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-4 py-4">
+                                                <div className="flex justify-end gap-2">
+                                                    <button
+                                                        type="button"
+                                                        title="Редактировать"
+                                                        onClick={() => {
+                                                            setSelectedMenu(item);
+                                                            setEditModal(true);
+                                                        }}
+                                                        className="
+                                                            flex
+                                                            h-9
+                                                            w-9
+                                                            items-center
+                                                            justify-center
+                                                            rounded-lg
+                                                            border
+                                                            border-blue-100
+                                                            bg-blue-50
+                                                            text-blue-600
+                                                            transition
+                                                            hover:bg-blue-100
+                                                        "
+                                                    >
+                                                        <svg
+                                                            className="h-4 w-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="1.8"
+                                                                d="M15.5 5.5l3 3M4 20h4l10.5-10.5a2.12 2.12 0 0 0-3-3L5 17v3z"
+                                                            />
+                                                        </svg>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        title="Удалить"
+                                                        onClick={() =>
+                                                            deleteCategory(
+                                                                item.id
+                                                            )
+                                                        }
+                                                        className="
+                                                            flex
+                                                            h-9
+                                                            w-9
+                                                            items-center
+                                                            justify-center
+                                                            rounded-lg
+                                                            border
+                                                            border-red-100
+                                                            bg-red-50
+                                                            text-red-600
+                                                            transition
+                                                            hover:bg-red-100
+                                                        "
+                                                    >
+                                                        <svg
+                                                            className="h-4 w-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="1.8"
+                                                                d="M6 7h12M9 7V5h6v2m2 0-.7 12H7.7L7 7m3 4v5m4-5v5"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="6"
+                                            className="px-4 py-12 text-center"
+                                        >
+                                            <div className="flex flex-col items-center">
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-50 text-gray-400">
+                                                    <svg
+                                                        className="h-6 w-6"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth="1.8"
+                                                            d="M20 13V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7m16 0-3-3-3 3m6 0v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5"
+                                                        />
+                                                    </svg>
+                                                </div>
+
+                                                <p className="mt-3 text-sm font-medium text-gray-600">
+                                                    Категории не найдены
+                                                </p>
+
+                                                <p className="mt-1 text-sm text-gray-400">
+                                                    Попробуйте изменить параметры поиска.
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Pagination */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-gray-500">
+                        Всего записей:{' '}
+                        <span className="font-semibold text-gray-700">
+                            {categoryList?.total || 0}
                         </span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap items-center gap-1">
+                        {categoryList?.links?.map((item, index) => {
+                            const label = item.label
+                                .replace('&laquo; Previous', '«')
+                                .replace('Next &raquo;', '»');
 
-                        <button
-                            type="button"
-                            onClick={() => setSelectedIds([])}
-                            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
-                        >
-                            Снять выделение
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={removeSelected}
-                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                        >
-                            🗑 Удалить выбранные
-                        </button>
-
+                            return (
+                                <Link
+                                    key={index}
+                                    href={item.url || '#'}
+                                    preserveScroll
+                                    className={`
+                                        flex
+                                        h-9
+                                        min-w-9
+                                        items-center
+                                        justify-center
+                                        rounded-lg
+                                        border
+                                        px-2
+                                        text-sm
+                                        transition
+                                        ${
+                                            item.active
+                                                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                : item.url
+                                                    ? 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-800'
+                                                    : 'cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300'
+                                        }
+                                    `}
+                                >
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html: label,
+                                        }}
+                                    />
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
-            )}    
-
-            <div className="bg-white border rounded shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                        <thead className="bg-gray-100 border-b">
-                            <tr>
-                                <th className="w-12 px-4 py-3 text-center">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        checked={
-                                            selectedIds.length === categoryList?.data?.length &&
-                                            categoryList?.data?.length > 0
-                                        }
-                                        onChange={toggleAll}
-                                    />
-                                </th>
-
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                                    Название
-                                </th>
-
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                                    Описание
-                                </th>
-
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                                    Создано
-                                </th>
-
-                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                                    Обновлено
-                                </th>
-
-                                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-600">
-                                    Действия
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody className="divide-y divide-gray-100">
-
-                            {categoryList?.data?.map((item) => (
-                                <tr
-                                    key={item.id}
-                                    className="hover:bg-blue-50 transition-colors"
-                                >
-                                    <td className="px-4 py-4 text-center">
-                                        <input
-                                            type="checkbox"
-                                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            checked = {selectedIds.includes(item.id)}
-                                            onChange = {() => {
-                                                if (selectedIds.includes(item.id)){
-                                                    setSelectedIds(
-                                                        selectedIds.filter(id => id !== item.id)
-                                                    );
-                                                } else {
-                                                    setSelectedIds([...selectedIds, item.id]);
-                                                }
-                                            }}
-                                        />
-                                    </td>
-
-                                    <td className="px-4 py-4">
-                                        <div className="font-medium text-gray-800">
-                                            {item.title}
-                                        </div>
-                                    </td>
-
-                                    <td className="px-4 py-4 text-gray-600">
-                                        {item.description || (
-                                            <span className="text-gray-400 italic">
-                                                Нет описания
-                                            </span>
-                                        )}
-                                    </td>
-
-                                    <td className="px-4 py-4">
-                                        <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
-                                            {new Date(item.created_at).toLocaleDateString()}
-                                        </span>
-                                    </td>
-
-                                    <td className="px-4 py-4">
-                                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
-                                            {new Date(item.updated_at).toLocaleDateString()}
-                                        </span>
-                                    </td>
-
-                                    <td className="px-4 py-4">
-                                        <div className="flex justify-end gap-2">
-
-                                            <button
-                                                title="Редактировать"
-                                                onClick={() => {
-                                                    setSelectedMenu(item);
-                                                    setEditModal(true);
-                                                }}
-                                                className="
-                                                    p-2
-                                                    rounded
-                                                    border
-                                                    border-blue-200
-                                                    text-blue-600
-                                                    hover:bg-blue-100
-                                                    transition
-                                                "
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="w-5 h-5"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                                    />
-                                                </svg>
-                                            </button>
-
-                                            <button
-                                                title="Удалить"
-                                                onClick={() => deleteMenu(item.id)}
-                                                className="
-                                                    p-2
-                                                    rounded
-                                                    border
-                                                    border-red-200
-                                                    text-red-600
-                                                    hover:bg-red-100
-                                                    transition
-                                                "
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="w-5 h-5"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                    />
-                                                </svg>
-                                            </button>
-
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>            
-
-           <div className="mt-6 flex items-center justify-between">
-
-    <div className="text-sm text-gray-500">
-        Всего записей: <b>{categoryList.total}</b>
-    </div>
-
-    <div className="flex items-center gap-1">
-
-        {categoryList?.links?.map((item, index) => {
-
-            const label = item.label
-                .replace("&laquo; Previous", "«")
-                .replace("Next &raquo;", "»");
-
-            return (
-                <Link
-                    key={index}
-                    href={item.url || "#"}
-                    preserveScroll
-                    className={`
-                        min-w-[38px]
-                        h-[38px]
-                        flex
-                        items-center
-                        justify-center
-                        border
-                        rounded
-                        transition
-                        ${
-                            item.active
-                                ? "bg-blue-600 border-blue-600 text-white"
-                                : item.url
-                                    ? "bg-white hover:bg-gray-100 text-gray-700"
-                                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        }
-                    `}
-                >
-                    <span
-                        dangerouslySetInnerHTML={{
-                            __html: label,
-                        }}
-                    />
-                </Link>
-            );
-        })}
-
-    </div>
-        
-
-</div>
-    
-    
-
-
-        </AuthenticatedLayout>    
-  )
+            </div>
+        </AuthenticatedLayout>
+    );
 }
 
-export default Index
+export default Index;

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import LiveSelect from "./LiveSelect";
-import { router } from '@inertiajs/react';
-export default function SearchForm({ filter, onSearch,setSearchForm,searchForm }) {
+import { router } from "@inertiajs/react";
 
-
-   
-
+export default function SearchForm({
+    filter,
+    onSearch,
+    setSearchForm,
+    searchForm,
+}) {
     const handleChange = (e) => {
         setSearchForm({
             ...searchForm,
@@ -13,45 +15,56 @@ export default function SearchForm({ filter, onSearch,setSearchForm,searchForm }
         });
     };
 
+    const inputClass = `
+        w-full
+        rounded-lg
+        border
+        border-gray-200
+        bg-white
+        px-3.5
+        py-2.5
+        text-sm
+        text-gray-700
+        outline-none
+        transition
+        placeholder:text-gray-400
+        focus:border-blue-500
+        focus:ring-4
+        focus:ring-blue-50
+    `;
 
+    const labelClass = `
+        mb-2
+        block
+        text-sm
+        font-medium
+        text-gray-700
+    `;
 
     return (
         <form
             onSubmit={onSearch}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-end"
+            className="grid grid-cols-1 items-end gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
             {/* Номер */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
                     Номер
                 </label>
+
                 <input
                     type="text"
                     name="number"
                     value={searchForm.number}
                     onChange={handleChange}
                     placeholder="Введите номер..."
-                    className="
-                        w-full
-                        border
-                        border-gray-300
-                        rounded
-                        px-3
-                        py-2.5
-                        bg-white
-                        transition
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-blue-500
-                        focus:border-blue-500
-                    "
+                    className={inputClass}
                 />
             </div>
 
-
             {/* Заголовок */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
                     Заголовок
                 </label>
 
@@ -61,65 +74,49 @@ export default function SearchForm({ filter, onSearch,setSearchForm,searchForm }
                     value={searchForm.title}
                     onChange={handleChange}
                     placeholder="Введите заголовок..."
-                    className="
-                        w-full
-                        border
-                        border-gray-300
-                        rounded
-                        px-3
-                        py-2.5
-                        bg-white
-                        transition
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-blue-500
-                        focus:border-blue-500
-                    "
+                    className={inputClass}
                 />
             </div>
 
-
             {/* Категория */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Относится
+                <label className={labelClass}>
+                    Категория
                 </label>
 
                 <LiveSelect
                     type="category"
                     placeholder="Выберите категорию..."
-                    onChange={(e) => {
+                    onChange={(option) => {
                         setSearchForm({
                             ...searchForm,
-                            category_id: e?.value || "",
+                            category_id: option?.value || "",
                         });
                     }}
                 />
             </div>
 
-
-            {/* Форма документа */}
+            {/* Меню */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Форма документа
+                <label className={labelClass}>
+                    Меню
                 </label>
 
                 <LiveSelect
                     type="menu"
-                    placeholder="Выберите форму..."
-                    onChange={(e) => {
+                    placeholder="Выберите меню..."
+                    onChange={(option) => {
                         setSearchForm({
                             ...searchForm,
-                            menu_id: e?.value || "",
+                            menu_id: option?.value || "",
                         });
                     }}
                 />
             </div>
 
-
-            {/* Тип */}
+            {/* Статус */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
                     Статус
                 </label>
 
@@ -127,93 +124,78 @@ export default function SearchForm({ filter, onSearch,setSearchForm,searchForm }
                     name="status"
                     value={searchForm.status}
                     onChange={handleChange}
-                    className="
-                        w-full
-                        border
-                        border-gray-300
-                        rounded
-                        px-3
-                        py-2.5
-                        bg-white
-                        transition
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-blue-500
-                        focus:border-blue-500
-                    "
+                    className={inputClass}
                 >
-                    <option value="">
-                        Все
-                    </option>
-                    <option value="active">     
+                    <option value="">Все</option>
+
+                    <option value="active">
                         Действующие
                     </option>
+
                     <option value="passive">
-                        Утративший силу
+                        Утратившие силу
                     </option>
                 </select>
             </div>
+
             {/* Дата */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
                     Дата документа
                 </label>
+
                 <input
                     type="date"
                     name="date"
                     value={searchForm.date}
                     onChange={handleChange}
-                    className="
-                        w-full
-                        border
-                        border-gray-300
-                        rounded
-                        px-3
-                        py-2.5
-                        bg-white
-                        transition
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-blue-500
-                        focus:border-blue-500
-                    "
+                    className={inputClass}
                 />
             </div>
+
             {/* Кнопки */}
-            <div className="md:col-span-2 lg:col-span-3 flex gap-2">
+            <div className="flex gap-2 md:col-span-2 lg:col-span-3">
+                {/* Поиск */}
                 <button
                     type="submit"
                     className="
-                        flex
+                        inline-flex
                         items-center
                         justify-center
                         gap-2
+                        rounded-lg
                         bg-blue-600
-                        hover:bg-blue-700
-                        text-white
                         px-5
                         py-2.5
-                        rounded
-                        transition
+                        text-sm
+                        font-medium
+                        text-white
                         shadow-sm
+                        transition
+                        hover:bg-blue-700
+                        focus:outline-none
+                        focus:ring-4
+                        focus:ring-blue-100
                     "
                 >
                     <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-5 h-5"
+                        className="h-4 w-4"
                         fill="none"
-                        viewBox="0 0 24 24"
                         stroke="currentColor"
-                        strokeWidth={2}
+                        viewBox="0 0 24 24"
                     >
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                            strokeWidth="1.8"
+                            d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
                         />
                     </svg>
-                    Найти 
+
+                    Найти
                 </button>
+
+                {/* Сброс */}
                 <button
                     type="button"
                     onClick={() => {
@@ -223,26 +205,46 @@ export default function SearchForm({ filter, onSearch,setSearchForm,searchForm }
                             category_id: "",
                             menu_id: "",
                             type: "",
+                            status: "",
                             date: "",
                         };
+
                         setSearchForm(emptyForm);
-                        router.get('/documents');
+                        router.get("/documents");
                     }}
                     className="
-                        flex
+                        inline-flex
                         items-center
                         justify-center
+                        gap-2
+                        rounded-lg
+                        border
+                        border-gray-200
+                        bg-white
                         px-5
                         py-2.5
-                        rounded
-                        border
-                        border-gray-300
-                        bg-gray-100
-                        hover:bg-gray-200
-                        text-gray-700
+                        text-sm
+                        font-medium
+                        text-gray-600
                         transition
+                        hover:bg-gray-50
+                        hover:text-gray-800
                     "
                 >
+                    <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.8"
+                            d="M4 4v5h5M20 20v-5h-5M5.5 9A7 7 0 0 1 18 6.5L20 9M18.5 15A7 7 0 0 1 6 17.5L4 15"
+                        />
+                    </svg>
+
                     Сбросить
                 </button>
             </div>
