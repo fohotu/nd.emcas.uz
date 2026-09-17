@@ -79,7 +79,7 @@ class FavoriteController extends Controller
         $result = $action->execute($data);
         return response()->json([
             'success' => $result,
-        ]);
+        ]); 
     }
 
 }
