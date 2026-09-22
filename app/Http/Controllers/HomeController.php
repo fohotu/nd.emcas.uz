@@ -18,6 +18,21 @@ class HomeController extends Controller
        return Inertia::render('Home/Index');
     }
 
+    public function userDashboard(Request $request,DocumentService $service)
+    {
+        $favorites = $request->user()->favorites()->pluck('document_id');
+        $favorite_documents = $service->getFavorites($favorites);
+        $last_documents = $service->getAllDocuments();
+       
+       
+        return Inertia::render('Home/UserDashboard',
+            [
+                'favorites' => $favorite_documents,
+                'documents' =>  $last_documents
+            ]
+        );
+    }
+
     public function index(DocumentService $service,CategoryService $categoryService,MenuService $menuService, Request $request)
     {
 

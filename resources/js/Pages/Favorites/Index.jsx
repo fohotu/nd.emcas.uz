@@ -311,7 +311,7 @@ return (
             />
         </Modal>
         <div className="py-6">
-            <div className="mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto">
                 {/* ===================== */}
                 {/* SEARCH FORM */}
                 {/* ===================== */}
@@ -393,51 +393,100 @@ return (
 
 
                     {
-                        openSearchForm ?
-                    
-                    <div className="p-6">
+                        openSearchForm ?                
+                        <div className="w-full rounded-xl bg-white p-6 shadow-sm sm:p-7">
+
+                        {/* Header */}
+                        <div className="mb-7 flex items-start gap-3">
+
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                <svg
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="1.8"
+                                        d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
+                                    />
+                                </svg>
+                            </div>
+
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-800">
+                                    Поиск документов
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-400">
+                                    Укажите параметры для поиска документов.
+                                </p>
+                            </div>
+
+                        </div>
+
 
                         <form onSubmit={handleSubmit}>
 
                             {/* Номер документа */}
+                            <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
 
-                            <div className="mb-5 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-
-                                <div className="lg:col-span-2">
-
+                                <div className="md:col-span-3">
                                     <label
                                         htmlFor="number"
-                                        className="font-medium text-gray-700"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
                                         Номер документа
                                     </label>
-
                                 </div>
 
-
-                                <div className="lg:col-span-5">
-
+                                <div className="md:col-span-6">
                                     <input
                                         id="number"
                                         name="number"
                                         type="text"
                                         value={searchField.number}
                                         onChange={handleChange}
-                                        className="w-full rounded-md border-gray-300 shadow-sm"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            placeholder:text-gray-400
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     />
-
                                 </div>
 
-
-                                <div className="lg:col-span-3">
-
-                                    <label className="flex cursor-pointer items-center gap-2">
+                                <div className="flex items-center md:col-span-3">
+                                    <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
 
                                         <input
                                             type="checkbox"
                                             name="number_d"
                                             checked={searchField.number_d}
                                             onChange={handleChange}
+                                            className="
+                                                h-4
+                                                w-4
+                                                rounded
+                                                border-gray-300
+                                                text-blue-600
+                                                focus:ring-blue-500
+                                            "
                                         />
 
                                         <span>
@@ -445,152 +494,245 @@ return (
                                         </span>
 
                                     </label>
-
                                 </div>
 
                             </div>
 
 
                             {/* Название */}
+                            <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
 
-                            <div className="mb-5 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-
-                                <div className="lg:col-span-2">
-
+                                <div className="md:col-span-3">
                                     <label
                                         htmlFor="title"
-                                        className="font-medium text-gray-700"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
                                         Название документа
                                     </label>
-
                                 </div>
 
-                                <div className="lg:col-span-7">
-
+                                <div className="md:col-span-6">
                                     <input
                                         id="title"
                                         name="title"
                                         type="text"
                                         value={searchField.title}
                                         onChange={handleChange}
-                                        className="w-full rounded-md border-gray-300 shadow-sm"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            placeholder:text-gray-400
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     />
-
                                 </div>
-                                <div className="lg:col-span-3">
-                                    <label className="flex cursor-pointer items-center gap-2">
+
+                                <div className="flex items-center md:col-span-3">
+                                    <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
+
                                         <input
                                             type="checkbox"
                                             name="title_d"
                                             checked={searchField.title_d}
                                             onChange={handleChange}
+                                            className="
+                                                h-4
+                                                w-4
+                                                rounded
+                                                border-gray-300
+                                                text-blue-600
+                                                focus:ring-blue-500
+                                            "
                                         />
+
                                         <span>
                                             Точное соответствие
                                         </span>
-                                    </label>
 
+                                    </label>
                                 </div>
 
                             </div>
 
 
-                            {/* Тип */}
+                            {/* Принадлежит */}
+                            <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
 
-                            <div className="mb-5 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-
-                                <div className="lg:col-span-2">
-
-                                    <label className="font-medium text-gray-700">
+                                <div className="md:col-span-3">
+                                    <label className="block text-sm font-medium text-gray-700">
                                         Принадлежит
                                     </label>
-
                                 </div>
-                                <div className="lg:col-span-8">
+
+                                <div className="md:col-span-6">
                                     <select
                                         name="menu_id"
                                         value={searchField.menu_id || ''}
                                         onChange={handleChange}
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     >
-                                        <option value="">Все разделы</option>
+                                        <option value="">
+                                            Все разделы
+                                        </option>
+
                                         {renderMenuOptions(filter?.menus || [])}
+
                                     </select>
                                 </div>
+
                             </div>
 
 
                             {/* Дата */}
+                            <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
 
-                            <div className="mb-5 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-
-                                <div className="lg:col-span-2">
-
-                                    <label className="font-medium text-gray-700">
+                                <div className="md:col-span-3">
+                                    <label className="block text-sm font-medium text-gray-700">
                                         Дата
                                     </label>
-
                                 </div>
 
 
-                                <div className="lg:col-span-3">
-
+                                <div className="md:col-span-3">
                                     <input
                                         name="start"
                                         type="date"
                                         value={searchField.start}
                                         onChange={handleChange}
-                                        className="w-full rounded-md border-gray-300 shadow-sm"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     />
-
                                 </div>
 
 
-                                <div className="lg:col-span-3">
-
+                                <div className="md:col-span-3">
                                     <input
                                         name="end"
                                         type="date"
                                         value={searchField.end}
                                         onChange={handleChange}
                                         disabled={!searchField.date_i}
-                                        className="w-full rounded-md border-gray-300 shadow-sm disabled:bg-gray-100"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            disabled:cursor-not-allowed
+                                            disabled:bg-gray-50
+                                            disabled:text-gray-400
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     />
-
                                 </div>
 
 
-                                <div className="lg:col-span-2">
+                                <div className="flex items-center md:col-span-3">
 
-                                    <label className="flex items-center gap-2">
+                                    <div className="flex flex-col gap-2">
 
-                                        <input
-                                            type="checkbox"
-                                            checked={searchField.date_d}
-                                            onChange={() => handleDateType('exact')}
-                                        />
+                                        <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
 
-                                        Точная дата
+                                            <input
+                                                type="checkbox"
+                                                checked={searchField.date_d}
+                                                onChange={() => handleDateType('exact')}
+                                                className="
+                                                    h-4
+                                                    w-4
+                                                    rounded
+                                                    border-gray-300
+                                                    text-blue-600
+                                                    focus:ring-blue-500
+                                                "
+                                            />
 
-                                    </label>
+                                            <span>
+                                                Точная дата
+                                            </span>
 
-                                </div>
+                                        </label>
 
 
-                                <div className="lg:col-span-2">
+                                        <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
 
-                                    <label className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={searchField.date_i}
+                                                onChange={() => handleDateType('range')}
+                                                className="
+                                                    h-4
+                                                    w-4
+                                                    rounded
+                                                    border-gray-300
+                                                    text-blue-600
+                                                    focus:ring-blue-500
+                                                "
+                                            />
 
-                                        <input
-                                            type="checkbox"
-                                            checked={searchField.date_i}
-                                            onChange={() => handleDateType('range')}
-                                        />
+                                            <span>
+                                                Диапазон
+                                            </span>
 
-                                        Диапазон
+                                        </label>
 
-                                    </label>
+                                    </div>
 
                                 </div>
 
@@ -598,71 +740,174 @@ return (
 
 
                             {/* Описание */}
+                            <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
 
-                            <div className="mb-5 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-
-                                <div className="lg:col-span-2">
-
-                                    <label className="font-medium text-gray-700">
+                                <div className="md:col-span-3">
+                                    <label className="block text-sm font-medium text-gray-700">
                                         Часть описания
                                     </label>
-
                                 </div>
 
-
-                                <div className="lg:col-span-8">
+                                <div className="md:col-span-6">
 
                                     <input
                                         name="description"
                                         type="text"
                                         value={searchField.description}
                                         onChange={handleChange}
-                                        className="w-full rounded-md border-gray-300 shadow-sm"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            placeholder:text-gray-400
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     />
+
                                 </div>
+
                             </div>
+
+
                             {/* Статус */}
-                           <div className="mb-6 grid grid-cols-1 items-center gap-3 lg:grid-cols-12">
-                                <div className="lg:col-span-2">
-                                    <span className="font-medium text-gray-700">
+                            <div className="mb-6 grid grid-cols-1 gap-5 md:grid-cols-12">
+
+                                <div className="md:col-span-3">
+                                    <span className="block text-sm font-medium text-gray-700">
                                         Статус документа
                                     </span>
                                 </div>
-                                <div className="lg:col-span-4">
+
+                                <div className="md:col-span-5">
+
                                     <select
-                                        value = {searchField.status}
-                                        onChange = {(e) =>
+                                        value={searchField.status}
+                                        onChange={(e) =>
                                             setSearchField((prev) => ({
                                                 ...prev,
                                                 status: e.target.value,
                                             }))
                                         }
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2"
+                                        className="
+                                            mt-0
+                                            block
+                                            w-full
+                                            rounded-lg
+                                            border
+                                            border-gray-200
+                                            bg-white
+                                            px-3.5
+                                            py-2.5
+                                            text-sm
+                                            text-gray-700
+                                            outline-none
+                                            transition
+                                            focus:border-blue-500
+                                            focus:ring-4
+                                            focus:ring-blue-50
+                                        "
                                     >
-                                        <option value="">Все</option>
-                                        <option value="active">Действующие</option>
-                                        <option value="passive">Утратившие силу</option>
+                                        <option value="">
+                                            Все
+                                        </option>
+
+                                        <option value="active">
+                                            Действующие
+                                        </option>
+
+                                        <option value="passive">
+                                            Утратившие силу
+                                        </option>
+
                                     </select>
+
                                 </div>
+
                             </div>
-                            {/* Кнопки */}
-                            <div className="flex gap-3">
-                                <button
-                                    type="submit"
-                                    className="rounded-md bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-                                >
-                                    Найти
-                                </button>
+
+
+                            {/* Buttons */}
+                            <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
+
                                 <button
                                     type="button"
                                     onClick={handleReset}
-                                    className="rounded-md bg-gray-500 px-5 py-2 text-white hover:bg-gray-600"
+                                    className="
+                                        rounded-lg
+                                        border
+                                        border-gray-200
+                                        bg-white
+                                        px-4
+                                        py-2.5
+                                        text-sm
+                                        font-medium
+                                        text-gray-600
+                                        transition
+                                        hover:bg-gray-50
+                                        hover:text-gray-800
+                                    "
                                 >
                                     Очистить
                                 </button>
+
+
+                                <button
+                                    type="submit"
+                                    className="
+                                        inline-flex
+                                        items-center
+                                        gap-2
+                                        rounded-lg
+                                        bg-blue-600
+                                        px-5
+                                        py-2.5
+                                        text-sm
+                                        font-medium
+                                        text-white
+                                        shadow-sm
+                                        transition
+                                        hover:bg-blue-700
+                                        focus:outline-none
+                                        focus:ring-4
+                                        focus:ring-blue-100
+                                    "
+                                >
+
+                                    <svg
+                                        className="h-4 w-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="1.8"
+                                            d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
+                                        />
+                                    </svg>
+
+                                    Найти
+
+                                </button>
+
                             </div>
+
                         </form>
-                    </div>
+
+                        </div>
                     :""                    
                     }
                 </div>
@@ -892,17 +1137,23 @@ return (
                                                     "
                                                     title="Прикрепить к тегу"
                                                 >
-                                                    <svg
-                                                        className="w-5 h-5"
+                                                <svg
+                                                        className="h-5 w-5"
                                                         fill="none"
                                                         stroke="currentColor"
-                                                        strokeWidth="1.8"
                                                         viewBox="0 0 24 24"
                                                     >
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
-                                                            d="M7 7h.01M3 11.5V6a3 3 0 013-3h5.5a3 3 0 012.12.88l6.5 6.5a3 3 0 010 4.24l-3 3a3 3 0 01-4.24 0l-6.5-6.5A3 3 0 013 11.5z"
+                                                            strokeWidth="1.8"
+                                                            d="M20.5 13.5 13.5 20.5a2 2 0 0 1-2.83 0L3.5 13.33A2 2 0 0 1 3 11.91V5a2 2 0 0 1 2-2h6.91a2 2 0 0 1 1.42.59l7.17 7.08a2 2 0 0 1 0 2.83Z"
+                                                        />
+                                                        <circle
+                                                            cx="7.5"
+                                                            cy="7.5"
+                                                            r="1.25"
+                                                            strokeWidth="1.8"
                                                         />
                                                     </svg>
                                                 </button>

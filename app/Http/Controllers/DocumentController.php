@@ -107,6 +107,22 @@ class DocumentController extends Controller
         ]);
     }
 
+    public function viewAll(Request $request,DocumentService $documentService)
+    {
+        $favoriteIds = $request->user()
+        ->favorites()
+        ->pluck('document_id');
+        $query = $request->only(['number','title','date','category_id','menu_id','status']);
+        $documents = $documentService->getAllDocuments($query);
+        
+
+        return Inertia::render('Documents/ViewAll', [
+            'documents' => $documents,
+            'favoriteIds' => $favoriteIds,
+        ]);
+
+    }
+
 
 
     public function show(Document $document)

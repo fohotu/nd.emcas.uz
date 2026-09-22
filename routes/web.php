@@ -53,9 +53,11 @@ Route::middleware('auth')->group(function () {
 
     //user profile routes
     Route::get('/documents/menu/{id}/category/{category_id?}',[DocumentController::class, 'view'])->name('document.view');
+    Route::get('/documents/all', [DocumentController::class, 'viewAll'])->name('documents.all');
     Route::get('/documents/{document}',[DocumentController::class, 'show'])->name('document.show');
 
     Route::get('/home',[HomeController::class, 'index'])->name('home');
+    Route::get('/',[HomeController::class, 'userDashboard'])->name('user-dashboard');
 
 
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');

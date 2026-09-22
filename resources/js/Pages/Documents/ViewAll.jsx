@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrubs from './BreadCrubs';
 import { Tree } from 'react-arborist';
-import { router, Link } from '@inertiajs/react';
+import { router, Link , usePage} from '@inertiajs/react';
 import SearchForm from './SearchForm';
 
 import Modal from '@/Components/Modal';
@@ -10,11 +10,8 @@ import TagForm from './TagForm';
 import Swal from 'sweetalert2';
 
 function View({
-    category,
-    menu_item,
     documents,
     favoriteIds,
-    selectedCategoryId,
 }) {
     let query = {};
     let filter = {};
@@ -25,7 +22,7 @@ function View({
             href: 'dashboard',
         },
         {
-            title: menu_item?.title,
+            title: 'Documents',
         },
     ];
 
@@ -38,6 +35,12 @@ function View({
         status: query['status'] ?? '',
         date: query['date'] ?? '',
     });
+
+    const { main_menu } = usePage().props;
+
+    
+
+     console.log(main_menu);
 
     const [treeData, setTreeData] = useState([]);
     const [menuList, setMenuList] = useState([]);
@@ -112,11 +115,15 @@ function View({
         if (favoriteIds?.length) {
             setFavoriteDocuments(favoriteIds);
         }
-    }, []);
+    }, []); 
 
     useEffect(() => {
-        setTreeData(buildTree(category));
-    }, [category]);
+        if(main_menu){
+            setTreeData(buildTree(main_menu));
+
+           
+        }
+    }, [main_menu]);
 
     const buildTree = (items, parentId = null) => {
         return items
@@ -129,15 +136,16 @@ function View({
             }));
     };
 
-    function handleChange(e) {
-        const key = e.target.name;
-        const value = e.target.value;
-
-        setSearchForm({
-            ...searchForm,
-            [key]: value,
-        });
-    }
+    const prepareTree = (items = []) => {
+        return items.map((item) => ({
+            ...item,
+            name: item.title,
+            href: '/documents/menu/' + item.id + '/category',
+            children: prepareTree(item.children_recursive || []),
+        }));
+    };
+    const data = prepareTree(main_menu || []);
+    
 
     function handleSearch(e) {
         e.preventDefault();
@@ -173,37 +181,7 @@ function View({
                         {/* Header */}
                         <div className="flex items-start gap-3 border-b border-gray-100 px-5 py-5">
 
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-
-                                <svg
-                                    className="h-5 w-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="1.8"
-                                        d="M3.75 6.75h5.5l2 2h9v8.5a2 2 0 0 1-2 2h-14.5a2 2 0 0 1-2-2v-10.5a2 2 0 0 1 2-2Z"
-                                    />
-                                </svg>
-
-                            </div>
-
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                    Категории
-                                </h3>
-
-                                <p className="mt-1 text-sm text-gray-400">
-                                    Выберите категорию
-                                </p>
-                            </div>
-
                         </div>
-
-
                         {/* Tree */}
                         <div className="p-3">
 
@@ -241,14 +219,13 @@ function View({
                             ) : (
 
                                 <Tree
-                                    initialData={treeData}
+                                    initialData={data}
                                     openByDefault={true}
                                     width="100%"
                                     height={800}
                                     rowHeight={36}
                                 >
                                     {({ node, style }) => (
-
                                         <div
                                             style={style}
                                             className="
@@ -258,9 +235,8 @@ function View({
                                                 px-1
                                             "
                                         >
-
                                             <Link
-                                                href={`/documents/menu/${menu_item.id}/category/${node.data.id}`}
+                                                href={`/documents/menu/${node.data.id}/category/`}
                                                 className="
                                                     flex
                                                     h-full
@@ -280,7 +256,6 @@ function View({
                                                     e.stopPropagation();
                                                 }}
                                             >
-
                                                 <svg
                                                     className="mr-2 h-4 w-4 shrink-0 text-gray-400"
                                                     fill="none"

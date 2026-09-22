@@ -145,7 +145,7 @@ function EditTag({ tag, setEditModal }) {
             <div className="mt-7 flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
                 <button
                     type="button"
-                    onClick={() => setEditModal(false)}
+                    onClick={() => setEditModal(null)}
                     className="
                         rounded-lg
                         border
