@@ -18,11 +18,11 @@ function View({
 
     const breadcrumb = [
         {
-            title: 'Панель управления',
-            href: 'dashboard',
+            title: 'Главная страница',
+            href: '/',
         },
         {
-            title: 'Documents',
+            title: 'Все документы',
         },
     ];
 

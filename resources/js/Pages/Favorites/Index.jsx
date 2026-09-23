@@ -4,6 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
 import Swal from 'sweetalert2';
+import BreadCrubs from './BreadCrubs';
 
 function Index({ documents,filter,favoriteIds }) {
     console.log(filter,documents,favoriteIds);
@@ -294,6 +295,16 @@ const removeSelected = () => {
             }
         };
 
+        const breadcrumb = [
+            {
+                title: 'Главная страница',
+                href: '/',
+            },
+            {
+                title: 'Избранное',
+            },
+        ];
+
 return (
 
     <AuthenticatedLayout
@@ -310,6 +321,7 @@ return (
             errorCalback={errorAtachTag}
             />
         </Modal>
+        <BreadCrubs items={breadcrumb} />
         <div className="py-6">
             <div className="mx-auto">
                 {/* ===================== */}

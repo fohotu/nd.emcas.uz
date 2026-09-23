@@ -19,15 +19,49 @@ function View({
     let query = {};
     let filter = {};
 
-    const breadcrumb = [
+    let breadcrumb = [
         {
-            title: 'Панель управления',
-            href: 'dashboard',
+            title: 'Главная страница',
+            href: '/',
+        },
+        {
+            title: 'Все документы',
+            href: '/documents/all',
         },
         {
             title: menu_item?.title,
         },
     ];
+
+    if (selectedCategoryId) {
+        const selected_category = category.find(
+            (item) => item.id == selectedCategoryId
+        );
+
+        if (selected_category) {
+            breadcrumb = [
+                {
+                    title: 'Главная страница',
+                    href: '/',
+                },
+                {
+                    title: 'Все документы',
+                    href: '/documents/all',
+                },
+                {
+                    title: menu_item?.title,
+                    href: '/documents/menu/' + menu_item.id + '/category',
+                },
+                {
+                    title: selected_category.title,
+                   
+                },
+            ];
+        }
+    }
+
+
+   
 
     const [searchForm, setSearchForm] = useState({
         number: query['number'] ?? '',

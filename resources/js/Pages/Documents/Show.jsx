@@ -19,16 +19,29 @@ function InfoItem({ label, value }) {
 }
 
 function Show({ document }) {
-     const breadcrumb = [
+    const breadcrumb = [
         {
-            title: "Панель управления",
-            href: "dashboard",
+            title: 'Главная страница',
+            href: '/',
+        },
+        {
+            title: 'Все документы',
+            href:'/documents/all',
+        },
+        {
+            title: document?.menu?.title,
+            href:'/documents/menu/'+document?.menu?.id+'/category/'
+        },
+        {
+            title: document?.category?.title,
+            href:'/documents/menu/'+document?.menu?.id+'/category/'+document?.category?.id
         },
         {
             title: document?.title,
         },
-    ];
 
+    ];
+    
     const getStatus = (status) => {
         const statuses = {
             active: {
