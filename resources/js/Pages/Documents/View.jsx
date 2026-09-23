@@ -53,8 +53,7 @@ function View({
                     href: '/documents/menu/' + menu_item.id + '/category',
                 },
                 {
-                    title: selected_category.title,
-                   
+                    title: selected_category.title, 
                 },
             ];
         }

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import AddTag from './AddTag';
 import EditTag from './EditTag';
 import TagDocuments from './TagDocuments';
+import BreadCrubs from './BreadCrubs';
 
 
 export default function Index({ tags }) {
@@ -55,6 +56,17 @@ export default function Index({ tags }) {
         });
 
     };
+
+     const breadcrumb = [
+            {
+                title: 'Главная страница',
+                href: '/',
+            },
+            {
+                title: 'Список тегов',
+            },
+        ];
+    
 
 
     const removeSelected = () => {
@@ -116,7 +128,8 @@ export default function Index({ tags }) {
                 </div>
             }
         >
-
+           
+            <BreadCrubs items={breadcrumb} />
             <div className="py-6">
 
                 <div className="mx-auto">
