@@ -9,9 +9,10 @@ export default function AuthenticatedLayout({
     user = { name: 'Farkhod' },
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    
+    const { main_menu,auth } = usePage().props;
 
-    const { main_menu } = usePage().props;
-
+     
     const prepareTree = (items = []) => {
         return items.map((item) => ({
             ...item,
@@ -347,57 +348,12 @@ export default function AuthenticatedLayout({
                                 {Node}
                             </Tree>
                         </div>
-                    </div>
-
-                    {/* Admin */}
-                    {user?.role === 'admin' && (
-                        <div className="mt-5 border-t border-slate-800 px-2 pt-4">
-                            <h4 className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                                Система
-                            </h4>
-
-                            <Link
-                                href="/dashboard"
-                                className="
-                                    group
-                                    flex
-                                    items-center
-                                    gap-3
-                                    rounded-lg
-                                    px-3
-                                    py-2.5
-                                    text-slate-300
-                                    transition
-                                    hover:bg-slate-800
-                                    hover:text-white
-                                "
-                            >
-                                <svg
-                                    className="h-5 w-5 text-slate-500 group-hover:text-indigo-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="1.8"
-                                        d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-13h6V4h-6v3Z"
-                                    />
-                                </svg>
-
-                                <span className="text-sm font-medium">
-                                    Администрирование
-                                </span>
-                            </Link>
-                        </div>
-                    )}
+                    </div>       
                 </nav>
             </aside>
 
             {/* CONTENT */}
             <div className="flex min-w-0 flex-1 flex-col">
-
                 {/* HEADER */}
                 <header className="flex h-16 shrink-0 items-center border-b border-gray-100 bg-white px-4 sm:px-6">
 
@@ -506,7 +462,7 @@ export default function AuthenticatedLayout({
 
                         <LanguageDropdown />
 
-                        <UserDropdown user={user} />
+                        <UserDropdown user={auth?.user} />
                     </div>
                 </header>
 

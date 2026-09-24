@@ -109,16 +109,43 @@ Route::middleware('auth')->group(function () {
     Route::get('/file/download/{id}',[FileController::class,'download'])->name('file.download')->withoutMiddleware([EnsureAdmin::class]);
     Route::get('/file/download-link/{id}',[FileController::class,'dowloadLink'])->name('file.download-link')->withoutMiddleware([EnsureAdmin::class]);
 
-    Route::get('/test',function(){
-        /*
-            $m = new \App\Models\Tags;
-            $m->name = "Test #7";
-            $m->user_id = auth()->id();
-            $m->save();
-            dd($m);
-        */
-    });
+   
+    Route::get('/file/view/{id}',[FileController::class,'view'])->name('file.view');
 
+
+
+  
+
+});
+
+
+
+
+Route::get('/test/doc', function () {
+
+    $docx = storage_path('app/public/test.docx');
+    $outputDir = storage_path('app/public');
+    $pdf = $outputDir . '/test.pdf';
+
+    $libreOffice = '/Applications/LibreOffice.app/Contents/MacOS/soffice';
+
+    exec(
+        escapeshellarg($libreOffice)
+        . ' --headless --convert-to pdf'
+        . ' --outdir ' . escapeshellarg($outputDir)
+        . ' ' . escapeshellarg($docx)
+        . ' 2>&1',
+        $output,
+        $result
+    );
+
+    abort_unless(
+        $result === 0 && file_exists($pdf),
+        500,
+        implode("\n", $output)
+    );
+
+    return response()->file($pdf);
 });
 
 
