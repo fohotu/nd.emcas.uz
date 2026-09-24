@@ -263,7 +263,7 @@ export default function DocumentViewer({
 
                 if (!cancelled) {
                     setError(
-                        'Не удалось открыть PDF-файл.'
+                        'Не удалось открыть файл.'
                     );
                 }
             } finally {

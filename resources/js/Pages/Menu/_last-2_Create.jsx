@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from '@inertiajs/react';
 
-function Create({
-    parents = [],
-    onSuccessHandler,
-    onErrorHandler,
-    onClose,
-}) {
+function Create({ parents = [], onSuccessHandler, onErrorHandler, onClose }) {
     const {
         data,
         setData,
@@ -14,45 +9,14 @@ function Create({
         processing,
         errors,
     } = useForm({
-        title_ru: '',
-        title_uz: '',
-        title_en: '',
-
-        description_ru: '',
-        description_uz: '',
-        description_en: '',
-
+        title: '',
+        description: '',
         sys_name: '',
         parent_id: '',
         order: '',
         route: '',
         url: '',
     });
-
-    const [activeLanguage, setActiveLanguage] = useState('uz');
-
-    const languages = [
-        {
-            code: 'uz',
-            label: "O'zbek",
-        },
-        {
-            code: 'ru',
-            label: 'Русский',
-        },
-        {
-            code: 'en',
-            label: 'English',
-        },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find(
-            (language) => language.code === activeLanguage
-        )?.label || '';
 
     const submit = (e) => {
         e.preventDefault();
@@ -94,11 +58,6 @@ function Create({
         text-gray-700
     `;
 
-    const getErrorClass = (field) =>
-        errors[field]
-            ? 'border-red-400 focus:border-red-500 focus:ring-red-50'
-            : '';
-
     return (
         <form
             onSubmit={submit}
@@ -137,61 +96,22 @@ function Create({
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
                 {/* Title */}
-                <div className="md:col-span-2">
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className={labelClass}>
-                            Название
-                            <span className="ml-1 text-red-500">*</span>
-                        </label>
-
-                        {/* Language tabs */}
-                        <div className="flex items-center rounded-lg bg-gray-100 p-1">
-                            {languages.map((language) => (
-                                <button
-                                    key={language.code}
-                                    type="button"
-                                    onClick={() =>
-                                        setActiveLanguage(language.code)
-                                    }
-                                    className={`
-                                        rounded-md
-                                        px-3
-                                        py-1.5
-                                        text-xs
-                                        font-medium
-                                        transition
-                                        ${
-                                            activeLanguage ===
-                                            language.code
-                                                ? 'bg-white text-blue-600 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                        }
-                                    `}
-                                >
-                                    {language.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                <div>
+                    <label className={labelClass}>
+                        Название <span className="text-red-500">*</span>
+                    </label>
 
                     <input
                         type="text"
-                        value={data[titleField]}
-                        onChange={(e) =>
-                            setData(
-                                titleField,
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            titleField
-                        )}`}
-                        placeholder={`Введите название на ${activeLanguageLabel}`}
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        className={inputClass}
+                        placeholder="Введите название"
                     />
 
-                    {errors[titleField] && (
+                    {errors.title && (
                         <p className="mt-1.5 text-xs text-red-500">
-                            {errors[titleField]}
+                            {errors.title}
                         </p>
                     )}
                 </div>
@@ -199,21 +119,14 @@ function Create({
                 {/* System Name */}
                 <div>
                     <label className={labelClass}>
-                        Системное имя
+                        Системное имя 
                     </label>
 
                     <input
                         type="text"
                         value={data.sys_name}
-                        onChange={(e) =>
-                            setData(
-                                'sys_name',
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            'sys_name'
-                        )}`}
+                        onChange={(e) => setData('sys_name', e.target.value)}
+                        className={inputClass}
                         placeholder="Например: documents"
                     />
 
@@ -232,25 +145,13 @@ function Create({
 
                     <select
                         value={data.parent_id}
-                        onChange={(e) =>
-                            setData(
-                                'parent_id',
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            'parent_id'
-                        )}`}
+                        onChange={(e) => setData('parent_id', e.target.value)}
+                        className={inputClass}
                     >
-                        <option value="">
-                            Без родителя
-                        </option>
+                        <option value="">Без родителя</option>
 
                         {parents.map((parent) => (
-                            <option
-                                key={parent.id}
-                                value={parent.id}
-                            >
+                            <option key={parent.id} value={parent.id}>
                                 {parent.title}
                             </option>
                         ))}
@@ -273,15 +174,8 @@ function Create({
                         type="number"
                         min={0}
                         value={data.order}
-                        onChange={(e) =>
-                            setData(
-                                'order',
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            'order'
-                        )}`}
+                        onChange={(e) => setData('order', e.target.value)}
+                        className={inputClass}
                         placeholder="0"
                     />
 
@@ -302,15 +196,8 @@ function Create({
                         type="text"
                         placeholder="/dashboard"
                         value={data.route}
-                        onChange={(e) =>
-                            setData(
-                                'route',
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            'route'
-                        )}`}
+                        onChange={(e) => setData('route', e.target.value)}
+                        className={inputClass}
                     />
 
                     {errors.route && (
@@ -329,15 +216,8 @@ function Create({
                     <input
                         type="text"
                         value={data.url}
-                        onChange={(e) =>
-                            setData(
-                                'url',
-                                e.target.value
-                            )
-                        }
-                        className={`${inputClass} ${getErrorClass(
-                            'url'
-                        )}`}
+                        onChange={(e) => setData('url', e.target.value)}
+                        className={inputClass}
                         placeholder="https://example.com"
                     />
 
@@ -351,34 +231,21 @@ function Create({
 
             {/* Description */}
             <div className="mt-5">
-                <div className="mb-2 flex items-center justify-between">
-                    <label className={labelClass}>
-                        Описание
-                    </label>
-
-                    <span className="text-xs text-gray-400">
-                        {activeLanguageLabel}
-                    </span>
-                </div>
+                <label className={labelClass}>
+                    Описание
+                </label>
 
                 <textarea
                     rows={4}
-                    value={data[descriptionField]}
-                    onChange={(e) =>
-                        setData(
-                            descriptionField,
-                            e.target.value
-                        )
-                    }
-                    className={`${inputClass} resize-none ${getErrorClass(
-                        descriptionField
-                    )}`}
-                    placeholder={`Введите описание на ${activeLanguageLabel}`}
+                    value={data.description}
+                    onChange={(e) => setData('description', e.target.value)}
+                    className={`${inputClass} resize-none`}
+                    placeholder="Введите описание пункта меню"
                 />
 
-                {errors[descriptionField] && (
+                {errors.description && (
                     <p className="mt-1.5 text-xs text-red-500">
-                        {errors[descriptionField]}
+                        {errors.description}
                     </p>
                 )}
             </div>
@@ -445,7 +312,6 @@ function Create({
                                     stroke="currentColor"
                                     strokeWidth="3"
                                 />
-
                                 <path
                                     className="opacity-75"
                                     fill="currentColor"
