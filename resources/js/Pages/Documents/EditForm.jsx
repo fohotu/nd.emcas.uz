@@ -14,6 +14,13 @@ export default function EditForm(props) {
 
     const { data, setData, put, processing, errors } = useForm({
         title: activeModel?.title,
+        title_ru: activeModel?.title_ru || "",
+        title_uz: activeModel?.title_uz || "",
+        title_en: activeModel?.title_en || "",
+
+        description_ru: activeModel?.description_ru || "",
+        description_uz: activeModel?.description_uz || "",
+        description_en: activeModel?.description_en || "",
         number: activeModel?.number,
         category_id: activeModel?.category_id,
         version_for: activeModel?.version_for,
@@ -28,6 +35,15 @@ export default function EditForm(props) {
     useEffect(() => {
         setData({
             title: activeModel?.title,
+
+            title_ru: activeModel?.title_ru || "",
+            title_uz: activeModel?.title_uz || "",
+            title_en: activeModel?.title_en || "",
+
+            description_ru: activeModel?.description_ru || "",
+            description_uz: activeModel?.description_uz || "",
+            description_en: activeModel?.description_en || "",
+
             number: activeModel?.number,
             category_id: activeModel?.category_id,
             menu_id: activeModel?.category?.menu?.id,
@@ -45,6 +61,20 @@ export default function EditForm(props) {
 
     const [uploadedError, setUploadedError] = useState([]);
     const [categoryLoaded, setCategoryLoad] = useState([]);
+
+    const [activeLanguage, setActiveLanguage] = useState("uz");
+
+    const languages = [
+        { code: "uz", label: "O'zbek" },
+        { code: "ru", label: "Русский" },
+        { code: "en", label: "English" },
+    ];
+
+    const titleField = `title_${activeLanguage}`;
+    const descriptionField = `description_${activeLanguage}`;
+
+    const activeLanguageLabel =
+        languages.find((l) => l.code === activeLanguage)?.label || "";
 
     const getdataList = (input) => {
         return axios
@@ -270,22 +300,40 @@ export default function EditForm(props) {
 
                     {/* Название */}
                     <div className="mb-5">
-                        <label className={labelClass}>
-                            Название
-                        </label>
+                        <div className="mb-2 flex items-center justify-between">
+                            <label className={labelClass}>
+                                Название
+                            </label>
+
+                            <div className="flex rounded-lg bg-gray-100 p-1">
+                                {languages.map((language) => (
+                                    <button
+                                        key={language.code}
+                                        type="button"
+                                        onClick={() => setActiveLanguage(language.code)}
+                                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                                            activeLanguage === language.code
+                                                ? "bg-white text-blue-600 shadow-sm"
+                                                : "text-gray-500 hover:text-gray-700"
+                                        }`}
+                                    >
+                                        {language.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                         <input
                             type="text"
-                            value={data.title}
-                            onChange={(e) =>
-                                setData("title", e.target.value)
-                            }
+                            value={data[titleField]}
+                            onChange={(e) => setData(titleField, e.target.value)}
+                            placeholder={`Введите название на ${activeLanguageLabel}`}
                             className={inputClass}
                         />
 
-                        {errors.title && (
+                        {errors[titleField] && (
                             <p className="mt-1 text-xs text-red-500">
-                                {errors.title}
+                                {errors[titleField]}
                             </p>
                         )}
                     </div>
@@ -525,16 +573,28 @@ export default function EditForm(props) {
 
                     {/* Описание */}
                     <div className="mb-5">
-                        <label className={labelClass}>
-                            Описание
-                        </label>
+                        <div className="mb-2 flex items-center justify-between">
+                            <label className={labelClass}>
+                                Описание
+                            </label>
+
+                            <span className="text-xs text-gray-400">
+                                {activeLanguageLabel}
+                            </span>
+                        </div>
 
                         <Editor
-                            value={data.description}
+                            value={data[descriptionField]}
                             onChange={(html) =>
-                                setData("description", html)
+                                setData(descriptionField, html)
                             }
                         />
+
+                        {errors[descriptionField] && (
+                            <p className="mt-1 text-xs text-red-500">
+                                {errors[descriptionField]}
+                            </p>
+                        )}
                     </div>
 
                     {/* Файлы */}

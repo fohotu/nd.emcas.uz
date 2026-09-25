@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from '@inertiajs/react';
 import AsyncSelect from 'react-select/async';
 
@@ -19,47 +18,14 @@ function Create({
         processing,
         errors,
     } = useForm({
-        title_ru: '',
-        title_uz: '',
-        title_en: '',
-
-        description_ru: '',
-        description_uz: '',
-        description_en: '',
-
+        title: '',
+        description: '',
         parent: null,
         parent_id: null,
-
         menu_id: '',
         menu: null,
-
         order: '',
     });
-
-    const [activeLanguage, setActiveLanguage] = useState('uz');
-
-    const languages = [
-        {
-            code: 'uz',
-            label: "O'zbek",
-        },
-        {
-            code: 'ru',
-            label: 'Русский',
-        },
-        {
-            code: 'en',
-            label: 'English',
-        },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find(
-            (language) => language.code === activeLanguage
-        )?.label || '';
 
     const submit = (e) => {
         e.preventDefault();
@@ -102,11 +68,6 @@ function Create({
     `;
 
     const errorClass = 'mt-1.5 text-xs text-red-500';
-
-    const getErrorClass = (field) =>
-        errors[field]
-            ? 'border-red-400 focus:border-red-500 focus:ring-red-50'
-            : '';
 
     const selectStyles = (hasError = false) => ({
         control: (provided, state) => ({
@@ -222,60 +183,30 @@ function Create({
 
                 {/* Title */}
                 <div>
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className={labelClass}>
-                            Название
-                            <span className="ml-1 text-red-500">*</span>
-                        </label>
-
-                        {/* Language tabs */}
-                        <div className="flex items-center rounded-lg bg-gray-100 p-1">
-                            {languages.map((language) => (
-                                <button
-                                    key={language.code}
-                                    type="button"
-                                    onClick={() =>
-                                        setActiveLanguage(language.code)
-                                    }
-                                    className={`
-                                        rounded-md
-                                        px-3
-                                        py-1.5
-                                        text-xs
-                                        font-medium
-                                        transition
-                                        ${
-                                            activeLanguage ===
-                                            language.code
-                                                ? 'bg-white text-blue-600 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                        }
-                                    `}
-                                >
-                                    {language.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <label className={labelClass}>
+                        Название <span className="text-red-500">*</span>
+                    </label>
 
                     <input
                         type="text"
-                        value={data[titleField]}
+                        value={data.title}
                         onChange={(e) =>
-                            setData(
-                                titleField,
-                                e.target.value
-                            )
+                            setData('title', e.target.value)
                         }
-                        placeholder={`Введите название на ${activeLanguageLabel}`}
-                        className={`${inputClass} ${getErrorClass(
-                            titleField
-                        )}`}
+                        placeholder="Введите название категории"
+                        className={`
+                            ${inputClass}
+                            ${
+                                errors?.title
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-50'
+                                    : ''
+                            }
+                        `}
                     />
 
-                    {errors[titleField] && (
+                    {errors.title && (
                         <p className={errorClass}>
-                            {errors[titleField]}
+                            {errors.title}
                         </p>
                     )}
                 </div>
@@ -364,15 +295,10 @@ function Create({
                         min={0}
                         value={data.order}
                         onChange={(e) =>
-                            setData(
-                                'order',
-                                e.target.value
-                            )
+                            setData('order', e.target.value)
                         }
                         placeholder="0"
-                        className={`${inputClass} ${getErrorClass(
-                            'order'
-                        )}`}
+                        className={inputClass}
                     />
 
                     {errors.order && (
@@ -380,39 +306,30 @@ function Create({
                             {errors.order}
                         </p>
                     )}
-
                 </div>
 
                 {/* Description */}
                 <div>
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className={labelClass}>
-                            Описание
-                        </label>
-
-                        <span className="text-xs text-gray-400">
-                            {activeLanguageLabel}
-                        </span>
-                    </div>
+                    <label className={labelClass}>
+                        Описание
+                    </label>
 
                     <textarea
                         rows={4}
-                        value={data[descriptionField]}
+                        value={data.description}
                         onChange={(e) =>
                             setData(
-                                descriptionField,
+                                'description',
                                 e.target.value
                             )
                         }
-                        placeholder={`Введите описание на ${activeLanguageLabel}`}
-                        className={`${inputClass} resize-none ${getErrorClass(
-                            descriptionField
-                        )}`}
+                        placeholder="Введите описание категории"
+                        className={`${inputClass} resize-none`}
                     />
 
-                    {errors[descriptionField] && (
+                    {errors.description && (
                         <p className={errorClass}>
-                            {errors[descriptionField]}
+                            {errors.description}
                         </p>
                     )}
                 </div>

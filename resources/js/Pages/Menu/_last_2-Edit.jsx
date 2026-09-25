@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 
-export default function Edit({
-    menu,
-    parents = [],
-    onSuccessHandler,
-    onErrorHandler,
-    onClose,
-}) {
+function Edit({ menu, parents = [], onSuccessHandler, onClose }) {
     const {
         data,
         setData,
@@ -15,56 +8,53 @@ export default function Edit({
         processing,
         errors,
     } = useForm({
-        title_ru: menu.title_ru ?? '',
-        title_uz: menu.title_uz ?? '',
-        title_en: menu.title_en ?? '',
-
-        description_ru: menu.description_ru ?? '',
-        description_uz: menu.description_uz ?? '',
-        description_en: menu.description_en ?? '',
-
-        sys_name: menu.sys_name ?? '',
-        parent_id: menu.parent_id ?? '',
-        order: menu.order ?? '',
-        route: menu.route ?? '',
-        url: menu.url ?? '',
+        title: menu.title || '',
+        description: menu.description || '',
+        sys_name: menu.sys_name || '',
+        parent_id: menu.parent_id || '',
+        order: menu.order || '',
+        route: menu.route || '',
+        url: menu.url || '',
     });
-
-    const [activeLanguage, setActiveLanguage] = useState('uz');
-
-    const languages = [
-        { code: 'uz', label: "O'zbek" },
-        { code: 'ru', label: 'Русский' },
-        { code: 'en', label: 'English' },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find((l) => l.code === activeLanguage)?.label || '';
 
     const submit = (e) => {
         e.preventDefault();
 
         put(`/menu/${menu.id}`, {
-            onSuccess: () => onSuccessHandler?.(),
-            onError: () => onErrorHandler?.(),
+            onSuccess: () => {
+                onSuccessHandler?.();
+            },
         });
     };
 
     const inputClass = `
-        mt-2 block w-full rounded-lg border border-gray-200 bg-white
-        px-3.5 py-2.5 text-sm text-gray-700 outline-none transition
-        placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-50
+        mt-2
+        block
+        w-full
+        rounded-lg
+        border
+        border-gray-200
+        bg-white
+        px-3.5
+        py-2.5
+        text-sm
+        text-gray-700
+        outline-none
+        transition
+        placeholder:text-gray-400
+        focus:border-blue-500
+        focus:ring-4
+        focus:ring-blue-50
     `;
 
-    const labelClass = `block text-sm font-medium text-gray-700`;
+    const labelClass = `
+        block
+        text-sm
+        font-medium
+        text-gray-700
+    `;
 
-    const getErrorClass = (field) =>
-        errors[field]
-            ? 'border-red-400 focus:border-red-500 focus:ring-red-50'
-            : '';
+    const errorClass = "mt-1.5 text-xs text-red-500";
 
     return (
         <form
@@ -84,7 +74,7 @@ export default function Edit({
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth="1.8"
-                            d="M12 5v14M5 12h14"
+                            d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M16.5 3.5a2.12 2.12 0 0 1 3 3L12 14l-4 1 1-4 7.5-7.5z"
                         />
                     </svg>
                 </div>
@@ -95,7 +85,7 @@ export default function Edit({
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-400">
-                        Измените информацию о пункте меню.
+                        Измените информацию о выбранном пункте меню.
                     </p>
                 </div>
             </div>
@@ -104,62 +94,48 @@ export default function Edit({
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
                 {/* Title */}
-                <div className="md:col-span-2">
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className={labelClass}>
-                            Название
-                            <span className="ml-1 text-red-500">*</span>
-                        </label>
-
-                        <div className="flex items-center rounded-lg bg-gray-100 p-1">
-                            {languages.map((language) => (
-                                <button
-                                    key={language.code}
-                                    type="button"
-                                    onClick={() => setActiveLanguage(language.code)}
-                                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                                        activeLanguage === language.code
-                                            ? 'bg-white text-blue-600 shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                                >
-                                    {language.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                <div>
+                    <label className={labelClass}>
+                        Название <span className="text-red-500">*</span>
+                    </label>
 
                     <input
                         type="text"
-                        value={data[titleField]}
-                        onChange={(e) =>
-                            setData(titleField, e.target.value)
-                        }
-                        className={`${inputClass} ${getErrorClass(titleField)}`}
-                        placeholder={`Введите название на ${activeLanguageLabel}`}
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        className={`
+                            ${inputClass}
+                            ${
+                                errors.title
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-50'
+                                    : ''
+                            }
+                        `}
                     />
 
-                    {errors[titleField] && (
-                        <p className="mt-1.5 text-xs text-red-500">
-                            {errors[titleField]}
+                    {errors.title && (
+                        <p className={errorClass}>
+                            {errors.title}
                         </p>
                     )}
                 </div>
 
                 {/* System Name */}
                 <div>
-                    <label className={labelClass}>Системное имя</label>
+                    <label className={labelClass}>
+                        Системное имя
+                    </label>
 
                     <input
                         type="text"
                         value={data.sys_name}
                         onChange={(e) => setData('sys_name', e.target.value)}
-                        className={`${inputClass} ${getErrorClass('sys_name')}`}
+                        className={inputClass}
                         placeholder="Например: documents"
                     />
 
                     {errors.sys_name && (
-                        <p className="mt-1.5 text-xs text-red-500">
+                        <p className={errorClass}>
                             {errors.sys_name}
                         </p>
                     )}
@@ -167,26 +143,36 @@ export default function Edit({
 
                 {/* Parent */}
                 <div>
-                    <label className={labelClass}>Родитель</label>
+                    <label className={labelClass}>
+                        Родительское меню
+                    </label>
 
                     <select
-                        value={data.parent_id}
-                        onChange={(e) => setData('parent_id', e.target.value)}
-                        className={`${inputClass} ${getErrorClass('parent_id')}`}
+                        value={data.parent_id ?? ''}
+                        onChange={(e) =>
+                            setData(
+                                'parent_id',
+                                e.target.value === ''
+                                    ? null
+                                    : Number(e.target.value)
+                            )
+                        }
+                        className={inputClass}
                     >
                         <option value="">Без родителя</option>
 
-                        {parents
-                            .filter((parent) => parent.id !== menu.id)
-                            .map((parent) => (
-                                <option key={parent.id} value={parent.id}>
-                                    {parent.title}
-                                </option>
-                            ))}
+                        {parents.map((parent) => (
+                            <option
+                                key={parent.id}
+                                value={parent.id}
+                            >
+                                {parent.title}
+                            </option>
+                        ))}
                     </select>
 
                     {errors.parent_id && (
-                        <p className="mt-1.5 text-xs text-red-500">
+                        <p className={errorClass}>
                             {errors.parent_id}
                         </p>
                     )}
@@ -194,19 +180,21 @@ export default function Edit({
 
                 {/* Order */}
                 <div>
-                    <label className={labelClass}>Порядок</label>
+                    <label className={labelClass}>
+                        Порядок
+                    </label>
 
                     <input
                         type="number"
                         min={0}
                         value={data.order}
                         onChange={(e) => setData('order', e.target.value)}
-                        className={`${inputClass} ${getErrorClass('order')}`}
+                        className={inputClass}
                         placeholder="0"
                     />
 
                     {errors.order && (
-                        <p className="mt-1.5 text-xs text-red-500">
+                        <p className={errorClass}>
                             {errors.order}
                         </p>
                     )}
@@ -214,18 +202,20 @@ export default function Edit({
 
                 {/* Route */}
                 <div>
-                    <label className={labelClass}>Route</label>
+                    <label className={labelClass}>
+                        Route
+                    </label>
 
                     <input
                         type="text"
                         value={data.route}
                         onChange={(e) => setData('route', e.target.value)}
-                        className={`${inputClass} ${getErrorClass('route')}`}
                         placeholder="/dashboard"
+                        className={inputClass}
                     />
 
                     {errors.route && (
-                        <p className="mt-1.5 text-xs text-red-500">
+                        <p className={errorClass}>
                             {errors.route}
                         </p>
                     )}
@@ -233,18 +223,20 @@ export default function Edit({
 
                 {/* URL */}
                 <div>
-                    <label className={labelClass}>URL</label>
+                    <label className={labelClass}>
+                        URL
+                    </label>
 
                     <input
                         type="text"
                         value={data.url}
                         onChange={(e) => setData('url', e.target.value)}
-                        className={`${inputClass} ${getErrorClass('url')}`}
+                        className={inputClass}
                         placeholder="https://example.com"
                     />
 
                     {errors.url && (
-                        <p className="mt-1.5 text-xs text-red-500">
+                        <p className={errorClass}>
                             {errors.url}
                         </p>
                     )}
@@ -253,37 +245,46 @@ export default function Edit({
 
             {/* Description */}
             <div className="mt-5">
-                <div className="mb-2 flex items-center justify-between">
-                    <label className={labelClass}>Описание</label>
-
-                    <span className="text-xs text-gray-400">
-                        {activeLanguageLabel}
-                    </span>
-                </div>
+                <label className={labelClass}>
+                    Описание
+                </label>
 
                 <textarea
                     rows={4}
-                    value={data[descriptionField]}
+                    value={data.description}
                     onChange={(e) =>
-                        setData(descriptionField, e.target.value)
+                        setData('description', e.target.value)
                     }
-                    className={`${inputClass} resize-none ${getErrorClass(descriptionField)}`}
-                    placeholder={`Введите описание на ${activeLanguageLabel}`}
+                    className={`${inputClass} resize-none`}
+                    placeholder="Введите описание пункта меню"
                 />
 
-                {errors[descriptionField] && (
-                    <p className="mt-1.5 text-xs text-red-500">
-                        {errors[descriptionField]}
+                {errors.description && (
+                    <p className={errorClass}>
+                        {errors.description}
                     </p>
                 )}
             </div>
 
-            {/* Actions */}
+            {/* Buttons */}
             <div className="mt-7 flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-800"
+                    className="
+                        rounded-lg
+                        border
+                        border-gray-200
+                        bg-white
+                        px-4
+                        py-2.5
+                        text-sm
+                        font-medium
+                        text-gray-600
+                        transition
+                        hover:bg-gray-50
+                        hover:text-gray-800
+                    "
                 >
                     Отмена
                 </button>
@@ -291,7 +292,26 @@ export default function Edit({
                 <button
                     type="submit"
                     disabled={processing}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="
+                        inline-flex
+                        items-center
+                        gap-2
+                        rounded-lg
+                        bg-blue-600
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-medium
+                        text-white
+                        shadow-sm
+                        transition
+                        hover:bg-blue-700
+                        focus:outline-none
+                        focus:ring-4
+                        focus:ring-blue-100
+                        disabled:cursor-not-allowed
+                        disabled:opacity-50
+                    "
                 >
                     {processing ? (
                         <>
@@ -308,13 +328,15 @@ export default function Edit({
                                     stroke="currentColor"
                                     strokeWidth="3"
                                 />
+
                                 <path
                                     className="opacity-75"
                                     fill="currentColor"
                                     d="M21 12a9 9 0 0 0-9-9v3a6 6 0 0 1 6 6h3z"
                                 />
                             </svg>
-                            Обновление...
+
+                            Сохранение...
                         </>
                     ) : (
                         <>
@@ -331,7 +353,8 @@ export default function Edit({
                                     d="M5 12.5l4.5 4.5L19 7.5"
                                 />
                             </svg>
-                            Обновить
+
+                            Сохранить изменения
                         </>
                     )}
                 </button>
@@ -339,3 +362,5 @@ export default function Edit({
         </form>
     );
 }
+
+export default Edit;

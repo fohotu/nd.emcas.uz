@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import Upload from "rc-upload";
 import axios from "axios";
+import Modal from "@/Components/Modal";
+import DocumentViewer from "@/Components/DocumentViewer";
+
 
 function UploadedFiles(props) {
     const { activeModel, downloadFile } = props;
@@ -51,8 +54,43 @@ function UploadedFiles(props) {
         });
     };
 
+
+
+     /** Document View Modal */  
+       
+        const [viewerOpen, setViewerOpen] = useState(false); 
+        const [viewerFile, setViewerFile] = useState(null); 
+        const openDocument = (file) => { 
+            let url  = `/file/view/${file.id}`;
+            
+            let title = file.file_name;
+    
+            setViewerFile({
+                url,
+                title,
+            }); 
+            setViewerOpen(true); 
+        }; 
+        const closeDocument = () => { 
+            setViewerOpen(false); 
+            setViewerFile(null); 
+        };
+        /** Document View Modal */
+
     return (
         <div>
+            <Modal show={viewerOpen} maxWidth="full">
+                <div className="w-[99vw] h-[95vh] max-w-none max-h-none">
+                    <DocumentViewer 
+                                    document={activeModel}
+                                    open={viewerOpen} 
+                                    file={viewerFile?.url}
+                                    title={viewerFile?.title}
+                                    onClose={closeDocument}
+                    />   
+                </div>
+            </Modal>    
+
             {/* Upload */}
             <Upload {...uploadProps}>
                 <div className="cursor-pointer rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-5 py-5 text-center transition hover:border-blue-400 hover:bg-blue-50/30">
@@ -118,7 +156,7 @@ function UploadedFiles(props) {
 
                             {/* Actions */}
                             <div className="ml-3 flex shrink-0 items-center gap-1">
-
+                               
                                 {/* Download */}
                                 <button
                                     type="button"
@@ -141,6 +179,33 @@ function UploadedFiles(props) {
                                     </svg>
                                 </button>
 
+                                {/* View */}
+                            {
+                                /*
+                                  <button
+                                        type="button"
+                                        onClick={() => openDocument(file)}
+                                        title="Просмотр"
+                                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-yellow-600 transition hover:bg-emerald-50"
+                                    >
+                                        <svg
+                                            className="h-4 w-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={1.8}
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"
+                                            />
+                                            <circle cx="12" cy="12" r="3" strokeWidth={1.8} />
+                                        </svg>
+                                    </button>
+
+                                */
+                    }
                                 {/* Delete */}
                                 <button
                                     type="button"

@@ -11,9 +11,9 @@ class CreateMenuAction
         
         return Menu::create([
             'title' => $data['title'] ?? $data['title_uz'],
-            'title_uz' => $data['title_uz'],
-            'title_ru' => $data['title_ru'],
-            'title_en' => $data['title_en'],
+            'title_uz' => $data['title_uz'] ?? null,
+            'title_ru' => $data['title_ru'] ?? null,
+            'title_en' => $data['title_en'] ?? null,
             'description' => $data['description'] ?? null,
             'description_uz' => $data['description_uz'] ?? null,
             'description_ru' => $data['description_ru'] ?? null,
@@ -22,7 +22,7 @@ class CreateMenuAction
             'order' => $data['order'] ?? 0,
             'route' => $data['route'] ?? null,
             'url' => $data['url'] ?? null,
-            'sys_name' => $data['sys_name']  ?? Str::slug($data['title']),
+            'sys_name' => $data['sys_name']  ?? Str::slug($data['title_uz'].'-'.random_int(1,999)),
         ]);
 
     }

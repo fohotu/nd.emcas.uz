@@ -58,8 +58,10 @@ class MenuController extends Controller
      */
     public function store(CreateMenuRequest $request, CreateMenuAction $action)
     {
+        
+        $r = $action->execute($request->validated());
+      //  dd($request,$request->validated(),$r);
        
-        $action->execute($request->validated());
         return redirect()->route('menu.index')
             ->with('success', 'Menu created successfully');
 

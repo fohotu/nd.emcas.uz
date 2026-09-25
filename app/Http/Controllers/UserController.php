@@ -86,4 +86,22 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Пользователи удалены.');
     }
 
+
+    public function updateLanguage(Request $request)
+    {
+        $request->validate([
+            'language' => ['required', 'string', 'in:uz,ru,en'],
+        ]);
+
+        $user = $request->user();
+
+        $user->language = $request->language;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'language' => $user->language,
+        ]);
+    }
+
 }

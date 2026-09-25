@@ -1,20 +1,41 @@
 import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import axios from 'axios';
 
-export default function LanguageDropdown() {
+export default function LanguageDropdown({default_language}) {
     const [isOpen, setIsOpen] = useState(false);
-    const [language, setLanguage] = useState('RU');
+    const [language, setLanguage] = useState(default_language);
+
+    const changeLanguage = async (language) => {
+        try {
+            const response = await axios.post('/users/language', {
+                language:language.toLowerCase(),
+            });
+
+            if (response.data.success) {
+                console.log('Язык изменён:', response.data.language);
+                setLanguage(language)
+                // после изменения перезагрузить Inertia props
+                router.reload({
+                    only: ['auth', 'main_menu'],
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка изменения языка:', error);
+        }
+    };
 
     const languages = [
         {
-            code: 'RU',
+            code: 'ru',
             name: 'Русский',
         },
         {
-            code: 'UZ',
+            code: 'uz',
             name: 'O‘zbekcha',
         },
         {
-            code: 'EN',
+            code: 'en',
             name: 'English',
         },
     ];
@@ -145,7 +166,7 @@ export default function LanguageDropdown() {
                                 key={item.code}
                                 type="button"
                                 onClick={() => {
-                                    setLanguage(item.code);
+                                    changeLanguage(item.code);
                                     setIsOpen(false);
                                 }}
                                 className={`

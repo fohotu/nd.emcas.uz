@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from '@inertiajs/react';
 import AsyncSelect from 'react-select/async';
 
@@ -13,123 +13,105 @@ function Edit({
     loadMenu,
 }) {
     const { data, setData, put, processing, errors } = useForm({
-        title_ru: category.title_ru || '',
-        title_uz: category.title_uz || '',
-        title_en: category.title_en || '',
-
-        description_ru: category.description_ru || '',
-        description_uz: category.description_uz || '',
-        description_en: category.description_en || '',
-
+        title: category.title || '',
+        description: category.description || '',
         parent: category.parent?.id
             ? {
                   value: category.parent.id,
                   label: category.parent.title,
               }
             : null,
-
         parent_id: category.parent_id || '',
-
         menu_id: category.menu_id || '',
-
         menu: category.menu?.id
             ? {
                   value: category.menu.id,
                   label: category.menu.title,
               }
             : null,
-
         order: category.order || '',
     });
-
-    const [activeLanguage, setActiveLanguage] = useState('uz');
-
-    const languages = [
-        { code: 'uz', label: "O'zbek" },
-        { code: 'ru', label: 'Русский' },
-        { code: 'en', label: 'English' },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find((item) => item.code === activeLanguage)?.label || '';
 
     const submit = (e) => {
         e.preventDefault();
 
         put(`/category/${category.id}`, {
-            onSuccess: () => onSuccessHandler?.(),
-            onError: (errors) => onErrorHandler?.(errors),
+            onSuccess: () => {
+                onSuccessHandler?.();
+            },
+            onError: (errors) => {
+                onErrorHandler?.(errors);
+            },
         });
     };
-
-    const getErrorClass = (field) =>
-        errors[field]
-            ? 'border-red-400 focus:border-red-500 focus:ring-red-50'
-            : 'border-gray-200 focus:border-blue-500 focus:ring-blue-50';
 
     const selectStyles = {
         control: (provided, state) => ({
             ...provided,
             minHeight: '42px',
             borderRadius: '8px',
-            borderColor:
-                errors?.menu_id || errors?.parent_id
-                    ? '#ef4444'
-                    : state.isFocused
+            borderColor: errors?.menu_id || errors?.parent_id
+                ? '#ef4444'
+                : state.isFocused
                     ? '#3b82f6'
                     : '#e5e7eb',
             boxShadow: state.isFocused
-                ? '0 0 0 4px rgba(59,130,246,.08)'
+                ? '0 0 0 4px rgba(59, 130, 246, 0.08)'
                 : 'none',
             '&:hover': {
-                borderColor:
-                    errors?.menu_id || errors?.parent_id
-                        ? '#ef4444'
-                        : '#3b82f6',
+                borderColor: errors?.menu_id || errors?.parent_id
+                    ? '#ef4444'
+                    : '#3b82f6',
             },
         }),
+
         valueContainer: (provided) => ({
             ...provided,
             padding: '2px 12px',
         }),
+
         placeholder: (provided) => ({
             ...provided,
             color: '#9ca3af',
             fontSize: '14px',
         }),
+
         singleValue: (provided) => ({
             ...provided,
             color: '#374151',
             fontSize: '14px',
         }),
+
         input: (provided) => ({
             ...provided,
             fontSize: '14px',
         }),
+
         option: (provided, state) => ({
             ...provided,
             backgroundColor: state.isSelected
                 ? '#2563eb'
                 : state.isFocused
-                ? '#eff6ff'
-                : '#fff',
-            color: state.isSelected ? '#fff' : '#111827',
+                    ? '#eff6ff'
+                    : '#ffffff',
+            color: state.isSelected ? '#ffffff' : '#111827',
             cursor: 'pointer',
             fontSize: '14px',
             padding: '10px 12px',
         }),
+
         menu: (provided) => ({
             ...provided,
             borderRadius: '8px',
             overflow: 'hidden',
-            border: '1px solid #f1f5f9',
             boxShadow:
-                '0 10px 25px -5px rgba(0,0,0,.08),0 8px 10px -6px rgba(0,0,0,.05)',
+                '0 10px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.05)',
+            border: '1px solid #f1f5f9',
         }),
-        indicatorSeparator: () => ({ display: 'none' }),
+
+        indicatorSeparator: () => ({
+            display: 'none',
+        }),
     };
 
     return (
@@ -140,7 +122,7 @@ function Edit({
             {/* Header */}
             <div className="border-b border-gray-100 px-6 py-5">
                 <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
                         <svg
                             className="h-5 w-5"
                             fill="none"
@@ -166,7 +148,6 @@ function Edit({
                         <h2 className="text-lg font-semibold text-gray-800">
                             Редактирование категории
                         </h2>
-
                         <p className="mt-1 text-sm text-gray-400">
                             Измените информацию о категории.
                         </p>
@@ -179,43 +160,24 @@ function Edit({
 
                 {/* Title */}
                 <div>
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className="block text-sm font-medium text-gray-700">
-                            Название
-                            <span className="ml-1 text-red-500">*</span>
-                        </label>
-
-                        <div className="flex rounded-lg bg-gray-100 p-1">
-                            {languages.map((language) => (
-                                <button
-                                    key={language.code}
-                                    type="button"
-                                    onClick={() => setActiveLanguage(language.code)}
-                                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                                        activeLanguage === language.code
-                                            ? 'bg-white text-blue-600 shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                                >
-                                    {language.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                        Название <span className="text-red-500">*</span>
+                    </label>
 
                     <input
                         type="text"
-                        value={data[titleField]}
-                        onChange={(e) => setData(titleField, e.target.value)}
-                        placeholder={`Введите название на ${activeLanguageLabel}`}
-                        className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition ${getErrorClass(
-                            titleField
-                        )}`}
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 ${
+                            errors?.title
+                                ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-50'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'
+                        }`}
                     />
 
-                    {errors[titleField] && (
+                    {errors?.title && (
                         <p className="mt-1.5 text-xs text-red-500">
-                            {errors[titleField]}
+                            {errors.title}
                         </p>
                     )}
                 </div>
@@ -230,7 +192,7 @@ function Edit({
                         cacheOptions={false}
                         defaultOptions
                         loadOptions={loadMenu}
-                        value={data.menu}
+                        value={data.menu ?? null}
                         placeholder="Выберите меню..."
                         isClearable
                         onChange={(option) =>
@@ -243,7 +205,7 @@ function Edit({
                         styles={selectStyles}
                     />
 
-                    {errors.menu_id && (
+                    {errors?.menu_id && (
                         <p className="mt-1.5 text-xs text-red-500">
                             {errors.menu_id}
                         </p>
@@ -276,7 +238,7 @@ function Edit({
                         styles={selectStyles}
                     />
 
-                    {errors.parent_id && (
+                    {errors?.parent_id && (
                         <p className="mt-1.5 text-xs text-red-500">
                             {errors.parent_id}
                         </p>
@@ -294,12 +256,14 @@ function Edit({
                         min={0}
                         value={data.order}
                         onChange={(e) => setData('order', e.target.value)}
-                        className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition ${getErrorClass(
-                            'order'
-                        )}`}
+                        className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition ${
+                            errors?.order
+                                ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-50'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'
+                        }`}
                     />
 
-                    {errors.order && (
+                    {errors?.order && (
                         <p className="mt-1.5 text-xs text-red-500">
                             {errors.order}
                         </p>
@@ -308,31 +272,26 @@ function Edit({
 
                 {/* Description */}
                 <div>
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className="block text-sm font-medium text-gray-700">
-                            Описание
-                        </label>
-
-                        <span className="text-xs text-gray-400">
-                            {activeLanguageLabel}
-                        </span>
-                    </div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                        Описание
+                    </label>
 
                     <textarea
                         rows={4}
-                        value={data[descriptionField]}
+                        value={data.description}
                         onChange={(e) =>
-                            setData(descriptionField, e.target.value)
+                            setData('description', e.target.value)
                         }
-                        placeholder={`Введите описание на ${activeLanguageLabel}`}
-                        className={`w-full resize-none rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition ${getErrorClass(
-                            descriptionField
-                        )}`}
+                        className={`w-full resize-none rounded-lg border px-3.5 py-2.5 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 ${
+                            errors?.description
+                                ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-50'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'
+                        }`}
                     />
 
-                    {errors[descriptionField] && (
+                    {errors?.description && (
                         <p className="mt-1.5 text-xs text-red-500">
-                            {errors[descriptionField]}
+                            {errors.description}
                         </p>
                     )}
                 </div>

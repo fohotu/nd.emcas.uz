@@ -22,7 +22,13 @@ class UpdateDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'title_uz' => ['required', 'string', 'max:255'],
+            'title_ru' => ['nullable', 'string', 'max:255'],
+            'title_en' => ['nullable', 'string', 'max:255'],
+            'description_uz' => ['nullable', 'string', 'max:1000'],
+            'description_ru' => ['nullable', 'string', 'max:1000'],
+            'description_en' => ['nullable', 'string', 'max:1000'],
             'number' => ['required', 'string', 'max:255'],
             'menu_id'=> ['nullable'],
             'category_id'=> ['nullable'],

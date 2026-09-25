@@ -92,6 +92,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
 
+    Route::post('/users/language', [UserController::class, 'updateLanguage'])
+        ->name('user.language.update');
+
+
     Route::resource('menu', MenuController::class)->only(['index', 'store', 'update', 'destroy','edit']);
     Route::post('/menu/bulk-delete', [MenuController::class, 'bulkDelete'])->name('menu.bulk-delete');
     Route::get('/menu/live-search', [MenuController::class, 'liveSearch'])->name('menu.live-search');

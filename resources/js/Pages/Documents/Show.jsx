@@ -127,16 +127,16 @@ function Show({ document }) {
     <BreadCrubs items={breadcrumb} />
 
     <Modal show={viewerOpen} maxWidth="full">
-    <div className="w-[99vw] h-[95vh] max-w-none max-h-none">
-        <DocumentViewer 
-                        document={document}
-                        open={viewerOpen} 
-                        file={viewerFile?.url}
-                        title={viewerFile?.title}
-                        onClose={closeDocument}
-        />   
-    </div>
-</Modal>
+        <div className="w-[99vw] h-[95vh] max-w-none max-h-none">
+            <DocumentViewer 
+                            document={document}
+                            open={viewerOpen} 
+                            file={viewerFile?.url}
+                            title={viewerFile?.title}
+                            onClose={closeDocument}
+            />   
+        </div>
+    </Modal>
 
 
 

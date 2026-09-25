@@ -13,9 +13,7 @@ export default function CreateForm(props) {
     const { csrf_token } = usePage().props;
 
     const { data, setData, post, processing, errors } = useForm({
-        title_ru: "",
-        title_uz: "",
-        title_en: "",
+        title: "",
         number: "",
         reg_date: "",
         menu_id: "",
@@ -25,11 +23,7 @@ export default function CreateForm(props) {
         type: "uz",
         added: "",
         system_date: "",
-
-        description_ru: "",
-        description_uz: "",
-        description_en: "",
-
+        description: "",
         let_comment: true,
         language: "uz",
         doc_date: "",
@@ -39,20 +33,6 @@ export default function CreateForm(props) {
 
     const [uploadedError, setUploadedError] = useState([]);
     const [categoryLoaded, setCategoryLoad] = useState([]);
-
-    const [activeLanguage, setActiveLanguage] = useState("uz");
-
-    const languages = [
-        { code: "uz", label: "O'zbek" },
-        { code: "ru", label: "Русский" },
-        { code: "en", label: "English" },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find((l) => l.code === activeLanguage)?.label || "";
 
     useEffect(() => {
         if (categories.length) {
@@ -71,15 +51,9 @@ export default function CreateForm(props) {
             .then((response) =>
                 response.data.map((item) => ({
                     value: item.id,
-                    /*
                     label: item.number
                         ? `${item.number} ${item.title || ""}`
                         : item.title || "",
-                    */
-                   label:
-                    item.number
-                        ? `${item.number} ${item[`title_${data.language}`] || ""}`
-                        : item[`title_${data.language}`] || "",
                     status: item.status,
                 }))
             );
@@ -97,8 +71,7 @@ export default function CreateForm(props) {
             .then((response) =>
                 response.data.data.map((item) => ({
                     value: item.id,
-                   // label: item.title || "",
-                    label: item[`title_${data.language}`] || "",
+                    label: item.title || "",
                 }))
             );
     };
@@ -295,43 +268,28 @@ export default function CreateForm(props) {
 
                     {/* Title */}
                     <div className="mb-5">
-                        <div className="mb-2 flex items-center justify-between">
-                            <label className={labelClass}>
-                                Название
-                                <span className="ml-1 text-red-500">*</span>
-                            </label>
-
-                            <div className="flex rounded-lg bg-gray-100 p-1">
-                                {languages.map((language) => (
-                                    <button
-                                        key={language.code}
-                                        type="button"
-                                        onClick={() => setActiveLanguage(language.code)}
-                                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                                            activeLanguage === language.code
-                                                ? "bg-white text-blue-600 shadow-sm"
-                                                : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {language.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <label className={labelClass}>
+                            Название
+                            <span className="ml-1 text-red-500">*</span>
+                        </label>
 
                         <input
                             type="text"
-                            value={data[titleField]}
-                            onChange={(e) => setData(titleField, e.target.value)}
-                            placeholder={`Введите название на ${activeLanguageLabel}`}
+                            value={data.title}
+                            onChange={(e) =>
+                                setData("title", e.target.value)
+                            }
+                            placeholder="Введите название документа..."
                             className={`${inputClass} ${
-                                errors[titleField] ? "border-red-400" : ""
+                                errors.title
+                                    ? "border-red-400"
+                                    : ""
                             }`}
                         />
 
-                        {errors[titleField] && (
+                        {errors.title && (
                             <p className="mt-1 text-xs text-red-500">
-                                {errors[titleField]}
+                                {errors.title}
                             </p>
                         )}
                     </div>
@@ -542,22 +500,20 @@ export default function CreateForm(props) {
 
                     {/* Description */}
                     <div className="mb-5">
-                        <div className="mb-2 flex items-center justify-between">
-                            <label className={labelClass}>Описание</label>
-
-                            <span className="text-xs text-gray-400">
-                                {activeLanguageLabel}
-                            </span>
-                        </div>
+                        <label className={labelClass}>
+                            Описание
+                        </label>
 
                         <Editor
-                            value={data[descriptionField]}
-                            onChange={(html) => setData(descriptionField, html)}
+                            value={data.description}
+                            onChange={(html) =>
+                                setData("description", html)
+                            }
                         />
 
-                        {errors[descriptionField] && (
+                        {errors.description && (
                             <p className="mt-1 text-xs text-red-500">
-                                {errors[descriptionField]}
+                                {errors.description}
                             </p>
                         )}
                     </div>

@@ -9,7 +9,13 @@ class Category extends Model
     
     protected $fillable = [
         'title',
+        'title_uz',
+        'title_ru',
+        'title_en',
         'description',
+        'description_uz',
+        'description_ru',
+        'description_en',
         'menu_id',
         'parent_id',
         'order',

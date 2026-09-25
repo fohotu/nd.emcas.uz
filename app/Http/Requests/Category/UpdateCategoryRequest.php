@@ -23,8 +23,14 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'title_uz' => ['required', 'string', 'max:255'],
+            'title_ru' => ['nullable', 'string', 'max:255'],
+            'title_en' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'description_uz' => ['nullable', 'string'],
+            'description_ru' => ['nullable', 'string'],
+            'description_en' => ['nullable', 'string'],
             'menu_id' => ['required', 'exists:menus,id'],
             'parent_id' => ['nullable', 'exists:categories,id'],
             'order' => ['nullable', 'integer', 'min:0'],

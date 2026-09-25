@@ -19,37 +19,17 @@ class StoreDocumentRequest extends FormRequest
      * Правила валидации.
     */
 
-    /*
-    
-            $table->id();
-            $table->text('title')->nullable();
-            $table->string('number', 50)->nullable();
-            $table->timestamp('reg_date')->nullable();
-            $table->foreignId('category_id')
-                ->nullable()
-                ->constrained('categories')
-                ->nullOnDelete();
-            $table->foreignId('version_for')
-                ->nullable()
-                ->constrained('documents')
-                ->nullOnDelete();
-            $table->string('status', 15)->default('formation');
-            $table->string('type', 32)->default('uz');
-            $table->timestamp('added')->nullable();
-            $table->timestamp('system_date')->nullable();
-            $table->text('description')->nullable();
-            $table->boolean('let_comment')->default(true);
-            $table->string('language', 10)->default('uz');
-            $table->string('doc_date', 15)->nullable();
-            $table->timestamp('document_date')->nullable();
-            $table->timestamps();
-    
-    */
 
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'title_uz' => ['required', 'string', 'max:255'],
+            'title_ru' => ['nullable', 'string', 'max:255'],
+            'title_en' => ['nullable', 'string', 'max:255'],
+            'description_uz' => ['nullable', 'string', 'max:1000'],
+            'description_ru' => ['nullable', 'string', 'max:1000'],
+            'description_en' => ['nullable', 'string', 'max:1000'],
             'number' => ['required', 'string', 'max:255'],
             'menu_id'=> ['nullable'],
             'category_id'=> ['nullable'],

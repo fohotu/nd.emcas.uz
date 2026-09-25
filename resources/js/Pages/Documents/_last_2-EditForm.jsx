@@ -7,106 +7,82 @@ import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import Swal from "sweetalert2";
 
-export default function CreateForm(props) {
-    const { categories = [], documents = [], onSuccessHandler } = props;
+export default function EditForm(props) {
+    const { activeModel, onSuccessHandler, downloadFile } = props;
 
     const { csrf_token } = usePage().props;
 
-    const { data, setData, post, processing, errors } = useForm({
-        title_ru: "",
-        title_uz: "",
-        title_en: "",
-        number: "",
-        reg_date: "",
-        menu_id: "",
-        category_id: "",
-        version_for: "",
-        status: "formation",
-        type: "uz",
-        added: "",
-        system_date: "",
-
-        description_ru: "",
-        description_uz: "",
-        description_en: "",
-
-        let_comment: true,
-        language: "uz",
-        doc_date: "",
-        document_date: "",
-        files: [],
+    const { data, setData, put, processing, errors } = useForm({
+        title: activeModel?.title,
+        number: activeModel?.number,
+        category_id: activeModel?.category_id,
+        version_for: activeModel?.version_for,
+        status: activeModel?.status,
+        description: activeModel?.description,
+        language: activeModel?.language,
+        document_date: activeModel?.document_date,
+        files: activeModel?.files,
+        versions: activeModel?.versions,
     });
+
+    useEffect(() => {
+        setData({
+            title: activeModel?.title,
+            number: activeModel?.number,
+            category_id: activeModel?.category_id,
+            menu_id: activeModel?.category?.menu?.id,
+            version_for: activeModel?.version_for,
+            status: activeModel?.status,
+            description: activeModel?.description,
+            language: activeModel?.language,
+            document_date: activeModel?.document_date,
+            files: activeModel?.files,
+            category: activeModel?.category,
+            menu: activeModel?.category?.menu,
+            versions: activeModel?.versions,
+        });
+    }, []);
 
     const [uploadedError, setUploadedError] = useState([]);
     const [categoryLoaded, setCategoryLoad] = useState([]);
 
-    const [activeLanguage, setActiveLanguage] = useState("uz");
-
-    const languages = [
-        { code: "uz", label: "O'zbek" },
-        { code: "ru", label: "Русский" },
-        { code: "en", label: "English" },
-    ];
-
-    const titleField = `title_${activeLanguage}`;
-    const descriptionField = `description_${activeLanguage}`;
-
-    const activeLanguageLabel =
-        languages.find((l) => l.code === activeLanguage)?.label || "";
-
-    useEffect(() => {
-        if (categories.length) {
-            const options = categories.map((category) => ({
-                label: category.title,
-                value: category.id,
-            }));
-
-            setCategoryLoad(options);
-        }
-    }, [categories]);
-
     const getdataList = (input) => {
         return axios
             .get(`/document/live-search?q=${input}`)
-            .then((response) =>
-                response.data.map((item) => ({
+            .then((response) => {
+                return response.data.map((item) => ({
                     value: item.id,
-                    /*
                     label: item.number
                         ? `${item.number} ${item.title || ""}`
                         : item.title || "",
-                    */
-                   label:
-                    item.number
-                        ? `${item.number} ${item[`title_${data.language}`] || ""}`
-                        : item[`title_${data.language}`] || "",
-                    status: item.status,
-                }))
-            );
+                }));
+            });
     };
 
     const getMenuList = (input) => {
         return axios
             .get(`/menu/live-search?q=${input}`)
-            .then((response) => response.data);
+            .then((response) => {
+                return response.data.data.map((item) => ({
+                    value: item.id,
+                    label: item.title || "",
+                }));
+            });
     };
 
     const getCategoryByMenu = (menuId) => {
         return axios
             .get(`/category/by-menu?menu_id=${menuId}`)
-            .then((response) =>
-                response.data.data.map((item) => ({
+            .then((response) => {
+                return response.data.data.map((item) => ({
                     value: item.id,
-                   // label: item.title || "",
-                    label: item[`title_${data.language}`] || "",
-                }))
-            );
+                    label: item.title || "",
+                }));
+            });
     };
 
     const uploadProps = {
         name: "decision-document",
-
-        onStart: function () {},
 
         withCredentials: true,
 
@@ -134,12 +110,12 @@ export default function CreateForm(props) {
         axios.post("/file/remove", file).then((response) => {
             if (response.data.message === "success") {
                 const files = data.files.filter(
-                    (item) => item.id !== file.id
+                    (item) => item.id != file.id
                 );
 
                 setData({
                     ...data,
-                    files,
+                    files: files,
                 });
             }
         });
@@ -148,7 +124,7 @@ export default function CreateForm(props) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("documents.store"), {
+        put(route("documents.update", activeModel.id), {
             onSuccess: () => {
                 onSuccessHandler?.();
             },
@@ -182,13 +158,12 @@ export default function CreateForm(props) {
     `;
 
     const labelClass =
-        "mb-1.5 block text-sm font-medium text-gray-700";
+        "mb-2 block text-sm font-medium text-gray-700";
 
     const selectStyles = {
         control: (provided, state) => ({
             ...provided,
             minHeight: "42px",
-            height: "42px",
             borderRadius: "8px",
             borderColor: state.isFocused
                 ? "#3b82f6"
@@ -203,13 +178,7 @@ export default function CreateForm(props) {
 
         valueContainer: (provided) => ({
             ...provided,
-            height: "42px",
             padding: "2px 12px",
-        }),
-
-        indicatorsContainer: (provided) => ({
-            ...provided,
-            height: "42px",
         }),
 
         placeholder: (provided) => ({
@@ -235,9 +204,9 @@ export default function CreateForm(props) {
                 ? "#2563eb"
                 : state.isFocused
                 ? "#eff6ff"
-                : "#ffffff",
+                : "#fff",
             color: state.isSelected
-                ? "#ffffff"
+                ? "#fff"
                 : "#111827",
             cursor: "pointer",
             fontSize: "14px",
@@ -275,74 +244,58 @@ export default function CreateForm(props) {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={1.8}
-                                d="M12 4v16m8-8H4"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"
+                            />
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.8}
+                                d="M16.5 3.5a2.121 2.121 0 013 3L11 15l-4 1-4-1 1-4 8.5-8.5z"
                             />
                         </svg>
                     </div>
 
                     <div>
                         <h1 className="text-xl font-semibold text-gray-800">
-                            Создание документа
+                            Редактирование документа
                         </h1>
 
                         <p className="mt-0.5 text-sm text-gray-400">
-                            Заполните информацию о новом документе
+                            Изменение информации о документе
                         </p>
                     </div>
                 </div>
 
                 <form onSubmit={submit} className="p-6">
 
-                    {/* Title */}
+                    {/* Название */}
                     <div className="mb-5">
-                        <div className="mb-2 flex items-center justify-between">
-                            <label className={labelClass}>
-                                Название
-                                <span className="ml-1 text-red-500">*</span>
-                            </label>
-
-                            <div className="flex rounded-lg bg-gray-100 p-1">
-                                {languages.map((language) => (
-                                    <button
-                                        key={language.code}
-                                        type="button"
-                                        onClick={() => setActiveLanguage(language.code)}
-                                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                                            activeLanguage === language.code
-                                                ? "bg-white text-blue-600 shadow-sm"
-                                                : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                    >
-                                        {language.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <label className={labelClass}>
+                            Название
+                        </label>
 
                         <input
                             type="text"
-                            value={data[titleField]}
-                            onChange={(e) => setData(titleField, e.target.value)}
-                            placeholder={`Введите название на ${activeLanguageLabel}`}
-                            className={`${inputClass} ${
-                                errors[titleField] ? "border-red-400" : ""
-                            }`}
+                            value={data.title}
+                            onChange={(e) =>
+                                setData("title", e.target.value)
+                            }
+                            className={inputClass}
                         />
 
-                        {errors[titleField] && (
+                        {errors.title && (
                             <p className="mt-1 text-xs text-red-500">
-                                {errors[titleField]}
+                                {errors.title}
                             </p>
                         )}
                     </div>
 
-                    {/* Number + Menu */}
+                    {/* Номер + Меню */}
                     <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-2">
 
                         <div>
                             <label className={labelClass}>
                                 Номер
-                                <span className="ml-1 text-red-500">*</span>
                             </label>
 
                             <input
@@ -351,39 +304,40 @@ export default function CreateForm(props) {
                                 onChange={(e) =>
                                     setData("number", e.target.value)
                                 }
-                                placeholder="Введите номер..."
-                                className={`${inputClass} ${
-                                    errors.number
-                                        ? "border-red-400"
-                                        : ""
-                                }`}
+                                className={inputClass}
                             />
-
-                            {errors.number && (
-                                <p className="mt-1 text-xs text-red-500">
-                                    {errors.number}
-                                </p>
-                            )}
                         </div>
 
                         <div>
                             <label className={labelClass}>
-                                Меню
+                                Относится к
                             </label>
 
                             <AsyncSelect
-                                loadOptions={getMenuList}
                                 isClearable
-                                placeholder="Выберите меню..."
-                                onChange={(option) => {
-                                    if (option) {
+                                value={
+                                    data?.menu
+                                        ? {
+                                              value: data.menu.id,
+                                              label: data.menu.title,
+                                          }
+                                        : null
+                                }
+                                onChange={(e) => {
+                                    if (e) {
                                         setData({
                                             ...data,
-                                            menu_id: option.value,
+                                            menu_id: e.value,
                                             category_id: "",
+                                            menu: {
+                                                ...data.menu,
+                                                id: e.value,
+                                                title: e.label,
+                                            },
+                                            category: null,
                                         });
 
-                                        getCategoryByMenu(option.value).then(
+                                        getCategoryByMenu(e.value).then(
                                             (categories) => {
                                                 setCategoryLoad(categories);
                                             }
@@ -398,40 +352,49 @@ export default function CreateForm(props) {
                                         setCategoryLoad([]);
                                     }
                                 }}
+                                loadOptions={getMenuList}
+                                placeholder="Выберите меню..."
+                                allowCreateWhileLoading
+                                createOptionPosition="first"
                                 styles={selectStyles}
                             />
                         </div>
                     </div>
 
-                    {/* Category + Version */}
+                    {/* Категория + Версия */}
                     <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-2">
 
                         <div>
                             <label className={labelClass}>
-                                Категория
+                                Форма документа
                             </label>
 
                             <Select
                                 options={categoryLoaded}
                                 isClearable
-                                placeholder="Выберите категорию..."
                                 value={
-                                    data.category_id
-                                        ? categoryLoaded.find(
-                                              (option) =>
-                                                  option.value ===
-                                                  data.category_id
-                                          ) || null
+                                    data?.category
+                                        ? {
+                                              value: data.category.id,
+                                              label: data.category.title,
+                                          }
                                         : null
                                 }
-                                onChange={(option) => {
-                                    setData({
-                                        ...data,
-                                        category_id: option
-                                            ? option.value
-                                            : null,
-                                    });
+                                onChange={(e) => {
+                                    if (e) {
+                                        const c_d = {
+                                            id: e.value,
+                                            title: e.label,
+                                        };
+
+                                        setData({
+                                            ...data,
+                                            category: c_d,
+                                            category_id: e.value,
+                                        });
+                                    }
                                 }}
+                                placeholder="Выберите категорию..."
                                 styles={selectStyles}
                             />
                         </div>
@@ -442,23 +405,38 @@ export default function CreateForm(props) {
                             </label>
 
                             <AsyncSelect
-                                loadOptions={getdataList}
                                 isClearable
-                                placeholder="Выберите документ..."
-                                onChange={(option) => {
-                                    setData({
-                                        ...data,
-                                        version_for: option
-                                            ? option.value
-                                            : "",
-                                    });
+                                value={
+                                    data?.versions
+                                        ? {
+                                              value: data.versions.id,
+                                              label: `${data.versions.number || ""} (${data.versions.title || ""})`,
+                                          }
+                                        : null
+                                }
+                                onChange={(e) => {
+                                    if (e) {
+                                        setData({
+                                            ...data,
+                                            version_for: e.value,
+                                            versions: {
+                                                ...data.versions,
+                                                id: e.value,
+                                                title: e.label,
+                                            },
+                                        });
+                                    }
                                 }}
+                                loadOptions={getdataList}
+                                placeholder="Выберите документ..."
+                                allowCreateWhileLoading
+                                createOptionPosition="first"
                                 styles={selectStyles}
                             />
                         </div>
                     </div>
 
-                    {/* Status + Language + Date */}
+                    {/* Статус + Язык + Дата */}
                     <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-3">
 
                         <div>
@@ -476,12 +454,16 @@ export default function CreateForm(props) {
                                 }
                                 className={inputClass}
                             >
-                                <option value="active">
-                                    Действующие
+                                <option value="formation">
+                                    Formation
                                 </option>
 
-                                <option value="passive">
-                                    Утратившие силу
+                                <option value="active">
+                                    Active
+                                </option>
+
+                                <option value="archive">
+                                    Archive
                                 </option>
                             </select>
                         </div>
@@ -513,12 +495,6 @@ export default function CreateForm(props) {
                                     English
                                 </option>
                             </select>
-
-                            {errors.language && (
-                                <p className="mt-1 text-xs text-red-500">
-                                    {errors.language}
-                                </p>
-                            )}
                         </div>
 
                         <div>
@@ -528,7 +504,14 @@ export default function CreateForm(props) {
 
                             <input
                                 type="date"
-                                value={data.document_date}
+                                value={
+                                    data.document_date
+                                        ? data.document_date.substring(
+                                              0,
+                                              10
+                                          )
+                                        : ""
+                                }
                                 onChange={(e) =>
                                     setData(
                                         "document_date",
@@ -540,73 +523,96 @@ export default function CreateForm(props) {
                         </div>
                     </div>
 
-                    {/* Description */}
-                    <div className="mb-5">
-                        <div className="mb-2 flex items-center justify-between">
-                            <label className={labelClass}>Описание</label>
-
-                            <span className="text-xs text-gray-400">
-                                {activeLanguageLabel}
-                            </span>
-                        </div>
-
-                        <Editor
-                            value={data[descriptionField]}
-                            onChange={(html) => setData(descriptionField, html)}
-                        />
-
-                        {errors[descriptionField] && (
-                            <p className="mt-1 text-xs text-red-500">
-                                {errors[descriptionField]}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Upload */}
+                    {/* Описание */}
                     <div className="mb-5">
                         <label className={labelClass}>
-                            Файлы документа
+                            Описание
+                        </label>
+
+                        <Editor
+                            value={data.description}
+                            onChange={(html) =>
+                                setData("description", html)
+                            }
+                        />
+                    </div>
+
+                    {/* Файлы */}
+                    <div className="mb-5">
+                        <label className={labelClass}>
+                            Файлы
                         </label>
 
                         <Upload {...uploadProps}>
                             <div className="cursor-pointer rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-5 py-5 text-center transition hover:border-blue-400 hover:bg-blue-50/30">
 
-                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                                    <svg
-                                        className="h-5 w-5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={1.7}
-                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M12 12v8m0-8l-3 3m3-3l3 3"
-                                        />
-                                    </svg>
-                                </div>
+                                <svg
+                                    className="mx-auto h-9 w-9 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1.5}
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M12 12v9m0-9l-3 3m3-3l3 3"
+                                    />
+                                </svg>
 
                                 <p className="mt-2 text-sm font-medium text-gray-700">
                                     Нажмите для выбора файлов
                                 </p>
 
-                                <p className="mt-0.5 text-xs text-gray-400">
+                                <p className="mt-1 text-xs text-gray-400">
                                     PDF, DOCX, XLSX, JPG, PNG
                                 </p>
                             </div>
                         </Upload>
 
-                        {/* Uploaded files */}
-                        {data.files.length > 0 && (
+                        {data?.files?.length > 0 && (
                             <div className="mt-3 space-y-2">
                                 {data.files.map((file, index) => (
                                     <div
                                         key={`${file.file_name}-${index}`}
                                         className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5"
                                     >
-                                        <div className="flex min-w-0 items-center gap-2.5">
-                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-gray-500">
+                                        <div className="flex min-w-0 items-center gap-2">
+                                            <svg
+                                                className="h-4 w-4 shrink-0 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={1.7}
+                                                    d="M7 3h7l5 5v13H7a2 2 0 01-2-2V5a2 2 0 012-2z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={1.7}
+                                                    d="M14 3v6h6"
+                                                />
+                                            </svg>
+
+                                            <span className="truncate text-sm text-gray-700">
+                                                {file.file_name}
+                                            </span>
+                                        </div>
+
+                                        <div className="ml-3 flex shrink-0 gap-1">
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    downloadFile(file)
+                                                }
+                                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-emerald-600 hover:bg-emerald-50"
+                                                title="Скачать"
+                                            >
                                                 <svg
                                                     className="h-4 w-4"
                                                     fill="none"
@@ -616,45 +622,35 @@ export default function CreateForm(props) {
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        strokeWidth={1.7}
-                                                        d="M7 3h7l5 5v13H7a2 2 0 01-2-2V5a2 2 0 012-2z"
+                                                        strokeWidth={1.8}
+                                                        d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
                                                     />
+                                                </svg>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    deleteFile(file)
+                                                }
+                                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-red-500 hover:bg-red-50"
+                                                title="Удалить"
+                                            >
+                                                <svg
+                                                    className="h-4 w-4"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        strokeWidth={1.7}
-                                                        d="M14 3v6h6"
+                                                        strokeWidth={1.8}
+                                                        d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7h10zM10 11v5M14 11v5"
                                                     />
                                                 </svg>
-                                            </div>
-
-                                            <span className="truncate text-sm text-gray-700">
-                                                {file.file_name}
-                                            </span>
+                                            </button>
                                         </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                deleteFile(file)
-                                            }
-                                            className="ml-3 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-500 transition hover:bg-red-50"
-                                            title="Удалить"
-                                        >
-                                            <svg
-                                                className="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={1.8}
-                                                    d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a1 1 0 01-1 1H8a1 1 0 01-1-1V7h10zM10 11v5M14 11v5"
-                                                />
-                                            </svg>
-                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -666,49 +662,11 @@ export default function CreateForm(props) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
                         >
-                            {processing ? (
-                                <>
-                                    <svg
-                                        className="h-4 w-4 animate-spin"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            className="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            strokeWidth="4"
-                                        />
-                                        <path
-                                            className="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                        />
-                                    </svg>
-                                    Сохранение...
-                                </>
-                            ) : (
-                                <>
-                                    <svg
-                                        className="h-4 w-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={1.8}
-                                            d="M5 12l4 4L19 6"
-                                        />
-                                    </svg>
-                                    Сохранить
-                                </>
-                            )}
+                            {processing
+                                ? "Сохранение..."
+                                : "Сохранить"}
                         </button>
                     </div>
                 </form>
