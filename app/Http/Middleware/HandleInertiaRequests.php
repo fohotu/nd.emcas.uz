@@ -30,6 +30,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
+        $language = $request->user()?->language ?? 'uz';
+        app()->setLocale($language);
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -37,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'main_menu' => fn () => app(MenuService::class)->treeView(),
             'csrf_token' => $request->session()->token(),
+            'translations' => fn () => trans('messages'),
         ];
     }
 }

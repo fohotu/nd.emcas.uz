@@ -13,11 +13,10 @@ export default function LanguageDropdown({default_language}) {
             });
 
             if (response.data.success) {
-                console.log('Язык изменён:', response.data.language);
                 setLanguage(language)
                 // после изменения перезагрузить Inertia props
                 router.reload({
-                    only: ['auth', 'main_menu'],
+                    only: ['auth', 'main_menu','translations'],
                 });
             }
         } catch (error) {

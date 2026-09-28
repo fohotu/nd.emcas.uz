@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router,usePage } from '@inertiajs/react';
 import { Tree } from 'react-arborist';
+import useLocalized from '@/Hooks/useLocalized';
 import Modal from '@/Components/Modal';
 import Create from './Create';
 import Swal from 'sweetalert2';
@@ -22,6 +23,9 @@ function Index({ menu, query, treeMenu }) {
         title: query.title || '',
         description: query.description || '',
     });
+
+    const { translations } = usePage().props;
+    const { language, localized } = useLocalized();
 
     const buildTree = (menus) => {
         return menus?.map(menu => ({
@@ -737,23 +741,23 @@ function Index({ menu, query, treeMenu }) {
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Название
+                                          {translations.title}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Описание
+                                            {translations.description}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Создано
+                                            {translations.created}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Обновлено
+                                            {translations.updated}
                                         </th>
 
                                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Действия
+                                            {translations.actions}
                                         </th>
 
                                     </tr>
@@ -824,7 +828,7 @@ function Index({ menu, query, treeMenu }) {
                                                     </div>
 
                                                     <div className="font-medium text-gray-800">
-                                                        {item.title}
+                                                        {localized(item, 'title')}
                                                     </div>
 
                                                 </div>
@@ -834,11 +838,10 @@ function Index({ menu, query, treeMenu }) {
 
                                             <td className="max-w-md px-4 py-4 text-sm text-gray-600">
 
-                                                {item.description || (
-                                                    <span className="italic text-gray-400">
-                                                        Нет описания
-                                                    </span>
-                                                )}
+                                                {
+                                                   localized(item, 'description')
+                                                }
+                                            
 
                                             </td>
 

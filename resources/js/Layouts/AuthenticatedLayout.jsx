@@ -10,9 +10,7 @@ export default function AuthenticatedLayout({
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     
-    const { main_menu,auth } = usePage().props;
-
- 
+    const { main_menu,auth, translations } = usePage().props;
     const { language, localized } = useLocalized();
 
 
@@ -257,6 +255,7 @@ export default function AuthenticatedLayout({
                                 group-hover:scale-105
                             "
                         >
+                 
                             <svg
                                 className="h-6 w-6 text-white"
                                 fill="none"
