@@ -35,4 +35,49 @@ return [
     'user' => 'Foydalanuvchi',
     'updated' => 'Yangilangan',
     'actions' => 'Amallar',
+    'menu_list' => 'Menyu ro‘yxati',
+    'total_records' => 'Jami yozuvlar',
+    'document_list' => 'Hujjatlar ro‘yxati',
+    'user_list' => 'Foydalanuvchilar ro‘yxati',
+    'tag_list' => 'Teglar ro‘yxati',
+
+
+    'dashboard' => 'Boshqaruv paneli',
+    'menu' => 'Menyu',
+    'menu_search' => 'Menyuni qidirish',
+    'menu_search_placeholder' => 'Nomi va tavsifi bo‘yicha qidirish',
+    'category_search' => 'Kategoriyalarni qidirish',
+    'category_search_description' => 'Kategoriyalarni qidirish uchun filtrlardan foydalaning.',
+    'category_list' => 'Kategoriyalar ro‘yxati',
+    'document_search' => 'Hujjatlarni qidirish',
+    'document_search_description' => 'Hujjatlarni qidirish uchun filtrlardan foydalaning.',
+    'user_search' => 'Foydalanuvchilarni qidirish',
+    'user_search_description' => 'Foydalanuvchilarni qidirish uchun filtrlardan foydalaning.',
+    'role' => 'Rol',
+    'name' => 'Ism',
+    'email' => 'Email',
+    'registration_date' => 'Ro‘yxatdan o‘tgan sana',
+    'last_visit' => 'Oxirgi tashrif',
+    'system_overview' => 'Tizim haqida umumiy ma’lumot',
+    'main_statistics' => 'Elektron to‘plamning asosiy ko‘rsatkichlari',
+    'selected_section_documents' => 'Tanlangan bo‘lim hujjatlari ro‘yxati',
+    'document_search_parameters' => 'Hujjatlarni qidirish parametrlarini ko‘rsating.',
+    'search_results' => 'Qidiruv natijalari',
+    'found' => 'Topildi',
+
+    'active' => 'Amaldagi',
+    'passive' => 'Kuchini yo‘qotgan',
+
+    'document' => 'Hujjat',
+    'attached_files' => 'Biriktirilgan fayllar',
+    'language' => 'Til',
+    'created_date' => 'Yaratilgan sana',
+    'download' => 'Yuklab olish',
+    'view' => 'Ko‘rish',
+    'no_attached_files' => 'Biriktirilgan fayllar mavjud emas',
+    'file_name' => 'Fayl nomi',
+
+
+
+    
 ];

@@ -85,6 +85,8 @@ function PageThumbnail({
         };
     }, [pdf, pageNumber]);
 
+   
+
     return (
         <button
             type="button"
@@ -160,6 +162,8 @@ export default function DocumentViewer({
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    
 
     // ========================================================
     // LOAD PDF

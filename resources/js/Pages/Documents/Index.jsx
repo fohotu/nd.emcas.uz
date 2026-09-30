@@ -7,7 +7,7 @@ import EditForm from './EditForm';
 import Swal from 'sweetalert2';
 import CreateForm from './CreateForm';
 import UploadedFiles from './UploadedFiles';
-import BreadCrubs from './BreadCrubs';
+import BreadCrubs from '@/Components/BreadCrubs';
 
 function Index({ auth, documents, filter, query }) {
     const { data, setData, post, processing, reset, errors } = useForm({

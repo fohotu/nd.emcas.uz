@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import BreadCrubs from './BreadCrubs';
+import BreadCrubs from '@/Components/BreadCrubs';
 import { Tree } from 'react-arborist';
 import { router, Link , usePage} from '@inertiajs/react';
+import useLocalized from '@/Hooks/useLocalized';
 import SearchForm from './SearchForm';
 
 import Modal from '@/Components/Modal';
@@ -16,13 +17,17 @@ function View({
     let query = {};
     let filter = {};
 
+    const { translations } = usePage().props;
+    const { language, localized } = useLocalized();
+
+
     const breadcrumb = [
         {
-            title: 'Главная страница',
+            title: translations.main_page,
             href: '/',
         },
         {
-            title: 'Все документы',
+            title: translations.all_documents,
         },
     ];
 
@@ -38,9 +43,8 @@ function View({
 
     const { main_menu } = usePage().props;
 
-    
 
-     console.log(main_menu);
+    
 
     const [treeData, setTreeData] = useState([]);
     const [menuList, setMenuList] = useState([]);
@@ -120,8 +124,6 @@ function View({
     useEffect(() => {
         if(main_menu){
             setTreeData(buildTree(main_menu));
-
-           
         }
     }, [main_menu]);
 
@@ -277,9 +279,9 @@ function View({
                                                         flex-1
                                                         truncate
                                                     "
-                                                    title={node.data.name}
+                                                    title={localized(node.data,'title')}
                                                 >
-                                                    {node.data.name}
+                                                    {localized(node.data,'title')}
                                                 </span>
 
                                             </Link>
@@ -325,11 +327,11 @@ function View({
                             <div>
 
                                 <h3 className="text-base font-semibold text-gray-800">
-                                    Документы
+                                    {translations.documents}
                                 </h3>
 
                                 <p className="mt-1 text-sm text-gray-400">
-                                    Список документов выбранного раздела
+                                    {translations.selected_section_documents}
                                 </p>
 
                             </div>
@@ -337,7 +339,7 @@ function View({
                             <div className="rounded-lg bg-gray-50 px-3 py-2">
 
                                 <span className="text-xs text-gray-400">
-                                    Всего записей
+                                    {translations.total_records}:
                                 </span>
 
                                 <span className="ml-2 text-sm font-semibold text-gray-700">
@@ -363,23 +365,24 @@ function View({
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Название
+                                            {translations.title}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Описание
+                                            {translations.description}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Создано
+                                            {translations.created}
+
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Статус
+                                            {translations.status}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Теги
+                                            {translations.tags}
                                         </th>
 
                                     </tr>
@@ -533,7 +536,7 @@ function View({
                                                             "
                                                             title={item.title}
                                                         >
-                                                            {item.title}
+                                                           {localized(item,'title')}
                                                         </div>
 
                                                     </td>
@@ -541,9 +544,6 @@ function View({
 
                                                     {/* Description */}
                                                     <td className="max-w-[300px] px-4 py-4">
-
-                                                        {item.description ? (
-
                                                             <div
                                                                 className="
                                                                     line-clamp-2
@@ -553,18 +553,9 @@ function View({
                                                                 "
                                                                 dangerouslySetInnerHTML={{
                                                                     __html:
-                                                                        item.description,
+                                                                        localized(item,'description'),
                                                                 }}
                                                             />
-
-                                                        ) : (
-
-                                                            <span className="text-sm italic text-gray-400">
-                                                                Нет описания
-                                                            </span>
-
-                                                        )}
-
                                                     </td>
 
 
@@ -604,7 +595,7 @@ function View({
                                                                 font-medium
                                                                 text-green-700
                                                             ">
-                                                                Действующий
+                                                                {translations.active}
                                                             </span>
 
                                                         )}
@@ -622,7 +613,7 @@ function View({
                                                                 font-medium
                                                                 text-red-700
                                                             ">
-                                                                Утратил силу
+                                                               {translations.passive}
                                                             </span>
 
                                                         )}
@@ -798,7 +789,7 @@ function View({
 
                                 <div className="text-sm text-gray-500">
 
-                                    Всего записей:
+                                    {translations.total_records}:
 
                                     <b className="ml-1 font-semibold text-gray-700">
                                         {menuList.total}

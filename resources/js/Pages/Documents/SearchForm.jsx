@@ -1,13 +1,18 @@
 import React from "react";
 import LiveSelect from "./LiveSelect";
-import { router } from "@inertiajs/react";
+import { router , usePage} from "@inertiajs/react";
+
 
 export default function SearchForm({
     filter,
     onSearch,
     setSearchForm,
     searchForm,
+    reloadUrl = "/documents/all"
 }) {
+
+    const { translations } = usePage().props;
+
     const handleChange = (e) => {
         setSearchForm({
             ...searchForm,
@@ -49,44 +54,75 @@ export default function SearchForm({
             {/* Номер */}
             <div>
                 <label className={labelClass}>
-                    Номер
+                    {translations.number}
                 </label>
-
-                <input
-                    type="text"
-                    name="number"
-                    value={searchForm.number}
-                    onChange={handleChange}
-                    placeholder="Введите номер..."
-                    className={inputClass}
-                />
+                <div className="relative">
+                    <svg
+                        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <input
+                        type="text"
+                        name="number"
+                        value={searchForm.number}
+                        onChange={handleChange}
+                        className={`${inputClass} pl-10`}
+                    />
+                </div>
             </div>
 
             {/* Заголовок */}
             <div>
                 <label className={labelClass}>
-                    Заголовок
+                    {translations.title}
                 </label>
 
-                <input
-                    type="text"
-                    name="title"
-                    value={searchForm.title}
-                    onChange={handleChange}
-                    placeholder="Введите заголовок..."
-                    className={inputClass}
-                />
+                <div className="relative">
+                    <svg
+                        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+
+                    <input
+                        type="text"
+                        name="title"
+                        value={searchForm.title}
+                        onChange={handleChange}
+                        placeholder=""
+                        className={`${inputClass} pl-10`}
+                    />
+                </div>
             </div>
 
             {/* Категория */}
             <div>
                 <label className={labelClass}>
-                    Категория
+                    {translations.category}
                 </label>
 
                 <LiveSelect
                     type="category"
-                    placeholder="Выберите категорию..."
+                    placeholder=""
                     onChange={(option) => {
                         setSearchForm({
                             ...searchForm,
@@ -99,12 +135,12 @@ export default function SearchForm({
             {/* Меню */}
             <div>
                 <label className={labelClass}>
-                    Меню
+                    {translations.menu}
                 </label>
 
                 <LiveSelect
                     type="menu"
-                    placeholder="Выберите меню..."
+                    placeholder=""
                     onChange={(option) => {
                         setSearchForm({
                             ...searchForm,
@@ -117,23 +153,20 @@ export default function SearchForm({
             {/* Статус */}
             <div>
                 <label className={labelClass}>
-                    Статус
+                    {translations.status}
                 </label>
-
                 <select
                     name="status"
                     value={searchForm.status}
                     onChange={handleChange}
                     className={inputClass}
                 >
-                    <option value="">Все</option>
-
+                    <option value="">{translations.all_documents}</option>
                     <option value="active">
-                        Действующие
+                        {translations.active}
                     </option>
-
                     <option value="passive">
-                        Утратившие силу
+                        {translations.passive}
                     </option>
                 </select>
             </div>
@@ -141,7 +174,7 @@ export default function SearchForm({
             {/* Дата */}
             <div>
                 <label className={labelClass}>
-                    Дата документа
+                     {translations.document_date}
                 </label>
 
                 <input
@@ -192,7 +225,7 @@ export default function SearchForm({
                         />
                     </svg>
 
-                    Найти
+                     {translations.find}
                 </button>
 
                 {/* Сброс */}
@@ -210,7 +243,7 @@ export default function SearchForm({
                         };
 
                         setSearchForm(emptyForm);
-                        router.get("/documents");
+                        router.get(reloadUrl);
                     }}
                     className="
                         inline-flex
@@ -244,8 +277,7 @@ export default function SearchForm({
                             d="M4 4v5h5M20 20v-5h-5M5.5 9A7 7 0 0 1 18 6.5L20 9M18.5 15A7 7 0 0 1 6 17.5L4 15"
                         />
                     </svg>
-
-                    Сбросить
+                    {translations.cancel}
                 </button>
             </div>
         </form>

@@ -9,7 +9,7 @@ export default function useLocalized() {
         if (!item) {
             return '';
         }
-
+        console.log(item,field,item[field]);
         return (
             item[`${field}_${language}`] ??
             item[`${field}_uz`] ??

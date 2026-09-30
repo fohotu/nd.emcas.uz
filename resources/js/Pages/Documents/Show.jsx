@@ -1,13 +1,16 @@
 import React,{useState} from "react";
-
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import BreadCrubs from "./BreadCrubs";
+import BreadCrubs from '@/Components/BreadCrubs';
 import DOMPurify from "dompurify";
 import Modal from "@/Components/Modal";
 import DocumentViewer from "@/Components/DocumentViewer";
-
+import {usePage } from '@inertiajs/react';
+import useLocalized from "@/Hooks/useLocalized";
 
 function InfoItem({ label, value }) {
+
+   
+
     return (
         <div className="border-t border-gray-200 px-1 py-4 dark:border-gray-700">
             <div className="text-xs font-medium uppercase tracking-wider text-gray-400">
@@ -23,28 +26,29 @@ function InfoItem({ label, value }) {
 
 function Show({ document }) {
 
-    console.log(document);
+    const { translations } = usePage().props;
+    const { language, localized } = useLocalized();
+
     const breadcrumb = [
         {
-            title: 'Главная страница',
+            title: translations.main_page,
             href: '/',
         },
         {
-            title: 'Все документы',
+            title: translations.all_documents,
             href:'/documents/all',
         },
         {
-            title: document?.menu?.title,
+            title: localized(document.menu,'title'),
             href:'/documents/menu/'+document?.menu?.id+'/category/'
         },
         {
-            title: document?.category?.title,
+            title: localized(document.category,'title'),
             href:'/documents/menu/'+document?.menu?.id+'/category/'+document?.category?.id
         },
         {
-            title: document?.title,
+            title: localized(document,'title'),
         },
-
     ];
 
     const [documentShow,setDocumentShow] = useState(false);
@@ -173,11 +177,11 @@ function Show({ document }) {
                 <section>
                     <div className="mb-5 flex items-center gap-3">
                         <h2 className="mb-4 text-sm font-normal text-gray-700 dark:text-gray-200">
-                            Описание документа
+                            {translations.description}
                         </h2>
                     </div>
 
-                    {document?.description ? (
+                    
                         <div
                             className="
                                 prose
@@ -189,15 +193,11 @@ function Show({ document }) {
                             "
                             dangerouslySetInnerHTML={{
                                 __html: DOMPurify.sanitize(
-                                    document.description
+                                    localized(document,'description')
                                 ),
                             }}
                         />
-                    ) : (
-                        <div className="rounded-lg border border-dashed border-gray-300 px-5 py-8 text-center text-sm text-gray-400 dark:border-gray-600">
-                            Описание отсутствует
-                        </div>
-                    )}
+                    
                 </section>
 
                 {/* FILES */}
@@ -206,7 +206,7 @@ function Show({ document }) {
                     <div className="mb-5 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <h2 className="mb-4 text-sm font-normal text-gray-700 dark:text-gray-200">
-                                Прикреплённые файлы  
+                                {translations.attached_files} 
                             </h2>
                         </div>
 
@@ -280,7 +280,7 @@ function Show({ document }) {
                     <div className="min-w-0 flex-1">
                         {/* NAME LABEL */}
                         <div className="text-xs font-medium text-gray-400 dark:text-gray-500">
-                            Название файла
+                            {translations.file_name}
                         </div>
 
                         {/* FILE NAME */}
@@ -293,7 +293,7 @@ function Show({ document }) {
 
                         {/* CREATED DATE */}
                         <div className="mt-2 text-xs font-medium text-gray-400 dark:text-gray-500">
-                            Дата создания
+                            {translations.created_date}
                         </div>
 
                         <div className="mt-0.5 text-sm text-gray-600 dark:text-gray-300">
@@ -360,7 +360,7 @@ function Show({ document }) {
                                         />
                                     </svg>
 
-                                    Скачать
+                                    {translations.download}
                                 </a>
                             )}
 
@@ -416,7 +416,7 @@ function Show({ document }) {
                                     />
                                 </svg>
 
-                                Посмотреть
+                                {translations.view}
                             </button>
                         </div>
                     </div>
@@ -426,7 +426,7 @@ function Show({ document }) {
     </div>
 ) : (
     <div className="rounded-lg border border-dashed border-gray-300 px-5 py-8 text-center text-sm text-gray-400 dark:border-gray-600">
-        Нет прикреплённых файлов
+        {translations.no_attached_files}
     </div>
 )}
 
@@ -440,25 +440,17 @@ function Show({ document }) {
             {/* INFORMATION */}
             <aside className="border-t border-gray-200 bg-gray-50/50 p-6 dark:border-gray-700 dark:bg-gray-800/40 md:p-8 lg:border-l lg:border-t-0">
 
-                <div className="mb-6">
-                    <h2 className="text-base font-medium text-gray-900 dark:text-white">
-                        Информация
-                    </h2>
-
-                    <p className="mt-1 text-xs text-gray-400">
-                        Основные сведения о документе
-                    </p>
-                </div>
+               
 
                 <div className="space-y-0">
 
                     <InfoItem
-                        label="Номер"
+                        label={translations.number}
                         value={document?.number}
                     />
 
                     <InfoItem
-                        label="Относится к"
+                        label={translations.menu}
                         value={
                             document?.menu?.title ||
                             document?.menu_id
@@ -466,7 +458,7 @@ function Show({ document }) {
                     />
 
                     <InfoItem
-                        label="Форма документа"
+                        label={translations.category}
                         value={
                             document?.category?.title ||
                             document?.category_id
@@ -474,18 +466,18 @@ function Show({ document }) {
                     />
 
                     <InfoItem
-                        label="Язык"
+                        label={translations.language}
                         value={formatLanguage(document?.language)}
                     />
 
                     <InfoItem
-                        label="Дата документа"
+                        label={translations.document_date}
                         value={document?.document_date}
                     />
 
                     <div className="border-t border-gray-200 px-1 py-4 dark:border-gray-700">
                         <div className="mb-2 text-xs text-gray-400">
-                            Статус
+                            {translations.status}
                         </div>
 
                         <span
