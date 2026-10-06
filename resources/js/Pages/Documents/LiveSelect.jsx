@@ -2,7 +2,7 @@ import AsyncSelect from "react-select/async";
 import axios from "axios";
 import { useRef } from "react";
 
-export default function LiveSelect({ type,onChange }) {
+export default function LiveSelect({ type,value,onChange }) {
   
   const cache = useRef({});
   const timeout = useRef(null);
@@ -13,6 +13,8 @@ export default function LiveSelect({ type,onChange }) {
         return "/category/live-search";
       case "menu":
         return "/menu/live-search";
+      case "tag":
+        return "/tags/search";
       default:
         return "/category/live-search";
     }
@@ -99,6 +101,7 @@ export default function LiveSelect({ type,onChange }) {
 
   return (
     <AsyncSelect
+      value={value ?? null}
       clearable={true}
       cacheOptions
       defaultOptions

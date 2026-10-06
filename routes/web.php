@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CategoryController;
@@ -44,9 +45,16 @@ Route::get('/', function () {
 });
 
 
+/*
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+*/
+ 
+Route::get('/dashboard', [DashboardController::class, 'admin'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/user-dashboard', [DashboardController::class, 'user'])->name('dashboard.user');
 
 
 Route::middleware('auth')->group(function () {
@@ -71,7 +79,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/tags/bulk-delete', [TagController::class, 'removeMultiple'])->name('tags.bulk-delete');
     Route::get('/tags/search', [TagController::class, 'search'])->name('tags.search');
     Route::put('/tags/{tag}', [TagController::class, 'edit'])->name('tags.update');
-   
+   // Route::get('/tag/live-search', [TagController::class, 'liveSearch'])->name('tag.live-search');
+
     //admin routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

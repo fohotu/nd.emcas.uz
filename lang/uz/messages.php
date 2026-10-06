@@ -77,6 +77,10 @@ return [
     'no_attached_files' => 'Biriktirilgan fayllar mavjud emas',
     'file_name' => 'Fayl nomi',
 
+    'favorites' => 'Tanlanganlar',
+    'saved_documents' => 'Siz saqlagan hujjatlar',
+    'all_favorite_documents' => 'Barcha tanlangan hujjatlar',
+
 
 
     

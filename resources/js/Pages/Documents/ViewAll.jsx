@@ -10,11 +10,15 @@ import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
 import Swal from 'sweetalert2';
 
-function View({
+function ViewAll({
     documents,
     favoriteIds,
+    query,
+    defaultTag
 }) {
-    let query = {};
+
+   
+  
     let filter = {};
 
     const { translations } = usePage().props;
@@ -39,13 +43,12 @@ function View({
         type: query['type'] ?? '',
         status: query['status'] ?? '',
         date: query['date'] ?? '',
+        tag_id: query['tag_id'] ?? '',
+        defaultTag: defaultTag ?? null,
     });
 
+
     const { main_menu } = usePage().props;
-
-
-    
-
     const [treeData, setTreeData] = useState([]);
     const [menuList, setMenuList] = useState([]);
     const [favoriteDocuments, setFavoriteDocuments] = useState([]);
@@ -152,9 +155,7 @@ function View({
     function handleSearch(e) {
         e.preventDefault();
 
-        const url = `/documents/menu/${menu_item.id}/category/${
-            selectedCategoryId ?? ''
-        }`;
+        const url = `/documents/all`;
 
         router.get(url, searchForm, {
             onSuccess: (res) => {
@@ -373,7 +374,7 @@ function View({
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            {translations.created}
+                                            {translations.document_date}
 
                                         </th>
 
@@ -573,7 +574,7 @@ function View({
                                                             text-gray-600
                                                         ">
                                                             {new Date(
-                                                                item.created_at
+                                                                item.document_date
                                                             ).toLocaleDateString()}
                                                         </span>
 
@@ -881,5 +882,5 @@ function View({
     );
 }
 
-export default View;
+export default ViewAll;
 

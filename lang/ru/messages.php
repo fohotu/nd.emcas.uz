@@ -77,4 +77,8 @@ return [
     'view' => 'Посмотреть',
     'no_attached_files' => 'Нет прикреплённых файлов',
     'file_name' => 'Название файла',
+
+    'favorites' => 'Избранное',
+    'saved_documents' => 'Ваши сохранённые документы',
+    'all_favorite_documents' => 'Все избранные документы',
 ];

@@ -64,6 +64,25 @@ class DocumentService
             
         }
 
+
+        if (!empty($filters['search'])) {
+
+           
+            $model->where(
+                'title',
+                'like',
+                '%' . $filters['search'] . '%'
+            );
+
+            $model->where(
+                'number',
+                'like',
+                '%' . $filters['search'] . '%'
+            );
+            
+            
+        }
+
         /*
 
             if (!empty($filters['title'])) {
@@ -116,6 +135,9 @@ class DocumentService
         );
 
         if ($dateD && !empty($filters['start'])) {
+
+         //  dd($filters);
+
             $model->whereDate(
                 'document_date',
                 $filters['start']
@@ -141,6 +163,15 @@ class DocumentService
             }
 
         }
+        
+
+        if (!empty($filters['tag_id'])) {
+            $model->whereHas('tags', function ($query) use ($filters) {
+                $query->where('tags.id', $filters['tag_id']);
+            });
+        }
+
+      
 
         return $model->latest()->paginate($perPage);
 
@@ -151,12 +182,12 @@ class DocumentService
         return Document::findOrFail($id);
     }
 
-    public function getDocumentByCategory(int $categoryId): LengthAwarePaginator
+    public function getDocumentByCategory(int $categoryId,$filter=[]): LengthAwarePaginator
     {
         return Document::with('tags')->where('category_id', $categoryId)->latest()->paginate(10);
     }
 
-    public function getDocumentByMenu(int $menuId): LengthAwarePaginator
+    public function getDocumentByMenu(int $menuId,$filter=[]): LengthAwarePaginator
     {
         return Document::with('tags')->where('menu_id', $menuId)->latest()->paginate(10);
     }

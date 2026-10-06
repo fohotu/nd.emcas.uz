@@ -10,9 +10,8 @@ function UserDashboard({
     favorites = [],
 }) {
 
-  
 
-    const { main_menu } = usePage().props;
+    const { main_menu,translations } = usePage().props;
 
     const prepareTree = (items = []) => {
         return items.map((item) => ({
@@ -157,14 +156,12 @@ function UserDashboard({
 
                                 <div>
                                     <h1 className="text-xl font-semibold text-gray-800 sm:text-2xl">
-                                        Добро пожаловать
+                                        {translations.welcome}
                                         {user?.name ? `, ${user.name}` : ''}
                                     </h1>
 
                                     <p className="mt-2 text-sm leading-6 text-gray-500">
-                                        Используйте электронный сборник для
-                                        поиска и просмотра нормативно-правовых
-                                        актов и нормативных документов.
+                                        {translations.welcome_message}
                                     </p>
                                 </div>
 
@@ -234,11 +231,11 @@ function UserDashboard({
 
                         <div>
                             <h2 className="text-lg font-semibold text-gray-800">
-                                Поиск документов
+                                {translations.document_search}
                             </h2>
 
                             <p className="text-sm text-gray-400">
-                                Найдите нужный нормативный документ
+                                {translations.document_search_description}
                             </p>
                         </div>
 
@@ -246,7 +243,7 @@ function UserDashboard({
 
 
                     <form
-                        action="/documents"
+                        action="/documents/all"
                         method="GET"
                         className="flex flex-col gap-3 sm:flex-row"
                     >
@@ -275,11 +272,10 @@ function UserDashboard({
                                     d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
                                 />
                             </svg>
-
                             <input
                                 type="text"
                                 name="search"
-                                placeholder="Введите название, номер или ключевое слово..."
+                                placeholder=""
                                 className="
                                     block
                                     w-full
@@ -339,7 +335,7 @@ function UserDashboard({
                                 />
                             </svg>
 
-                            Найти
+                            {translations.find}
                         </button>
 
                     </form>
@@ -402,11 +398,11 @@ function UserDashboard({
 
                                     <div>
                                         <h2 className="text-lg font-semibold text-gray-800">
-                                            Избранное 
+                                            {translations.favorites}
                                         </h2>
 
                                         <p className="text-sm text-gray-400">
-                                            Ваши сохранённые документы
+                                            {translations.saved_documents}
                                         </p>
                                     </div>
 
@@ -423,7 +419,7 @@ function UserDashboard({
                                 hover:text-blue-700
                             "
                         >
-                            Все избранное документы →
+                            {translations.all_favorite_documents} →
                         </Link>
 
                             </div>
@@ -601,11 +597,11 @@ function UserDashboard({
 
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-800">
-                                    Последние документы
+                                    {translations.last_documents}
                                 </h2>
 
                                 <p className="text-sm text-gray-400">
-                                    Недавно добавленные документы
+                                    {translations.last_added_documents}
                                 </p>
                             </div>
 
@@ -621,7 +617,7 @@ function UserDashboard({
                                 hover:text-blue-700
                             "
                         >
-                            Все документы →
+                            {translations.all_documents} →
                         </Link>
 
                     </div>
@@ -636,19 +632,19 @@ function UserDashboard({
                                 <tr>
 
                                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Номер
+                                        {translations.number}
                                     </th>
 
                                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Название
+                                        {translations.title}
                                     </th>
 
                                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Дата
+                                        {translations.document_date}
                                     </th>
 
                                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Статус
+                                        {translations.status}
                                     </th>
 
                                 </tr>
@@ -723,7 +719,7 @@ function UserDashboard({
                                                         font-medium
                                                         text-green-700
                                                     ">
-                                                        Действующий
+                                                        {translations.active}
                                                     </span>
                                                 )}
 
@@ -738,7 +734,7 @@ function UserDashboard({
                                                         font-medium
                                                         text-red-700
                                                     ">
-                                                        Утратил силу
+                                                        {translations.passive}
                                                     </span>
                                                 )}
 

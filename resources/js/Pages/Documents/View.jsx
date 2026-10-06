@@ -15,8 +15,12 @@ function View({
     documents,
     favoriteIds,
     selectedCategoryId,
+    query,
+    defaultTag
 }) {
-    let query = {};
+
+   // let query = {};
+    console.log('query',query);
     let filter = {};
 
     const { translations } = usePage().props;
@@ -46,11 +50,11 @@ function View({
         if (selected_category) {
             breadcrumb = [
                 {
-                    title: 'Главная страница',
+                    title: translations.main_page,
                     href: '/',
                 },
                 {
-                    title: 'Все документы',
+                    title: translations.all_documents,
                     href: '/documents/all',
                 },
                 {
@@ -75,6 +79,8 @@ function View({
         type: query['type'] ?? '',
         status: query['status'] ?? '',
         date: query['date'] ?? '',
+        tag_id: query['tag_id'] ?? '',
+        defaultTag: defaultTag ?? null,
     });
 
     const [treeData, setTreeData] = useState([]);
@@ -157,7 +163,7 @@ function View({
     }, [category]);
 
 
-    console.log(treeData);
+
 
     const buildTree = (items, parentId = null) => {
         return items
@@ -443,7 +449,7 @@ function View({
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            {translations.created}
+                                            {translations.document_date}
                                         </th>
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -605,17 +611,11 @@ function View({
                                                             "
                                                             title={item.title}
                                                         >
-                                                            {localized(item,'title')}
+                                                           {item.number} - {localized(item,'title')}
                                                         </div>
-
                                                     </td>
-
-
                                                     {/* Description */}
                                                     <td className="max-w-[300px] px-4 py-4">
-
-                                                       
-
                                                             <div
                                                                 className="
                                                                     line-clamp-2
@@ -647,7 +647,7 @@ function View({
                                                             text-gray-600
                                                         ">
                                                             {new Date(
-                                                                item.created_at
+                                                                item.document_date
                                                             ).toLocaleDateString()}
                                                         </span>
 

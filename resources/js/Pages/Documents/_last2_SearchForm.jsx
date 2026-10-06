@@ -1,6 +1,7 @@
 import React from "react";
 import LiveSelect from "./LiveSelect";
-import { router, usePage } from "@inertiajs/react";
+import { router , usePage} from "@inertiajs/react";
+
 
 export default function SearchForm({
     filter,
@@ -9,6 +10,7 @@ export default function SearchForm({
     searchForm,
     reloadUrl = "/documents/all"
 }) {
+
     const { translations } = usePage().props;
 
     const handleChange = (e) => {
@@ -54,7 +56,6 @@ export default function SearchForm({
                 <label className={labelClass}>
                     {translations.number}
                 </label>
-
                 <div className="relative">
                     <svg
                         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
@@ -70,7 +71,6 @@ export default function SearchForm({
                             strokeLinejoin="round"
                         />
                     </svg>
-
                     <input
                         type="text"
                         name="number"
@@ -87,7 +87,7 @@ export default function SearchForm({
                     {translations.title}
                 </label>
 
-               <div className="relative">
+                <div className="relative">
                     <svg
                         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                         viewBox="0 0 24 24"
@@ -114,38 +114,39 @@ export default function SearchForm({
                 </div>
             </div>
 
-            {/* Тег */}
+            {/* Категория */}
             <div>
                 <label className={labelClass}>
-                    {translations.tag}
+                    {translations.category}
                 </label>
 
                 <LiveSelect
-                    type="tag"
+                    type="category"
                     placeholder=""
-                    value={searchForm.defaultTag}
                     onChange={(option) => {
                         setSearchForm({
                             ...searchForm,
-                            defaultTag: option,
-                            tag_id: option?.value || "",
+                            category_id: option?.value || "",
                         });
                     }}
                 />
             </div>
 
-            {/* Описание */}
+            {/* Меню */}
             <div>
                 <label className={labelClass}>
-                    {translations.description}
+                    {translations.menu}
                 </label>
 
-                <input
-                    type="text"
-                    name="description"
-                    value={searchForm.description}
-                    onChange={handleChange}
-                    className={inputClass}
+                <LiveSelect
+                    type="menu"
+                    placeholder=""
+                    onChange={(option) => {
+                        setSearchForm({
+                            ...searchForm,
+                            menu_id: option?.value || "",
+                        });
+                    }}
                 />
             </div>
 
@@ -154,21 +155,16 @@ export default function SearchForm({
                 <label className={labelClass}>
                     {translations.status}
                 </label>
-
                 <select
                     name="status"
                     value={searchForm.status}
                     onChange={handleChange}
                     className={inputClass}
                 >
-                    <option value="">
-                        {translations.all_documents}
-                    </option>
-
+                    <option value="">{translations.all_documents}</option>
                     <option value="active">
                         {translations.active}
                     </option>
-
                     <option value="passive">
                         {translations.passive}
                     </option>
@@ -178,7 +174,7 @@ export default function SearchForm({
             {/* Дата */}
             <div>
                 <label className={labelClass}>
-                    {translations.document_date}
+                     {translations.document_date}
                 </label>
 
                 <input
@@ -228,7 +224,8 @@ export default function SearchForm({
                             d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
                         />
                     </svg>
-                    {translations.find}
+
+                     {translations.find}
                 </button>
 
                 {/* Сброс */}
@@ -238,8 +235,9 @@ export default function SearchForm({
                         const emptyForm = {
                             number: "",
                             title: "",
-                            tag_id: "",
-                            description: "",
+                            category_id: "",
+                            menu_id: "",
+                            type: "",
                             status: "",
                             date: "",
                         };
@@ -279,7 +277,6 @@ export default function SearchForm({
                             d="M4 4v5h5M20 20v-5h-5M5.5 9A7 7 0 0 1 18 6.5L20 9M18.5 15A7 7 0 0 1 6 17.5L4 15"
                         />
                     </svg>
-
                     {translations.cancel}
                 </button>
             </div>

@@ -10,6 +10,7 @@ use App\Services\CategoryService;
 use App\Services\MenuService;
 use App\Models\Document;
 use App\Models\Menu;
+use App\Models\Tags;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\Document\StoreDocumentRequest;
@@ -84,19 +85,42 @@ class DocumentController extends Controller
 
 
     public function view(Request $request,CategoryService $service,DocumentService $documentService,$id,$category_id = null) {
+        
         $category = $service->getCategoryByMenu($id);
         $menu = Menu::findOrFail($id);
+        $query = $request->only(['number','title','date','category_id','menu_id','status','tag_id','search']);
         $favoriteIds = $request->user()
         ->favorites()
         ->pluck('document_id');
+        $query['start'] = $query['date'] ?? null;
 
+        $defaultTag = null;
        
-
-        if($category_id){
-            $documents = $documentService->getDocumentByCategory($category_id);
-        }else{
-            $documents = $documentService->getDocumentByMenu($id);
+        if(!empty($query['tag_id'])){
+            $tagObject = Tags::find($query['tag_id']);
+            $defaultTag = $tagObject
+            ? [
+                'value' => $tagObject->id,
+                'label' => $tagObject->name,
+            ]
+            : null;
         }
+        $query['date_d'] = !empty($query['date']);
+
+        if($category_id){  
+            //$documents = $documentService->getDocumentByCategory($category_id);
+            $query['category_id'] = $category_id;
+        }else{
+            //$documents = $documentService->getDocumentByMenu($id);
+            $query['menu_id'] = $id;
+          //  $documents = $documentService->getAllDocuments($query);
+        }
+
+      //  dd($query);
+
+        $documents = $documentService->getAllDocuments($query);
+
+       // dd($query,$documents);
 
         return Inertia::render('Documents/View', [
             'category' => $category,
@@ -104,7 +128,10 @@ class DocumentController extends Controller
             'selectedCategoryId' => $category_id,
             'documents' => $documents,
             'favoriteIds' => $favoriteIds,
+            'query' => $query,
+            'defaultTag' => $defaultTag
         ]);
+
     }
 
     public function viewAll(Request $request,DocumentService $documentService)
@@ -112,13 +139,34 @@ class DocumentController extends Controller
         $favoriteIds = $request->user()
         ->favorites()
         ->pluck('document_id');
-        $query = $request->only(['number','title','date','category_id','menu_id','status']);
+        $query = $request->only(['number','title','date','category_id','menu_id','status','tag_id','search']);
+       
+
+        $query['start'] = $query['date'] ?? null;
+
+        $defaultTag = null;
+
+        $query['date_d'] = !empty($query['date']);
+
         $documents = $documentService->getAllDocuments($query);
         
+    
+       
+        if(!empty($query['tag_id'])){
+            $tagObject = Tags::find($query['tag_id']);
+            if($tagObject){
+                $defaultTag = [
+                    'value' => $tagObject->id,
+                    'label' => $tagObject->name,
+                ];
+            }
+        }
 
         return Inertia::render('Documents/ViewAll', [
             'documents' => $documents,
             'favoriteIds' => $favoriteIds,
+            'query' => $query,
+            'defaultTag' => $defaultTag,
         ]);
 
     }

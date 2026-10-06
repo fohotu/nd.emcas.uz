@@ -7,7 +7,10 @@ import MenuIcon from '@/Components/Icons/MenuIcon';
 import DocumentIcon from '@/Components/Icons/DocumentIcon';
 import UserIcon from '@/Components/Icons/UserIcon';
 
-export default function Dashboard({ serverInfo }) {
+export default function Dashboard({ stats }) {
+
+    console.log('Dashboard stats:', stats);
+  
 
     const items = [
         {
@@ -75,7 +78,8 @@ export default function Dashboard({ serverInfo }) {
                     {/* Welcome */}
                     <div className="mb-7">
                         <h2 className="text-2xl font-semibold tracking-tight text-gray-800">
-                            Добро пожаловать
+                            Добро пожаловат
+                      
                         </h2>
 
                         <p className="mt-1 text-sm text-gray-500">
@@ -98,9 +102,9 @@ export default function Dashboard({ serverInfo }) {
                         </div>
 
                         <DashboardStats
-                            documentsCount={1248}
-                            categoriesCount={36}
-                            usersCount={87}
+                            documentsCount={stats.documents}
+                            categoriesCount={stats.categories}
+                            usersCount={stats.users}
                             visitsCount={15420}
 
                             latestDocuments={[

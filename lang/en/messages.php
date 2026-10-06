@@ -72,4 +72,8 @@ return [
     'view' => 'View',
     'no_attached_files' => 'No attached files',
     'file_name' => 'File name',
+    'favorites' => 'Favorites',
+    'saved_documents' => 'Your saved documents',
+    'all_favorite_documents' => 'All favorite documents',
+
 ];
