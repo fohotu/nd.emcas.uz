@@ -50,8 +50,10 @@ class FavoriteController extends Controller
 
     public function index(Request $request,DocumentService $service)
     {
-        $query = $request->only(['number','title','date','category_id','menu_id','status']);
+        $query = $request->only(['number','title','date','category_id','menu_id','status','start','number_d']);
         $favorites = $request->user()->favorites()->pluck('document_id');
+
+       // dd($query);
         $documents = $service->getFavorites($favorites,$query);
         
        

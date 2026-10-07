@@ -521,13 +521,9 @@ function ViewAll({
                                                             </button>
 
                                                         </div>
-
                                                     </td>
-
-
                                                     {/* Title */}
                                                     <td className="max-w-[260px] px-4 py-4">
-
                                                         <div
                                                             className="
                                                                 truncate
@@ -539,10 +535,7 @@ function ViewAll({
                                                         >
                                                            {localized(item,'title')}
                                                         </div>
-
                                                     </td>
-
-
                                                     {/* Description */}
                                                     <td className="max-w-[300px] px-4 py-4">
                                                             <div

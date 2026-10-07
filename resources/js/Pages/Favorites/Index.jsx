@@ -159,7 +159,13 @@ const handleSubmit = (e) => {
     );
 };
 
+/*
 
+    onSearch,
+    setSearchForm,
+    searchForm,
+
+*/
 const handleReset = () => {
 
     const resetData = {
@@ -182,7 +188,7 @@ const handleReset = () => {
     setSearchField(resetData);
 
     router.get(
-        route('favorites'),
+        route('favorites.index'),
         {},
         {
             preserveState: false,
@@ -206,13 +212,17 @@ const removeFavorites = (documentId) => {
 
 const attachTag = (document) => {
     setSelectedDocument(document);
+    
     /*
-    axios.post(route('tags.attach'), {
-        document_id: documentId,
-    });*/
+        axios.post(route('tags.attach'), {
+            document_id: documentId,
+        });
+    */
+
 }
 
 const successAtachTag = () => {
+    
     Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -223,6 +233,8 @@ const successAtachTag = () => {
 
     setSelectedDocument(null);
     router.reload();
+
+
 }
 
 const errorAtachTag = (error) => {
