@@ -433,7 +433,7 @@ function  Index({ auth, documents,filter,query}) {
 
             </thead>
 
-111
+
             <tbody className="divide-y divide-gray-100">
 
                 {documentsList?.map((doc) => (

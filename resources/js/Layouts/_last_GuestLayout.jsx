@@ -35,7 +35,7 @@ export default function GuestLayout({ children }) {
             {/* ПРАВАЯ КОЛОНКА: Чисто белый фон, 100% высоты, по центру форма */}
             <div className="flex w-full lg:w-1/2 min-h-screen bg-white items-center justify-center p-6 sm:p-12">
                 <div className="w-full max-w-md">
-                    
+                    {children}
                 </div>
             </div>
 

@@ -50,16 +50,18 @@ class FavoriteController extends Controller
 
     public function index(Request $request,DocumentService $service)
     {
-        $query = $request->only(['number','title','date','category_id','menu_id','status','start','number_d']);
-        $favorites = $request->user()->favorites()->pluck('document_id');
 
-       // dd($query);
+        $query = $request->only(['number','title','date','category_id','menu_id','status','start','number_d','date_d','date_i','title_d']);
+        $favorites = $request->user()->favorites()->pluck('document_id');
+        
+       //dd($query);
         $documents = $service->getFavorites($favorites,$query);
         
        
-       return Inertia::render('Favorites/Index',[
-        'documents'=>$documents
+        return Inertia::render('Favorites/Index',[
+            'documents'=>$documents
         ]);
+
     }
 
     public function remove(RemoveFavoriteRequest $request, RemoveFavoriteAction $action)

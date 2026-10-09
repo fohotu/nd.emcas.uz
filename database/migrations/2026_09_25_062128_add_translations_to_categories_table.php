@@ -11,10 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('categories', function (Blueprint $table) {
-            
-        });
-
          Schema::table('categories', function (Blueprint $table) {
             $table->string('title_ru')->nullable()->after('title');
             $table->string('title_uz')->nullable()->after('title_ru');

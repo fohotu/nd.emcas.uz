@@ -105,7 +105,7 @@ export default function Dashboard({ stats }) {
                             documentsCount={stats.documents}
                             categoriesCount={stats.categories}
                             usersCount={stats.users}
-                            visitsCount={15420}
+                            menusCount={stats.menus}
 
                             latestDocuments={[
                                 {

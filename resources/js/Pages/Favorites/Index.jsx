@@ -4,10 +4,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
 import Swal from 'sweetalert2';
+import axios from "axios";
+import AsyncSelect from "react-select/async";
 import BreadCrubs from './BreadCrubs';
+import Select from "react-select";
+import useLocalized from '@/Hooks/useLocalized';
 
 function Index({ documents,filter,favoriteIds }) {
-    console.log(filter,documents,favoriteIds);
+    
+     const { language, localized } = useLocalized();
+
     useEffect(() => {
         if(filter?.menus?.length){
             setMenuOptions(filter.menus.map((item) => ({
@@ -20,49 +26,71 @@ function Index({ documents,filter,favoriteIds }) {
         }
     },[]);
 
-const [searchField, setSearchField] = useState({
-    number: '',
-    number_d: false,
-    title: '',
-    title_d: false,
-    menu_id: '',
-    start: '',
-    end: '',
-    description: '',
-    status_all: false,
-    status_active: false,
-    status_passive: false,
-    date_d: false,
-    date_i: false,
-});
 
-const [favoriteDocuments, setFavoriteDocuments] = useState([]);
-const [menuOptions, setMenuOptions] = useState([]);
+    const getMenuList = (input) => {
+        return axios
+            .get(`/menu/live-search?q=${input}`)
+            .then((response) => response.data);
+    };
 
-const [selectedDocument,setSelectedDocument] = useState(null);
-const [openSearchForm,setOpenSearchForm] = useState(false);
+    const getCategoryByMenu = (menuId) => {
+        return axios
+            .get(`/category/by-menu?menu_id=${menuId}`)
+            .then((response) =>
+                response.data.data.map((item) => ({
+                    value: item.id,
+                   label:localized(item),
+                }))
+            );
+    };  
 
-const [selectedIds, setSelectedIds] = useState([]);
+    const [categoryLoaded, setCategoryLoad] = useState([]);
+    const [searchField, setSearchField] = useState({
+
+        number: '',
+        number_d: false,
+        title: '',
+        title_d: false,
+        menu_id: '',
+        category_id: '',
+        start: '',
+        end: '',
+        description: '',
+        status_all: false,
+        status_active: false,
+        status_passive: false,
+        date_d: true,
+        date_i: false,
+
+    });
+
+    const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+    const [menuOptions, setMenuOptions] = useState([]);
+
+    const [selectedDocument,setSelectedDocument] = useState(null);
+    const [openSearchForm,setOpenSearchForm] = useState(true);
+
+    const [selectedIds, setSelectedIds] = useState([]);
 
 
 
 
 
-const handleChange = (e) => {
-    const {
-        name,
-        value,
-        type,
-        checked,
-    } = e.target;
+    const handleChange = (e) => {
+        const {
+            name,
+            value,
+            type,
+            checked,
+        } = e.target;
 
-    setSearchField((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox'
-            ? checked
-            : value,
-    }));
-};
+        setSearchField((prev) => ({
+            ...prev,
+            [name]: type === 'checkbox'
+                ? checked
+                : value,
+        }));
+    };
 
 
 const handleDateType = (type) => {
@@ -230,12 +258,13 @@ const successAtachTag = () => {
         timer: 1500,
         showConfirmButton: false,
     });
-
+    
     setSelectedDocument(null);
     router.reload();
 
 
 }
+
 
 const errorAtachTag = (error) => {
     Swal.fire({
@@ -317,6 +346,81 @@ const removeSelected = () => {
             },
         ];
 
+
+         const selectStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            minHeight: "42px",
+            height: "42px",
+            borderRadius: "8px",
+            borderColor: state.isFocused
+                ? "#3b82f6"
+                : "#e5e7eb",
+            boxShadow: state.isFocused
+                ? "0 0 0 4px rgba(59, 130, 246, 0.08)"
+                : "none",
+            "&:hover": {
+                borderColor: "#3b82f6",
+            },
+        }),
+
+        valueContainer: (provided) => ({
+            ...provided,
+            height: "42px",
+            padding: "2px 12px",
+        }),
+
+        indicatorsContainer: (provided) => ({
+            ...provided,
+            height: "42px",
+        }),
+
+        placeholder: (provided) => ({
+            ...provided,
+            color: "#9ca3af",
+            fontSize: "14px",
+        }),
+
+        singleValue: (provided) => ({
+            ...provided,
+            color: "#374151",
+            fontSize: "14px",
+        }),
+
+        input: (provided) => ({
+            ...provided,
+            fontSize: "14px",
+        }),
+
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected
+                ? "#2563eb"
+                : state.isFocused
+                ? "#eff6ff"
+                : "#ffffff",
+            color: state.isSelected
+                ? "#ffffff"
+                : "#111827",
+            cursor: "pointer",
+            fontSize: "14px",
+            padding: "9px 12px",
+        }),
+
+        menu: (provided) => ({
+            ...provided,
+            borderRadius: "8px",
+            overflow: "hidden",
+            border: "1px solid #f1f5f9",
+            boxShadow:
+                "0 10px 25px -5px rgba(0,0,0,0.08)",
+        }),
+
+        indicatorSeparator: () => ({
+            display: "none",
+        }),
+    };
+
 return (
 
     <AuthenticatedLayout
@@ -327,10 +431,10 @@ return (
         }
     >
         <Modal show={selectedDocument} onClose={() => setSelectedDocument(null)}>
-           <TagForm 
-            documentId = {selectedDocument?.id}
-            successCalback={successAtachTag}
-            errorCalback={errorAtachTag}
+            <TagForm 
+                documentId = {selectedDocument?.id}
+                successCalback={successAtachTag}
+                errorCalback={errorAtachTag}
             />
         </Modal>
         <BreadCrubs items={breadcrumb} />
@@ -347,6 +451,7 @@ return (
                                 type="button"
                                 onClick={() => setOpenSearchForm(false)}
                                 className="
+                                    hidden
                                     inline-flex items-center gap-2
                                     rounded-lg
                                     bg-red-50
@@ -375,7 +480,6 @@ return (
                                         d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>
-
                                 Close Search
                             </button>
                         ) : (
@@ -383,6 +487,7 @@ return (
                                 type="button"
                                 onClick={() => setOpenSearchForm(true)}
                                 className="
+                                    hidden
                                     inline-flex items-center gap-2
                                     rounded-lg
                                     bg-blue-600
@@ -597,45 +702,74 @@ return (
 
                                 <div className="md:col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Принадлежит
+                                        Меню
                                     </label>
                                 </div>
 
                                 <div className="md:col-span-6">
-                                    <select
-                                        name="menu_id"
-                                        value={searchField.menu_id || ''}
-                                        onChange={handleChange}
-                                        className="
-                                            mt-0
-                                            block
-                                            w-full
-                                            rounded-lg
-                                            border
-                                            border-gray-200
-                                            bg-white
-                                            px-3.5
-                                            py-2.5
-                                            text-sm
-                                            text-gray-700
-                                            outline-none
-                                            transition
-                                            focus:border-blue-500
-                                            focus:ring-4
-                                            focus:ring-blue-50
-                                        "
-                                    >
-                                        <option value="">
-                                            Все разделы
-                                        </option>
+                                    <AsyncSelect
+                                        loadOptions={getMenuList}
+                                        isClearable
+                                        placeholder="Выберите меню..."
+                                        onChange={(option) => {
+                                            if (option) {
+                                                setSearchField({
+                                                    ...searchField,
+                                                    menu_id: option.value,
+                                                    category_id: "",
+                                                })    
 
-                                        {renderMenuOptions(filter?.menus || [])}
 
-                                    </select>
+                                                getCategoryByMenu(option.value).then(
+                                                    (categories) => {
+                                                        setCategoryLoad(categories);
+                                                    }
+                                                );
+                                            } else {
+
+                                                setSearchField({
+                                                    ...searchField,
+                                                    menu_id: "",
+                                                    category_id: "",
+                                                })   
+
+                                                setCategoryLoad([]);
+                                            }
+                                        }}
+                                        styles={selectStyles}
+                                    />
                                 </div>
 
                             </div>
 
+
+                             <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
+
+                                <div className="md:col-span-3">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Категория
+                                    </label>
+                                </div>
+
+                                <div className="md:col-span-6">
+                                     <Select
+                                        options={categoryLoaded}
+                                        isClearable
+                                        placeholder="Выберите категорию..."
+                                        
+                                        onChange={(option) => {
+                                            setSearchField({
+                                                ...searchField,
+                                                category_id: option
+                                                    ? option.value
+                                                    : null,
+                                            });
+                                        }}
+                                        styles={selectStyles}
+                                    />
+                                </div>
+
+                            </div>
 
                             {/* Дата */}
                             <div className="mb-5 grid grid-cols-1 gap-5 md:grid-cols-12">
@@ -1037,7 +1171,7 @@ return (
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-                                        Принадлежит
+                                        меню
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">

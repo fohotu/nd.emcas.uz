@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link,usePage } from '@inertiajs/react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -11,6 +11,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             ?.classList.add('!flex-row');
         document.getElementById('background')?.classList.add('!hidden');
     };
+
+      const{translations} = usePage.props
 
     return (
         <>

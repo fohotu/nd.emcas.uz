@@ -28,6 +28,8 @@ class CategoryController extends Controller
         $query = $request->only(['title','description']);
         $category = $service->getAllCategory($query);
         $treeCategory = $service->treeView(); 
+
+
         $menu = $menuService->getAllMenu();
 
         return Inertia::render('Category/Index', [
