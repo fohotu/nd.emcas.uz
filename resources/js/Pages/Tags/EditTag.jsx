@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { useForm, router,usePage } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 
 function EditTag({ tag, setEditModal }) {
@@ -13,6 +13,8 @@ function EditTag({ tag, setEditModal }) {
     } = useForm({
         name: tag?.name || '',
     });
+
+    const { translations } = usePage().props;
 
     const handleSubmit = (e) => {
       
@@ -106,11 +108,11 @@ function EditTag({ tag, setEditModal }) {
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-800">
-                        Редактирование тега
+                      {translations.edit_tag}
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-400">
-                        Измените название существующего тега.
+                        {translations.edit_tag_description}
                     </p>
                 </div>
             </div>
@@ -121,7 +123,7 @@ function EditTag({ tag, setEditModal }) {
                     htmlFor="name"
                     className={labelClass}
                 >
-                    Название <span className="text-red-500">*</span>
+                    {translations.title} <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -130,7 +132,7 @@ function EditTag({ tag, setEditModal }) {
                     name="name"
                     value={data.name}
                     onChange={(e) => setData('name', e.target.value)}
-                    placeholder="Введите название тега"
+                    placeholder=""
                     className={inputClass}
                 />
 
@@ -161,7 +163,7 @@ function EditTag({ tag, setEditModal }) {
                         hover:text-gray-800
                     "
                 >
-                    Отмена
+                    {translations.cancel}
                 </button>
 
                 <button
@@ -210,7 +212,7 @@ function EditTag({ tag, setEditModal }) {
                                 />
                             </svg>
 
-                            Сохранение...
+                            {translations.saving}...
                         </>
                     ) : (
                         <>
@@ -228,7 +230,7 @@ function EditTag({ tag, setEditModal }) {
                                 />
                             </svg>
 
-                            Сохранить
+                            {translations.save}
                         </>
                     )}
                 </button>

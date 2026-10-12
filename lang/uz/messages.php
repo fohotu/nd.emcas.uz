@@ -82,6 +82,26 @@ return [
     'all_favorite_documents' => 'Barcha tanlangan hujjatlar',
 
 
+    'selected' => 'Tanlandi',
+    'choose_action' => 'Amalni tanlang',
+    'deselect' => 'Belgilashni bekor qilish',
+    'delete_selected' => 'Tanlanganlarni o‘chirish',
+
+
+    'add' => 'Qo‘shish',
+    'create_tag' => 'Teg yaratish',
+    'enter_new_tag_name' => 'Yangi teg nomini kiriting.',
+
+    'edit_tag' => 'Tegni tahrirlash',
+    'edit_tag_description' => 'Mavjud teg nomini o‘zgartiring.',
+
+
+    'no_documents' => 'Hujjatlar mavjud emas',
+    'no_documents_for_tag' => 'Bu teg bilan hozircha bog‘langan hujjatlar mavjud emas.',
+
+
+    'search_documents' => 'Hujjatlarni qidirish',
+    'search_documents_description' => 'Hujjatlarni qidirish uchun parametrlarni kiriting.',
 
     
 ];

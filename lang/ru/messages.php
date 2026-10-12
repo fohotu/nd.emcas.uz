@@ -81,4 +81,25 @@ return [
     'favorites' => 'Избранное',
     'saved_documents' => 'Ваши сохранённые документы',
     'all_favorite_documents' => 'Все избранные документы',
+
+    'selected' => 'Выбрано',
+    'choose_action' => 'Выберите действие',
+    'deselect' => 'Снять выделение',
+    'delete_selected' => 'Удалить выбранные',
+
+    'add' => 'Добавить',
+    'create_tag' => 'Создание тега',
+    'enter_new_tag_name' => 'Введите название нового тега.',
+    'edit_tag' => 'Редактирование тега',
+    'edit_tag_description' => 'Измените название существующего тега.',
+    'tag_documents_list' => 'Список документов, связанных с тегом',
+
+    'no_documents' => 'Документы отсутствуют',
+    'no_documents_for_tag' => 'Для этого тега пока нет связанных документов.',  
+
+
+    'search_documents' => 'Поиск документов',
+    'search_documents_description' => 'Укажите параметры для поиска документов.',
+
+
 ];

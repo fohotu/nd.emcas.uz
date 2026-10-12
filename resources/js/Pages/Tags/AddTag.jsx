@@ -1,8 +1,10 @@
 import React from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { useForm, router,usePage } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 
 function AddTag({ setCreateModal }) {
+
+    const { translations } = usePage().props;
 
     const {
         data,
@@ -112,11 +114,11 @@ function AddTag({ setCreateModal }) {
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-800">
-                        Создание тега
+                        {translations.create_tag}
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-400">
-                        Введите название нового тега.
+                        {translations.enter_new_tag_name}
                     </p>
                 </div>
             </div>
@@ -127,7 +129,7 @@ function AddTag({ setCreateModal }) {
                     htmlFor="name"
                     className={labelClass}
                 >
-                    Название <span className="text-red-500">*</span>
+                    {translations.title} <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -136,7 +138,7 @@ function AddTag({ setCreateModal }) {
                     name="name"
                     value={data.name}
                     onChange={(e) => setData('name', e.target.value)}
-                    placeholder="Введите название тега"
+                    placeholder=""
                     className={inputClass}
                 />
               
@@ -168,7 +170,7 @@ function AddTag({ setCreateModal }) {
                         hover:text-gray-800
                     "
                 >
-                    Отмена
+                    {translations.cancel}
                 </button>
 
                 <button
@@ -217,7 +219,7 @@ function AddTag({ setCreateModal }) {
                                 />
                             </svg>
 
-                            Сохранение...
+                            {translations.saving}
                         </>
                     ) : (
                         <>
@@ -235,7 +237,7 @@ function AddTag({ setCreateModal }) {
                                 />
                             </svg>
 
-                            Сохранить
+                            {translations.save}
                         </>
                     )}
                 </button>

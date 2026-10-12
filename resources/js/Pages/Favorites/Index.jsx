@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { router, Link } from '@inertiajs/react';
+import { router, Link,usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
@@ -13,6 +13,7 @@ import useLocalized from '@/Hooks/useLocalized';
 function Index({ documents,filter,favoriteIds }) {
     
      const { language, localized } = useLocalized();
+     const { translations } = usePage().props;
 
     useEffect(() => {
         if(filter?.menus?.length){
@@ -338,30 +339,30 @@ const removeSelected = () => {
 
         const breadcrumb = [
             {
-                title: 'Главная страница',
+                title: translations.main_page,
                 href: '/',
             },
             {
-                title: 'Избранное',
+                title: translations.favorites,
             },
         ];
 
 
-         const selectStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            minHeight: "42px",
-            height: "42px",
-            borderRadius: "8px",
-            borderColor: state.isFocused
-                ? "#3b82f6"
-                : "#e5e7eb",
-            boxShadow: state.isFocused
-                ? "0 0 0 4px rgba(59, 130, 246, 0.08)"
-                : "none",
-            "&:hover": {
-                borderColor: "#3b82f6",
-            },
+        const selectStyles = {
+            control: (provided, state) => ({
+                ...provided,
+                minHeight: "42px",
+                height: "42px",
+                borderRadius: "8px",
+                borderColor: state.isFocused
+                    ? "#3b82f6"
+                    : "#e5e7eb",
+                boxShadow: state.isFocused
+                    ? "0 0 0 4px rgba(59, 130, 246, 0.08)"
+                    : "none",
+                "&:hover": {
+                    borderColor: "#3b82f6",
+                },
         }),
 
         valueContainer: (provided) => ({
@@ -426,7 +427,7 @@ return (
     <AuthenticatedLayout
         header={
             <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                Поиск документов
+                {translations.search_documents}
             </h2>
         }
     >
@@ -443,9 +444,8 @@ return (
                 {/* ===================== */}
                 {/* SEARCH FORM */}
                 {/* ===================== */}
-
                 <div className="mb-6 overflow-hidden bg-white shadow-sm sm:rounded">
-                    {
+                   {
                         openSearchForm ? (
                             <button
                                 type="button"
@@ -514,7 +514,6 @@ return (
                                         d="M21 21l-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z"
                                     />
                                 </svg>
-
                                 Search
                             </button>
                         )
@@ -546,11 +545,11 @@ return (
 
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-800">
-                                    Поиск документов
+                                    {translations.search_documents}
                                 </h2>
 
                                 <p className="mt-1 text-sm text-gray-400">
-                                    Укажите параметры для поиска документов.
+                                    {translations.search_documents_description}
                                 </p>
                             </div>
 
@@ -567,7 +566,7 @@ return (
                                         htmlFor="number"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Номер документа
+                                        {translations.number}
                                     </label>
                                 </div>
 
@@ -636,7 +635,7 @@ return (
                                         htmlFor="title"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Название документа
+                                        {translations.title}
                                     </label>
                                 </div>
 
@@ -702,7 +701,7 @@ return (
 
                                 <div className="md:col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Меню
+                                        {translations.menu}
                                     </label>
                                 </div>
 
@@ -747,7 +746,7 @@ return (
 
                                 <div className="md:col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Категория
+                                        {translations.category}
                                     </label>
                                 </div>
 
@@ -776,7 +775,7 @@ return (
 
                                 <div className="md:col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Дата
+                                        {translations.document_date}
                                     </label>
                                 </div>
 
@@ -902,7 +901,7 @@ return (
 
                                 <div className="md:col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Часть описания
+                                        {translations.description}
                                     </label>
                                 </div>
 
@@ -944,7 +943,7 @@ return (
 
                                 <div className="md:col-span-3">
                                     <span className="block text-sm font-medium text-gray-700">
-                                        Статус документа
+                                        {translations.status}
                                     </span>
                                 </div>
 
@@ -978,17 +977,13 @@ return (
                                         "
                                     >
                                         <option value="">
-                                            Все
                                         </option>
-
                                         <option value="active">
-                                            Действующие
+                                           {translations.active}
                                         </option>
-
                                         <option value="passive">
-                                            Утратившие силу
+                                            {translations.passive}
                                         </option>
-
                                     </select>
 
                                 </div>

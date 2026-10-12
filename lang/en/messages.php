@@ -76,4 +76,24 @@ return [
     'saved_documents' => 'Your saved documents',
     'all_favorite_documents' => 'All favorite documents',
 
+    'selected' => 'Selected',
+    'choose_action' => 'Choose an action',
+    'deselect' => 'Deselect',
+    'delete_selected' => 'Delete selected',
+
+    'add' => 'Add',
+    'create_tag' => 'Create tag',
+    'enter_new_tag_name' => 'Enter the name of the new tag.',
+
+    'edit_tag' => 'Edit tag',
+    'edit_tag_description' => 'Change the name of an existing tag.',
+    'tag_documents_list' => 'List of documents associated with the tag',
+
+
+    'no_documents' => 'No documents available',
+    'no_documents_for_tag' => 'There are no documents associated with this tag yet.',
+
+    'search_documents' => 'Search Documents',
+    'search_documents_description' => 'Specify the search criteria for documents.',
+
 ];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { router, Link } from '@inertiajs/react';
+import { router, Link,usePage } from '@inertiajs/react';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
@@ -8,10 +8,12 @@ import Swal from 'sweetalert2';
 import AddTag from './AddTag';
 import EditTag from './EditTag';
 import TagDocuments from './TagDocuments';
-import BreadCrubs from './BreadCrubs';
+import BreadCrubs from '@/Components/BreadCrubs';
 
 
 export default function Index({ tags }) {
+
+     const { translations } = usePage().props;
 
     const [createModal, setCreateModal] = useState(false);
     const [documentsOfTag, setDocumentsOfTag] = useState(null);
@@ -59,11 +61,11 @@ export default function Index({ tags }) {
 
      const breadcrumb = [
             {
-                title: 'Главная страница',
+                title: translations.main_page,
                 href: '/',
             },
             {
-                title: 'Список тегов',
+                title: translations.tags,
             },
         ];
     
@@ -140,11 +142,11 @@ export default function Index({ tags }) {
 
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">
-                                Список тегов
+                               {translations.tag_list}
                             </h3>
 
                             <p className="mt-1 text-sm text-gray-500">
-                                Всего записей: {tags?.total || 0}
+                               {translations.total_records}: {tags?.total || 0}
                             </p>
                         </div>
 
@@ -169,8 +171,7 @@ export default function Index({ tags }) {
                                     d="M12 4v16m8-8H4"
                                 />
                             </svg>
-
-                            Создать тег
+                            {translations.add}
 
                         </button>
 
@@ -205,11 +206,10 @@ export default function Index({ tags }) {
 
                                 <div>
                                     <div className="text-sm font-semibold text-gray-800">
-                                        Выбрано: {selectedIds.length}
+                                        {translations.selected}: {selectedIds.length}
                                     </div>
-
                                     <div className="text-xs text-gray-500">
-                                        Выберите действие
+                                        {translations.choose_action}
                                     </div>
                                 </div>
 
@@ -239,7 +239,10 @@ export default function Index({ tags }) {
                                         />
                                     </svg>
 
-                                    Снять выделение
+                                   {translations.deselect}
+                                    
+
+                                 
 
                                 </button>
 
@@ -265,7 +268,9 @@ export default function Index({ tags }) {
                                         />
                                     </svg>
 
-                                    Удалить выбранные
+                                    {translations.delete_selected}
+
+
 
                                 </button>
 
@@ -308,12 +313,12 @@ export default function Index({ tags }) {
 
 
                                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Название
+                                            {translations.title}
                                         </th>
 
 
                                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                            Действия
+                                            {translations.actions}
                                         </th>
 
                                     </tr>

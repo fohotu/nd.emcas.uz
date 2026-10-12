@@ -1,17 +1,18 @@
 import React from 'react';
-import {router, Link } from '@inertiajs/react';
+import {router, Link,usePage } from '@inertiajs/react';
 
 const TagDocuments = ({ data }) => {
+    const {translations} = usePage().props;
     return (
         <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div className="border-b border-gray-200 bg-gray-50 px-5 py-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800">
-                            Документы
+                            {translations.documents}
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
-                            Список документов, связанных с тегом <span className="font-bold">{data?.name}</span>
+                           {translations.tag_documents_list} <span className="font-bold">{data?.name}</span>
                         </p>
                     </div>
 
@@ -34,19 +35,19 @@ const TagDocuments = ({ data }) => {
                         
 
                             <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                Номер
+                                {translations.number}
                             </th>
 
                             <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                Название
+                                {translations.title}
                             </th>
 
                             <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                Дата
+                                {translations.created_date}
                             </th>
 
                             <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                Статус
+                                {translations.status}
                             </th>
                         </tr>
                     </thead>
@@ -83,8 +84,9 @@ const TagDocuments = ({ data }) => {
                                             <div className="font-medium text-gray-800">
                                                 {document.title || 'Без названия'}
                                             </div>
-
-                                             {
+                                            
+                                            
+                                            {
                                                 document.description ? (
                                                     <div
                                                         dangerouslySetInnerHTML={{
@@ -112,7 +114,7 @@ const TagDocuments = ({ data }) => {
                                                 text-xs font-medium
                                                 text-green-700
                                             ">
-                                                Действующий
+                                                  {translations.active}
                                             </span>
                                         ) : (
                                             <span className="
@@ -123,7 +125,7 @@ const TagDocuments = ({ data }) => {
                                                 text-xs font-medium
                                                 text-gray-500
                                             ">
-                                                Пассивный
+                                                {translations.passive}
                                             </span>
                                         )}
                                     </td>
@@ -157,11 +159,11 @@ const TagDocuments = ({ data }) => {
                                         </div>
 
                                         <p className="text-sm font-medium text-gray-600">
-                                            Документы отсутствуют
+                                            {translations.no_documents}
                                         </p>
 
                                         <p className="mt-1 text-xs text-gray-400">
-                                            Для этого тега пока нет связанных документов
+                                            {translations.no_documents_for_tag}
                                         </p>
                                     </div>
                                 </td>
