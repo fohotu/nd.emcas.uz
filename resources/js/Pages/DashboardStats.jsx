@@ -92,6 +92,7 @@ export default function DashboardStats({
             iconBg: 'bg-purple-50',
             iconColor: 'text-purple-600',
         },
+        /*
 
         {
             title: 'Посещения',
@@ -121,13 +122,16 @@ export default function DashboardStats({
             iconBg: 'bg-blue-50',
             iconColor: 'text-blue-600',
         },
+        
+        */
+
     ];
 
     return (
         <div className="space-y-6">
 
             {/* Statistics */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
                 {stats.map((stat) => (
                     <div
@@ -230,7 +234,7 @@ export default function DashboardStats({
                                 <Link
                                     key={document.id}
                                     href={route(
-                                        'dashboard',
+                                        'document.show',
                                         document.id
                                     )}
                                     className="
@@ -413,6 +417,8 @@ export default function DashboardStats({
             </div>
 
         </div>
+        
     );
+
 }
 

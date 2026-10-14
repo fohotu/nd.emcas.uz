@@ -107,67 +107,10 @@ export default function Dashboard({ stats }) {
                             usersCount={stats.users}
                             menusCount={stats.menus}
 
-                            latestDocuments={[
-                                {
-                                    id: 1,
-                                    title: 'Закон Республики Узбекистан о радиочастотном спектре',
-                                    document_date: '15.09.2026',
-                                },
-                                {
-                                    id: 2,
-                                    title: 'Положение о порядке использования радиочастотного спектра',
-                                    document_date: '12.09.2026',
-                                },
-                                {
-                                    id: 3,
-                                    title: 'Нормативные требования к радиоэлектронным средствам',
-                                    document_date: '08.09.2026',
-                                },
-                                {
-                                    id: 4,
-                                    title: 'Правила распределения полос радиочастот',
-                                    document_date: '05.09.2026',
-                                },
-                                {
-                                    id: 5,
-                                    title: 'Технические условия использования радиочастот',
-                                    document_date: '01.09.2026',
-                                },
-                            ]}
-
-                            latestUsers={[
-                                {
-                                    id: 1,
-                                    name: 'Farkhod Pulatov',
-                                    email: 'farkhod@example.com',
-                                    created_at: '17.09.2026',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Aziz Karimov',
-                                    email: 'aziz@example.com',
-                                    created_at: '16.09.2026',
-                                },
-                                {
-                                    id: 3,
-                                    name: 'Bekzod Tursunov',
-                                    email: 'bekzod@example.com',
-                                    created_at: '15.09.2026',
-                                },
-                                {
-                                    id: 4,
-                                    name: 'Jasur Abdullaev',
-                                    email: 'jasur@example.com',
-                                    created_at: '13.09.2026',
-                                },
-                                {
-                                    id: 5,
-                                    name: 'Sardor Akhmedov',
-                                    email: 'sardor@example.com',
-                                    created_at: '11.09.2026',
-                                },
-                            ]}
+                            latestDocuments={stats.last_documents}
+                            latestUsers={stats.last_users}
                         />
+                   
                     </section>
 
 

@@ -23,10 +23,12 @@ function Index({
     const [editModal, setEditModal] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState({});
 
+
     const [searchForm, setSearchForm] = useState({
         title: query.title || '',
         description: query.description || '',
     });
+    
 
     const buildTree = (categories) => {
         return categories?.map((category) => ({

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BreadCrubs from '@/Components/BreadCrubs';
 import { Tree } from 'react-arborist';
-import { router, Link,usePage } from '@inertiajs/react';
+import { router, Link,usePage,Head } from '@inertiajs/react';
 import SearchForm from './SearchForm';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
@@ -205,6 +205,7 @@ function View({
             title="View Menu"
             description="View menu details"
         >
+            <Head title={menu_item ? localized(menu_item,'title') : ''} />
             <BreadCrubs items={breadcrumb} />
 
             <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-12">

@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { router, Link,usePage } from '@inertiajs/react';
+import { router, Link,usePage,Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Modal from '@/Components/Modal';
 import TagForm from './TagForm';
@@ -9,6 +9,7 @@ import AsyncSelect from "react-select/async";
 import BreadCrubs from './BreadCrubs';
 import Select from "react-select";
 import useLocalized from '@/Hooks/useLocalized';
+
 
 function Index({ documents,filter,favoriteIds }) {
     
@@ -431,6 +432,7 @@ return (
             </h2>
         }
     >
+        <Head title={translations.favorites} />
         <Modal show={selectedDocument} onClose={() => setSelectedDocument(null)}>
             <TagForm 
                 documentId = {selectedDocument?.id}
@@ -940,15 +942,12 @@ return (
 
                             {/* Статус */}
                             <div className="mb-6 grid grid-cols-1 gap-5 md:grid-cols-12">
-
                                 <div className="md:col-span-3">
                                     <span className="block text-sm font-medium text-gray-700">
                                         {translations.status}
                                     </span>
                                 </div>
-
                                 <div className="md:col-span-5">
-
                                     <select
                                         value={searchField.status}
                                         onChange={(e) =>
@@ -1012,7 +1011,7 @@ return (
                                         hover:text-gray-800
                                     "
                                 >
-                                    Очистить
+                                    {translations.cancel}
                                 </button>
 
 
@@ -1052,7 +1051,7 @@ return (
                                         />
                                     </svg>
 
-                                    Найти
+                                    {translations.find}
 
                                 </button>
 
@@ -1088,7 +1087,7 @@ return (
                         </svg>
 
                         <span className="text-sm font-medium text-gray-700">
-                            Выбрано записей:
+                            {translations.selected}:
                             <span className="ml-1 font-bold text-blue-600">
                                 {selectedIds.length}
                             </span>
@@ -1102,7 +1101,7 @@ return (
                             onClick={() => setSelectedIds([])}
                             className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
                         >
-                            Снять выделение
+                            {translations.deselect}
                         </button>
 
                         <button
@@ -1110,7 +1109,7 @@ return (
                             onClick={removeSelected}
                             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
                         >
-                            🗑 Удалить выбранные
+                            🗑 {translations.delete_selected}
                         </button>
 
                     </div>
@@ -1121,12 +1120,12 @@ return (
                     <div className="border-b border-gray-200 px-6 py-4">
 
                         <h3 className="text-lg font-semibold text-gray-800">
-                            Результаты поиска
+                            {translations.search_results}
                         </h3>
                         
                         <p className="mt-1 text-sm text-gray-500">
 
-                            Найдено: {
+                            {translations.found}: {
                                 documents?.total ?? 0
                             }
 
@@ -1158,25 +1157,25 @@ return (
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-                                        Номер документа
+                                        {translations.number}
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-                                        Название
+                                        {translations.title}
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-                                        меню
+                                        {translations.menu}
                                     </th>
 
                                     <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-                                        Дата
+                                        {translations.document_date}
                                     </th>
 
           
 
                                     <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">
-                                        Статус
+                                        {translations.status}
                                     </th>
 
                                     <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">
@@ -1354,13 +1353,15 @@ return (
                                                 {document.status === 'active' && (
 
                                                     <span className="rounded bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                                                        Действующий
+                                                    
+                                                        {translations.active}
                                                     </span>
 
                                                 )}
                                                 {document.status === 'passive' && (
                                                     <span className="rounded bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                                                        Утратил силу
+                                                   
+                                                        {translations.passive}
                                                     </span>
                                                 )}
 
@@ -1416,34 +1417,22 @@ return (
 
                                         </tr>
                                         );
-                                    }
-
+                                    }  
                                     )
-
                                 ) : (
-
                                     <tr>
-
                                         <td
                                             colSpan="7"
                                             className="px-4 py-10 text-center text-gray-500"
                                         >
-                                            Документы не найдены
+                                            {translations.no_documents}
                                         </td>
-
                                     </tr>
-
                                 )}
-
                             </tbody>
-
                         </table>
-
                     </div>
-
-
                     {/* Pagination */}
-
                     {documents?.links?.length > 3 && (
 
                         <div className="flex flex-wrap gap-2 border-t border-gray-200 p-4">

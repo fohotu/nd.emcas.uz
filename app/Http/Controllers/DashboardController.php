@@ -12,18 +12,22 @@ class DashboardController extends Controller
 {
     public function admin()
     {
+
         $document = Document::count();
         $category = Category::count();
         $menu = Menu::count();
         $user = User::count();
 
-        $stats = [
+        $last_documents = Document::latest()->take(5)->get();
+        $last_users = User::latest()->take(5)->get();
 
+        $stats = [
             'documents' => Document::count(),
             'categories' => Category::count(),
             'menus' => Menu::count(),
             'users' => User::count(),
-            
+            'last_documents' => $last_documents,
+            'last_users' => $last_users
         ];
 
         //dd($stats);    
@@ -31,6 +35,8 @@ class DashboardController extends Controller
         return inertia('Dashboard', [
            'stats' => $stats,
         ]);
+
+
     }
 
     public function user()
